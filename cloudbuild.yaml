@@ -8,3 +8,5 @@ steps:
   args: ['run', 'deploy', 'fair-grade-app', '--image', 'gcr.io/$PROJECT_ID/fair-grade-app', '--region', 'us-central1', '--platform', 'managed', '--allow-unauthenticated']
 images:
 - 'gcr.io/$PROJECT_ID/fair-grade-app'
+options:
+  defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
