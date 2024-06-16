@@ -13,20 +13,29 @@ RUN npm install
 # Copy the rest of the application code to the working directory
 COPY . .
 
-# Set build-time environment variables
+COPY symmetric-ray-425503-d6-b10d3a717eaf.json /secrets/symmetric-ray-425503-d6-b10d3a717eaf.json
+
+# Accept build arguments and set environment variables
 ARG DB_INSTANCE_CONNECTION_NAME
 ARG DB_USER
 ARG DB_PASSWORD
 ARG DB_NAME
+ARG AUTH_SECRET
+ARG AUTH_TRUST_HOST
+ARG AUTH_GITHUB_ID
+ARG AUTH_GITHUB_SECRET
 
-# Set environment variables in the container
 ENV DB_INSTANCE_CONNECTION_NAME=$DB_INSTANCE_CONNECTION_NAME
 ENV DB_USER=$DB_USER
 ENV DB_PASSWORD=$DB_PASSWORD
 ENV DB_NAME=$DB_NAME
+ENV AUTH_SECRET=$AUTH_SECRET
+ENV AUTH_TRUST_HOST=$AUTH_TRUST_HOST
+ENV AUTH_GITHUB_ID=$AUTH_GITHUB_ID
+ENV AUTH_GITHUB_SECRET=$AUTH_GITHUB_SECRET
 
-# Set environment variable for Google Cloud credentials
-ENV GOOGLE_APPLICATION_CREDENTIALS=/secrets/credentials.json
+# Set environment variable for Google Cloud credentials if needed
+ENV GOOGLE_APPLICATION_CREDENTIALS=/secrets/symmetric-ray-425503-d6-b10d3a717eaf.json
 
 # Build the Next.js application
 RUN npm run build
