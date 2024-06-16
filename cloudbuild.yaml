@@ -3,14 +3,14 @@ steps:
   args: [
     'build', 
     '-t', 'gcr.io/$PROJECT_ID/fair-grade-app',
-    '--build-arg', 'DB_INSTANCE_CONNECTION_NAME=$DB_INSTANCE_CONNECTION_NAME',
-    '--build-arg', 'DB_USER=$DB_USER',
-    '--build-arg', 'DB_PASSWORD=$DB_PASSWORD',
-    '--build-arg', 'DB_NAME=$DB_NAME',
-    '--build-arg', 'AUTH_SECRET=$AUTH_SECRET',
-    '--build-arg', 'AUTH_TRUST_HOST=$AUTH_TRUST_HOST',
-    '--build-arg', 'AUTH_GITHUB_ID=$AUTH_GITHUB_ID',
-    '--build-arg', 'AUTH_GITHUB_SECRET=$AUTH_GITHUB_SECRET',
+    '--build-arg', 'DB_INSTANCE_CONNECTION_NAME=$_DB_INSTANCE_CONNECTION_NAME',
+    '--build-arg', 'DB_USER=$_DB_USER',
+    '--build-arg', 'DB_PASSWORD=$_DB_PASSWORD',
+    '--build-arg', 'DB_NAME=$_DB_NAME',
+    '--build-arg', 'AUTH_SECRET=$_AUTH_SECRET',
+    '--build-arg', 'AUTH_TRUST_HOST=$_AUTH_TRUST_HOST',
+    '--build-arg', 'AUTH_GITHUB_ID=$_AUTH_GITHUB_ID',
+    '--build-arg', 'AUTH_GITHUB_SECRET=$_AUTH_GITHUB_SECRET',
     '.'
   ]
 - name: 'gcr.io/cloud-builders/docker'
