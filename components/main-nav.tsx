@@ -19,7 +19,7 @@ export function MainNav() {
         <NavigationMenuList>
           <NavigationMenuItem>
             <NavigationMenuTrigger className="px-2">
-              Server Side
+              
             </NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
@@ -40,7 +40,7 @@ export function MainNav() {
               href="/client-example"
               className={navigationMenuTriggerStyle()}
             >
-              Client Side
+              
             </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>

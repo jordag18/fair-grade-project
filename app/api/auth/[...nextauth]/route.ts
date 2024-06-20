@@ -1,2 +1,2 @@
-export { GET, POST } from "@/auth";
-//CI/CD TEST
+import { handlers } from "@/auth"
+export const { GET, POST } = handlers
