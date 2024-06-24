@@ -8,58 +8,126 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String          @id @default(cuid())
   name          String?
-  username      String?   @unique
-  email         String?   @unique
-  FirstName     String?
-  LastName      String?
+  username      String?         @unique
+  email         String?         @unique
   emailVerified DateTime?
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  Account       Account?
   Session       Session[]
-}
+  Account       Account?
+ 
+  Assessments_Assessments_AssessorIDToUsers     Assessments[] @relation("Assessments_AssessorIDToUsers")
+  Assessments_Assessments_AssessedUserIDToUsers Assessments[] @relation("Assessments_AssessedUserIDToUsers")
+  UserCourse                                    UserCourse[]
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+ 
 model Account {
-  id                       String   @id @default(cuid())
-  userId                   String   @unique
+  id                       String  @id @default(cuid())
+  userId                   String  @unique
   type                     String
   provider                 String
   providerAccountId        String
-  refresh_token            String?  @db.Text
-  access_token             String?  @db.Text
+  refresh_token            String? @db.Text
+  access_token             String? @db.Text
   expires_at               Int?
   token_type               String?
   scope                    String?
-  id_token                 String?  @db.Text
+  id_token                 String? @db.Text
   session_state            String?
   refresh_token_expires_in Int?
-  createdAt                DateTime @default(now())
-  updatedAt                DateTime @updatedAt
-  user                     User     @relation(fields: [userId], references: [id])
-
+  user                     User?   @relation(fields: [userId], references: [id])
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
   @@unique([provider, providerAccountId])
   @@index([userId])
 }
-
+ 
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
   user         User     @relation(fields: [userId], references: [id])
-
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
   @@index([userId])
 }
-
+ 
 model VerificationToken {
   identifier String
   token      String
   expires    DateTime
-
+ 
   @@unique([identifier, token])
+}
+
+model AssessmentSkills {
+  AssessmentID Int          @id
+  SkillID      Int
+  Score        Int
+  Comment      String       @db.Text
+  Date         DateTime     @db.DateTime(0)
+  CourseSkills CourseSkills @relation(fields: [SkillID], references: [SkillID], onDelete: Cascade, onUpdate: NoAction, map: "AssessmentSkills_ibfk_1")
+
+  @@index([SkillID], map: "SkillID")
+}
+
+model Assessments {
+  AssessmentID                            Int      @id @default(autoincrement())
+  AssessorID                              String
+  AssessedUserID                          String
+  CourseID                                Int
+  Comment                                 String   @db.Text
+  InstrumentType                          String   @db.VarChar(100)
+  AssessmentDate                          DateTime @db.DateTime(0)
+  InstrumentDescription                   String   @db.Text
+  Users_Assessments_AssessorIDToUsers     User    @relation("Assessments_AssessorIDToUsers", fields: [AssessorID], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Assessments_ibfk_1")
+  Users_Assessments_AssessedUserIDToUsers User    @relation("Assessments_AssessedUserIDToUsers", fields: [AssessedUserID], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Assessments_ibfk_2")
+
+  @@index([AssessedUserID], map: "AssessedUserID")
+  @@index([AssessorID], map: "AssessorID")
+}
+
+model CourseSkills {
+  SkillID          Int                @id @default(autoincrement())
+  SkillName        String             @db.VarChar(100)
+  CourseID         Int
+  AssessmentSkills AssessmentSkills[]
+  Courses          Courses            @relation(fields: [CourseID], references: [CourseID], onDelete: Cascade, onUpdate: NoAction, map: "CourseSkills_ibfk_1")
+
+  @@index([CourseID], map: "CourseID")
+}
+
+model Courses {
+  CourseID     Int            @id
+  CourseName   String         @db.VarChar(100)
+  CourseSkills CourseSkills[]
+  UserCourse   UserCourse[]
+}
+
+model UserCourse {
+  UserID   String
+  CourseID Int
+  Role     UserCourse_Role
+  Users    User           @relation(fields: [UserID], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "UserCourse_ibfk_1")
+  Courses  Courses         @relation(fields: [CourseID], references: [CourseID], onDelete: Cascade, onUpdate: NoAction, map: "UserCourse_ibfk_2")
+
+  @@id([UserID, CourseID])
+  @@index([CourseID], map: "CourseID")
+}
+
+enum UserCourse_Role {
+  Admin
+  Instructor
+  TA
+  IA
+  Student
 }
