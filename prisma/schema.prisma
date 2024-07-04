@@ -107,7 +107,7 @@ model CourseSkills {
 }
 
 model Courses {
-  CourseID     Int            @id
+  CourseID     Int            @id @default(autoincrement())
   CourseName   String         @db.VarChar(100)
   CourseSkills CourseSkills[]
   UserCourse   UserCourse[]
