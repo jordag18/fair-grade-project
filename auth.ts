@@ -3,6 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import prisma from "./lib/prisma";
+import { UserCourseRole } from './types';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -11,38 +12,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     GoogleProvider({
       clientId: process.env.AUTH_GOOGLE_ID,
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
-      allowDangerousEmailAccountLinking: true,
-      authorization: {
-        params: {
-          prompt: "consent",
-          access_type: "offline",
-          response_type: "code",
-        },
-      },
     }),
     GitHubProvider({
       clientId: process.env.AUTH_GITHUB_ID,
       clientSecret: process.env.AUTH_GITHUB_SECRET,
-      authorization: {
-        params: {
-          prompt: "consent",
-          access_type: "offline",
-          response_type: "code",
-        },
-      },
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
+    async signIn({ user }) {
       try {
         const existingUser = await prisma.user.findUnique({
-          where: { email: user.email },
+          where: { email: user.email ?? "" },
         });
 
         if (!existingUser) {
           await prisma.user.create({
             data: {
-              email: user.email,
+              email: user.email ?? "",
               name: user.name || "",
               image: user.image || "",
             },
@@ -54,15 +40,33 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return false;
       }
     },
-    jwt({ token, user }) {
-      if (user) { // User is available during sign-in
-        token.id = user.id
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+
+        const userCourse = await prisma.userCourse.findFirst({
+          where: { UserID: user.id },
+        });
+
+        if (!userCourse) {
+          await prisma.userCourse.create({
+            data: {
+              UserID: user.id as string,
+              CourseID: 1,
+              Role: "Student",
+            },
+          });
+          token.role = "Student";
+        } else {
+          token.role = userCourse.Role;
+        }
       }
-      return token
+      return token;
     },
-    session({ session, token }) {
-      session.user.id = token.id
-      return session
+    async session({ session, token }) {
+      session.user.id = token.id as string; 
+      session.user.role = token.role as UserCourseRole; 
+      return session;
     },
   },
 });
