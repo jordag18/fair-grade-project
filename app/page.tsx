@@ -1,86 +1,42 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { SignIn, SignOut } from "@/components/auth-components"
+import { signIn } from "next-auth/react";
+import { Button } from "@/components/ui/button";
 
-interface Post {
-  id: number;
-  title: string;
-  content: string;
-}
-
-export default function Home() {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function fetchPosts() {
-      try {
-        const response = await fetch('/api/posts');
-        const data = await response.json();
-        setPosts(data);
-      } catch (error) {
-        setError('Failed to load posts');
-      }
-    }
-    fetchPosts();
-  }, []);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    try {
-      const response = await fetch('/api/posts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ title, content }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to add post');
-      }
-
-      const newPost: Post = await response.json();
-      setPosts([...posts, newPost]);
-      setTitle('');
-      setContent('');
-    } catch (error) {
-      setError('Failed to add post');
-    }
-  };
-
+export default function LoginPage() {
   return (
-    <div>
-      <h1>Posts</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <ul>
-        {posts.map(post => (
-          <li key={post.id}>
-            <h2>{post.title}</h2>
-            <p>{post.content}</p>
-          </li>
-        ))}
-      </ul>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Title"
-          required
-        />
-        <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="Content"
-          required
-        />
-        <button type="submit">Add Post</button>
-      </form>
+    <div className="flex h-screen bg-slate-300">
+      <div className="flex w-full p-24 pt-36">
+        <div className="w-1/2 bg-gray-100 p-8 flex flex-col justify-center items-center rounded-l-lg">
+          <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+            Welcome to Fair Grade
+          </h1>
+          <p className="leading-7 [&:not(:first-child)]:mt-6">
+            Please sign in using one of the following methods to access your
+            account.
+          </p>
+        </div>
+        <div className="w-1/2 flex flex-col justify-center items-center bg-gray-200 p-8 rounded-r-lg">
+          <Button
+            onClick={() => signIn("google")}
+            className="mb-4 w-2/3 bg-blue-600"
+          >
+            Sign in with Google
+          </Button>
+          <Button
+            onClick={() => signIn("github")}
+            className="mb-4 w-2/3 bg-slate-600"
+          >
+            Sign in with GitHub
+          </Button>
+          <Button
+            onClick={() => signIn("utep")}
+            className="w-2/3 bg-orange-600"
+          >
+            Sign in with UTEP (SSO)
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
