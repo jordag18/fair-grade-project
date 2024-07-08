@@ -40,8 +40,8 @@ export default function AdminPage() {
   };
 
   return (
-    <div>
-      <h1>Admin Page</h1>
+    <div className="flex flex-col">
+      <h1>Admin Assessments Page</h1>
       <p>Welcome, {session?.user?.name}!</p>
       <form onSubmit={handleSubmit}>
         <label>
