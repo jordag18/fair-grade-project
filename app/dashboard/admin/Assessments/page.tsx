@@ -1,65 +1,63 @@
-"use client";
 
-import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
-import { Course } from "@/types";
+import { DeleteSkillAlertDialog } from "@/components/Skills/DeleteSkillAlertDialog";
+import { CreateSkillDialog } from "@/components/Skills/CreateSkillDialog";
+import { ModifySkillDialog } from "@/components/Skills/ModifySkillDialog";
+import { DataTable } from "@/components/DataTable/DataTable";
+import { Assessment, columns } from "./columns";
 
-export default function AdminPage() {
-  const { data: session } = useSession();
-  const [courseName, setCourseName] = useState("");
-  const [courses, setCourses] = useState<Course[]>([]);
+async function getData(): Promise<Assessment[]> {
+  // Fetch data from your API here.
+  return [
+    {
+      CoachName: "Jordan Aguon",
+      StudentName: "Eric Cartman",
+      Comment: "This is the comment test",
+      Instrument: "Coaching Session",
+      DateCreated: new Date("2024-08-02T10:00:00Z"),
 
-  useEffect(() => {
-    const fetchCourses = async () => {
-      const res = await fetch("/api/admin/courses");
-      const data = await res.json();
-      setCourses(data);
-    };
+    },
+    {
+      CoachName: "Jordan Aguon",
+      StudentName: "Stan Marsh",
+      Comment: "This is the comment test 2",
+      Instrument: "Quiz",
+      DateCreated: new Date("2024-09-02T10:00:00Z"),
 
-    fetchCourses();
-  }, []);
+    },
+    {
+      CoachName: "Kevin Moreno",
+      StudentName: "Kyle Broflowski",
+      Comment: "This is the comment test 3",
+      Instrument: "Lab 1",
+      DateCreated: new Date("2024-09-03T10:00:00Z"),
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const res = await fetch("/api/admin/courses", {
-      method: "POST",
-      body: JSON.stringify({ courseName }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    },
 
-    if (res.ok) {
-      setCourseName("");
-      alert("Course added successfully");
-      const newCourse = await res.json();
-      setCourses((prevCourses) => [...prevCourses, newCourse]);
-    } else {
-      alert("Failed to add course");
-    }
-  };
+  ];
+}
+
+export default async function AdminAssessmentPage() {
+  const data = await getData();
 
   return (
-    <div className="flex flex-col">
-      <h1>Admin Assessments Page</h1>
-      <p>Welcome, {session?.user?.name}!</p>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Course Name:
-          <input
-            type="text"
-            value={courseName}
-            onChange={(e) => setCourseName(e.target.value)}
-          />
-        </label>
-        <button type="submit">Add Course</button>
-      </form>
-      <h2>Courses:</h2>
-      <ul>
-        {courses.map((course) => (
-          <li key={course.CourseID}>{course.CourseName}</li>
-        ))}
-      </ul>
+    <div className="flex mx-20 items-center content-center">
+      <div className="flex flex-col">
+        <div className="flex flex-col gap-y-2">
+          <div className="flex justify-between">
+            <DeleteSkillAlertDialog />
+            <div className="flex gap-x-2">
+              <CreateSkillDialog />
+              <ModifySkillDialog />
+            </div>
+          </div>
+        </div>
+        <DataTable
+          columns={columns}
+          data={data}
+          columnKey={"SkillName"}
+          placeholder="Filter Skill..."
+        />
+      </div>
     </div>
   );
 }

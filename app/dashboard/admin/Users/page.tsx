@@ -1,65 +1,63 @@
-"use client";
+import { User, columns } from "./columns";
+import { DataTable } from "../../../../components/DataTable/DataTable";
+import { DeleteUserAlertDialog } from "@/components/User/DeleteUserAlertDialog";
+import { ModifyUserDialog } from "@/components/User/ModifyUserDialog";
 
-import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
-import { Course } from "@/types";
+async function getData(): Promise<User[]> {
+  // Fetch data from your API here.
+  return [
+    {
+      Email: "jaaguon@miners.utep.edu",
+      Name: "Jordan Aguon",
+      Courses: ["CS3331", "CS3432"],
+      Role: "Admin",
+      DateAdded: new Date("2024-08-06T10:00:00Z"),
+    },
+    {
+      Email: "realemail@miners.utep.edu",
+      Name: "Kevin Moreno",
+      Courses: ["CS3331"],
+      Role: "Teaching Assistant",
+      DateAdded: new Date("2024-03-05T10:00:00Z"),
+    },
+    {
+      Email: "fakeemail@miners.utep.edu",
+      Name: "Christan Dees",
+      Courses: ["CS3432"],
+      Role: "Instructional Assistant",
+      DateAdded: new Date("2024-04-14T10:00:00Z"),
+    },
+    {
+      Email: "thetestemail@miners.utep.edu",
+      Name: "Eric Cartman",
+      Courses: ["CS3331", "CS3432", "CS1313"],
+      Role: "Student",
+      DateAdded: new Date("2024-10-17T10:00:00Z"),
+    },
+  ];
+}
 
-export default function AdminPage() {
-  const { data: session } = useSession();
-  const [courseName, setCourseName] = useState("");
-  const [courses, setCourses] = useState<Course[]>([]);
-
-  useEffect(() => {
-    const fetchCourses = async () => {
-      const res = await fetch("/api/admin/courses");
-      const data = await res.json();
-      setCourses(data);
-    };
-
-    fetchCourses();
-  }, []);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const res = await fetch("/api/admin/courses", {
-      method: "POST",
-      body: JSON.stringify({ courseName }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (res.ok) {
-      setCourseName("");
-      alert("Course added successfully");
-      const newCourse = await res.json();
-      setCourses((prevCourses) => [...prevCourses, newCourse]);
-    } else {
-      alert("Failed to add course");
-    }
-  };
+export default async function AdminUsersPage() {
+  const data = await getData();
 
   return (
-    <div className="flex flex-col">
-      <h1>Admin Users Page</h1>
-      <p>Welcome, {session?.user?.name}!</p>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Course Name:
-          <input
-            type="text"
-            value={courseName}
-            onChange={(e) => setCourseName(e.target.value)}
-          />
-        </label>
-        <button type="submit">Add Course</button>
-      </form>
-      <h2>Courses:</h2>
-      <ul>
-        {courses.map((course) => (
-          <li key={course.CourseID}>{course.CourseName}</li>
-        ))}
-      </ul>
+    <div className="flex mx-20 items-center content-center">
+      <div className="flex flex-col">
+        <div className="flex flex-col gap-y-2">
+          <div className="flex justify-between">
+            <DeleteUserAlertDialog />
+            <div className="flex gap-x-2">
+              <ModifyUserDialog />
+            </div>
+          </div>
+        </div>
+        <DataTable
+          columns={columns}
+          data={data}
+          columnKey={"Name"}
+          placeholder="Filter Name..."
+        />
+      </div>
     </div>
   );
 }

@@ -1,9 +1,8 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { DataTableColumnHeader } from "@/components/DataTable/DataTableColumnHeader";
 
 export type Course = {
   CourseID: String;
@@ -25,6 +24,7 @@ export const columns: ColumnDef<Course>[] = [
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
+        className="translate-y-[2px]"
       />
     ),
     cell: ({ row }) => (
@@ -32,6 +32,7 @@ export const columns: ColumnDef<Course>[] = [
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"
+        className="translate-y-[2px]"
       />
     ),
     enableSorting: false,
@@ -39,36 +40,58 @@ export const columns: ColumnDef<Course>[] = [
   },
   {
     accessorKey: "CourseID",
-    header: "Course ID",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Course ID" />
+    ),
+    cell: ({ row }) => (
+      <div className="w-[80px]">{row.getValue("CourseID")}</div>
+    ),
+    enableSorting: false,
+    enableHiding: false,
   },
   {
     accessorKey: "CourseName",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Course Name" />
+    ),
+    cell: ({ row }) => (
+      <div className="w-[80px]">{row.getValue("CourseName")}</div>
+    ),
   },
   {
     accessorKey: "DateRange",
-    header: "Date Range",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Date Range" />
+    ),
+    cell: ({ row }) => (
+      <div className="w-[100px]">{row.getValue("DateRange")}</div>
+    ),
   },
   {
     accessorKey: "TimeRange",
-    header: "Time Range",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Time Range" />
+    ),
+    cell: ({ row }) => (
+      <div className="w-[80px]">{row.getValue("TimeRange")}</div>
+    ),
   },
   {
     accessorKey: "Location",
-    header: "Location",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Location" />
+    ),
+    cell: ({ row }) => (
+      <div className="w-[80px]">{row.getValue("Location")}</div>
+    ),
   },
   {
     accessorKey: "Instructor",
-    header: "Instructor",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Instructor" />
+    ),
+    cell: ({ row }) => (
+      <div className="w-[80px]">{row.getValue("Instructor")}</div>
+    ),
   },
 ];

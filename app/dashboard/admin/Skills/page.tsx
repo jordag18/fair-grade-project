@@ -1,65 +1,133 @@
-"use client";
+import { Skill, columns } from "./columns";
+import { DataTable } from "../../../../components/DataTable/DataTable";
+import { CreateSkillDialog } from "@/components/Skills/CreateSkillDialog";
+import { DeleteSkillAlertDialog } from "@/components/Skills/DeleteSkillAlertDialog";
+import { ModifySkillDialog } from "@/components/Skills/ModifySkillDialog";
 
-import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
-import { Course } from "@/types";
+async function getData(): Promise<Skill[]> {
+  // Fetch data from your API here.
+  return [
+    {
+      SkillID: "1",
+      SkillName: "Integer Representation",
+      SkillType: "Quiz/Lab",
+      AddedBy: "Eric Fruedenthal",
+    },
+    {
+      SkillID: "2",
+      SkillName: "Bitwise/Bitfield",
+      SkillType: "Quiz/Lab",
+      AddedBy: "Jordan Aguon",
+    },
+    {
+      SkillID: "3",
+      SkillName: "Non-Numeric Representation",
+      SkillType: "Quiz/Lab",
+      AddedBy: "Christan Dees",
+    },
+    {
+      SkillID: "4",
+      SkillName: "Tools",
+      SkillType: "Professional",
+      AddedBy: "Kevin Moreno",
+    },
+    {
+      SkillID: "5",
+      SkillName: "Coaching Preperation",
+      SkillType: "Professional",
+      AddedBy: "Natasha Rovelli",
+    },
+    {
+      SkillID: "6",
+      SkillName: "Linearization",
+      SkillType: "Quiz/Lab",
+      AddedBy: "Eric Fruedenthal",
+    },
+    {
+      SkillID: "7",
+      SkillName: "I/O Address Mapping",
+      SkillType: "Quiz/Lab",
+      AddedBy: "Eric Fruedenthal",
+    },
+    {
+      SkillID: "8",
+      SkillName: "Subroutine Linkage",
+      SkillType: "Quiz/Lab",
+      AddedBy: "Eric Fruedenthal",
+    },
+    {
+      SkillID: "9",
+      SkillName: "State Machines",
+      SkillType: "Quiz/Lab",
+      AddedBy: "Eric Fruedenthal",
+    },
+    {
+      SkillID: "10",
+      SkillName: "Pointer Arithmetric",
+      SkillType: "Quiz/Lab",
+      AddedBy: "Eric Fruedenthal",
+    },
+    {
+      SkillID: "11",
+      SkillName: "Addressing Modes",
+      SkillType: "Quiz/Lab",
+      AddedBy: "Eric Fruedenthal",
+    },
+    {
+      SkillID: "12",
+      SkillName: "Sleep/Wakeup",
+      SkillType: "Quiz/Lab",
+      AddedBy: "Eric Fruedenthal",
+    },
+    {
+      SkillID: "13",
+      SkillName: "Control Flow & Comparison",
+      SkillType: "Quiz/Lab",
+      AddedBy: "Eric Fruedenthal",
+    },
+    {
+      SkillID: "14",
+      SkillName: "Interrupts",
+      SkillType: "Quiz/Lab",
+      AddedBy: "Eric Fruedenthal",
+    },
+    {
+      SkillID: "15",
+      SkillName: "Signed Comparison",
+      SkillType: "Quiz/Lab",
+      AddedBy: "Eric Fruedenthal",
+    },
+    {
+      SkillID: "16",
+      SkillName: "Unsigned Comparison",
+      SkillType: "Quiz/Lab",
+      AddedBy: "Eric Fruedenthal",
+    },
+  ];
+}
 
-export default function AdminPage() {
-  const { data: session } = useSession();
-  const [courseName, setCourseName] = useState("");
-  const [courses, setCourses] = useState<Course[]>([]);
-
-  useEffect(() => {
-    const fetchCourses = async () => {
-      const res = await fetch("/api/admin/courses");
-      const data = await res.json();
-      setCourses(data);
-    };
-
-    fetchCourses();
-  }, []);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const res = await fetch("/api/admin/courses", {
-      method: "POST",
-      body: JSON.stringify({ courseName }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (res.ok) {
-      setCourseName("");
-      alert("Course added successfully");
-      const newCourse = await res.json();
-      setCourses((prevCourses) => [...prevCourses, newCourse]);
-    } else {
-      alert("Failed to add course");
-    }
-  };
+export default async function AdminSkillPage() {
+  const data = await getData();
 
   return (
-    <div className="flex flex-col">
-      <h1>Admin Skills Page</h1>
-      <p>Welcome, {session?.user?.name}!</p>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Course Name:
-          <input
-            type="text"
-            value={courseName}
-            onChange={(e) => setCourseName(e.target.value)}
-          />
-        </label>
-        <button type="submit">Add Course</button>
-      </form>
-      <h2>Courses:</h2>
-      <ul>
-        {courses.map((course) => (
-          <li key={course.CourseID}>{course.CourseName}</li>
-        ))}
-      </ul>
+    <div className="flex mx-20 items-center content-center">
+      <div className="flex flex-col">
+        <div className="flex flex-col gap-y-2">
+          <div className="flex justify-between">
+            <DeleteSkillAlertDialog />
+            <div className="flex gap-x-2">
+              <CreateSkillDialog />
+              <ModifySkillDialog />
+            </div>
+          </div>
+        </div>
+        <DataTable
+          columns={columns}
+          data={data}
+          columnKey={"SkillName"}
+          placeholder="Filter Skill..."
+        />
+      </div>
     </div>
   );
 }
