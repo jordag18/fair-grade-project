@@ -1,6 +1,7 @@
 "use client";
 import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
+import { handleGoogleSignIn } from "@/lib/auth/googleSignInServerAction";
 
 export default function LoginPage() {
   return (
@@ -17,7 +18,7 @@ export default function LoginPage() {
         </div>
         <div className="w-1/2 flex flex-col justify-center items-center bg-gray-200 p-8 rounded-r-lg">
           <Button
-            onClick={() => signIn("google")}
+            onClick={() => handleGoogleSignIn()}
             className="mb-4 w-2/3 bg-blue-600"
           >
             Sign in with Google
