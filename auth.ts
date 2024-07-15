@@ -6,6 +6,7 @@ import prisma from "./lib/prisma";
 import { UserCourseRole } from './types';
 
 export const BASE_PATH = "http://localhost:3000";
+//export const BASE_PATH = "https://fair-grade-app-vpz4vvqzlq-uc.a.run.app";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
