@@ -1,5 +1,5 @@
 //import { Course } from "@/types";
-import { Course, columns } from "./columns";
+import { Course, Columns } from "./columns";
 import { DataTable } from "../../../../components/DataTable/DataTable";
 import { CreateCourseDialog } from "@/components/Course/CreateCourseDialog";
 import { ModifyCourseDialog } from "@/components/Course/ModifyCourseDialog";
@@ -122,7 +122,7 @@ export default async function AdminCoursePage() {
           </div>
         </div>
         <DataTable
-          columns={columns}
+          columns={Columns}
           data={data}
           columnKey={"CourseName"}
           placeholder="Filter Course Name..."
