@@ -16,6 +16,9 @@ COPY prisma ./prisma
 # Copy the rest of the application code to the working directory
 COPY . .
 
+# Copy the .env.production file created during the build process
+COPY .env.production .env.production
+
 # Run Prisma generate
 RUN npx prisma generate
 
