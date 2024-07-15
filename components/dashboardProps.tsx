@@ -11,19 +11,19 @@ export default async function DashboardProps({
   const userRole = await getUserRole();
 
   return (
-      <div className="flex flex-col">
+    <div className="flex flex-col">
       <CourseProvider>
         <TopBar userRole={userRole as string} />
         <div className="flex w-full bg-slate-300">
           <SideNav userRole={userRole as string} />
           <div
             className="flex w-full justify-center h-full-with-margin bg-slate-100 m-5"
-            style={{ "--top-margin": "10rem", marginTop: "1rem" }}
+            style={{ "--top-margin": "10rem", marginTop: "1rem" } as React.CSSProperties}
           >
             {children}
           </div>
         </div>
-        </CourseProvider>
-      </div>
+      </CourseProvider>
+    </div>
   );
 }
