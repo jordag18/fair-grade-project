@@ -10,8 +10,14 @@ COPY package.json package-lock.json ./
 # Install dependencies
 RUN npm install
 
+# Copy the Prisma schema file
+COPY prisma ./prisma
+
 # Copy the rest of the application code to the working directory
 COPY . .
+
+# Run Prisma generate
+RUN npx prisma generate
 
 # Accept build arguments and set environment variables
 ARG AUTH_SECRET
