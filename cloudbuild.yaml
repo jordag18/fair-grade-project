@@ -1,11 +1,11 @@
 substitutions:
-  _DATABASE_URL: "projects/symmetric-ray-425503-d6/secrets/DATABASE_URL/versions/latest"
-  _GOOGLE_APPLICATION_CREDENTIALS: "projects/symmetric-ray-425503-d6/secrets/GOOGLE_APPLICATION_CREDENTIALS/versions/latest"
-  _AUTH_SECRET: "projects/symmetric-ray-425503-d6/secrets/AUTH_SECRET/versions/latest"
-  _AUTH_GITHUB_ID: "projects/symmetric-ray-425503-d6/secrets/AUTH_GITHUB_ID/versions/latest"
-  _AUTH_GITHUB_SECRET: "projects/symmetric-ray-425503-d6/secrets/AUTH_GITHUB_SECRET/versions/latest"
-  _AUTH_GOOGLE_ID: "projects/symmetric-ray-425503-d6/secrets/AUTH_GOOGLE_ID/versions/latest"
-  _AUTH_GOOGLE_SECRET: "projects/symmetric-ray-425503-d6/secrets/AUTH_GOOGLE_SECRET/versions/latest"
+  _DATABASE_URL: "DATABASE_URL"
+  _GOOGLE_APPLICATION_CREDENTIALS: "GOOGLE_APPLICATION_CREDENTIALS"
+  _AUTH_SECRET: "AUTH_SECRET"
+  _AUTH_GITHUB_ID: "AUTH_GITHUB_ID"
+  _AUTH_GITHUB_SECRET: "AUTH_GITHUB_SECRET"
+  _AUTH_GOOGLE_ID: "AUTH_GOOGLE_ID"
+  _AUTH_GOOGLE_SECRET: "AUTH_GOOGLE_SECRET"
 
 steps:
 - name: 'gcr.io/cloud-builders/gcloud'
@@ -29,7 +29,6 @@ steps:
   args: [
     'build', 
     '-t', 'gcr.io/$PROJECT_ID/fair-grade-app',
-    '--build-arg', 'ENV_FILE=.env.production',
     '.'
   ]
 
