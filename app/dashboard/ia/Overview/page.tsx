@@ -7,7 +7,7 @@ async function getData(): Promise<StudentOverview[]> {
   return [];
 }
 
-export default async function AdminOverviewPage() {
+export default async function AdminSkillPage() {
   const data = await getData();
 
   return (

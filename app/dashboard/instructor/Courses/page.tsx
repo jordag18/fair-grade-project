@@ -5,7 +5,6 @@ import { CreateCourseDialog } from "@/components/Course/CreateCourseDialog";
 import { ModifyCourseDialog } from "@/components/Course/ModifyCourseDialog";
 import { DeleteCourseAlertDialog } from "@/components/Course/DeleteCourseAlertDialog";
 
-
 async function getData(): Promise<Course[]> {
   // Fetch data from your API here.
   return [
@@ -108,7 +107,7 @@ async function getData(): Promise<Course[]> {
   ];
 }
 
-export default async function AdminCoursePage() {
+export default async function AdminPage() {
   const data = await getData();
 
   return (
