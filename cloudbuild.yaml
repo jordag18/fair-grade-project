@@ -1,19 +1,28 @@
 steps:
 - name: 'gcr.io/cloud-builders/gcloud'
   id: 'Fetch secrets from Secret Manager'
-  entrypoint: 'sh'
-  args:
-    - '-c'
-    - |
-      echo "DATABASE_URL=$(gcloud secrets versions access latest --secret=${_DATABASE_URL})" >> .env.production
-      echo "GOOGLE_APPLICATION_CREDENTIALS=$(gcloud secrets versions access latest --secret=${_GOOGLE_APPLICATION_CREDENTIALS})" >> .env.production
-      echo "AUTH_SECRET=$(gcloud secrets versions access latest --secret=${_AUTH_SECRET})" >> .env.production
-      echo "AUTH_TRUST_HOST=https://fair-grade-app-vpz4vvqzlq-uc.a.run.app" >> .env.production
-      echo "NEXTAUTH_URL=https://fair-grade-app-vpz4vvqzlq-uc.a.run.app" >> .env.production
-      echo "AUTH_GITHUB_ID=$(gcloud secrets versions access latest --secret=${_AUTH_GITHUB_ID})" >> .env.production
-      echo "AUTH_GITHUB_SECRET=$(gcloud secrets versions access latest --secret=${_AUTH_GITHUB_SECRET})" >> .env.production
-      echo "AUTH_GOOGLE_ID=$(gcloud secrets versions access latest --secret=${_AUTH_GOOGLE_ID})" >> .env.production
-      echo "AUTH_GOOGLE_SECRET=$(gcloud secrets versions access latest --secret=${_AUTH_GOOGLE_SECRET})" >> .env.production
+  entrypoint: 'bash'
+  args: [
+    '-c', 
+    'echo "DATABASE_URL=$$DATABASE_URL" >> .env.production && \
+     echo "GOOGLE_APPLICATION_CREDENTIALS=$$GOOGLE_APPLICATION_CREDENTIALS" >> .env.production && \
+     echo "AUTH_SECRET=$$AUTH_SECRET" >> .env.production && \
+     echo "AUTH_TRUST_HOST=https://fair-grade-app-vpz4vvqzlq-uc.a.run.app" >> .env.production && \
+     echo "NEXTAUTH_URL=https://fair-grade-app-vpz4vvqzlq-uc.a.run.app" >> .env.production && \
+     echo "AUTH_GITHUB_ID=$$AUTH_GITHUB_ID" >> .env.production && \
+     echo "AUTH_GITHUB_SECRET=$$AUTH_GITHUB_SECRET" >> .env.production && \
+     echo "AUTH_GOOGLE_ID=$$AUTH_GOOGLE_ID" >> .env.production && \
+     echo "AUTH_GOOGLE_SECRET=$$AUTH_GOOGLE_SECRET" >> .env.production'
+  ]
+  secretEnv: [
+    'DATABASE_URL', 
+    'GOOGLE_APPLICATION_CREDENTIALS', 
+    'AUTH_SECRET', 
+    'AUTH_GITHUB_ID', 
+    'AUTH_GITHUB_SECRET', 
+    'AUTH_GOOGLE_ID', 
+    'AUTH_GOOGLE_SECRET'
+  ]
 
 - name: 'gcr.io/cloud-builders/docker'
   id: 'Build Docker Image'
@@ -52,15 +61,6 @@ availableSecrets:
     env: 'AUTH_GOOGLE_ID'
   - versionName: projects/symmetric-ray-425503-d6/secrets/AUTH_GOOGLE_SECRET/versions/latest
     env: 'AUTH_GOOGLE_SECRET'
-
-substitutions:
-  _DATABASE_URL: "DATABASE_URL"
-  _GOOGLE_APPLICATION_CREDENTIALS: "GOOGLE_APPLICATION_CREDENTIALS"
-  _AUTH_SECRET: "AUTH_SECRET"
-  _AUTH_GITHUB_ID: "AUTH_GITHUB_ID"
-  _AUTH_GITHUB_SECRET: "AUTH_GITHUB_SECRET"
-  _AUTH_GOOGLE_ID: "AUTH_GOOGLE_ID"
-  _AUTH_GOOGLE_SECRET: "AUTH_GOOGLE_SECRET"
 
 logsBucket: gs://744541105758-global-cloudbuild-logs
 
