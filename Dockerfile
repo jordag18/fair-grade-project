@@ -38,7 +38,7 @@ ENV AUTH_GOOGLE_SECRET=$AUTH_GOOGLE_SECRET
 RUN npm run build
 
 # Expose the port the app runs on
-EXPOSE 3000
+EXPOSE 8080
 
 # Start the Next.js application
 CMD ["npm", "start"]
