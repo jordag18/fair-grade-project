@@ -8,6 +8,7 @@ import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useCourse } from "@/context/CourseContext";
+import ActionsCell from "@/components/Course/CourseActionsCell";
 
 export type Course = {
   CourseID: String;
@@ -101,23 +102,6 @@ export const Columns: ColumnDef<Course>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
-      const { setSelectedCourse } = useCourse();
-      const user = row.original
-
-      return(
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setSelectedCourse(user.CourseName)}>Select Course</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    }
-  }
+    cell: ActionsCell,
+  },
 ];

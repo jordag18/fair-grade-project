@@ -32,7 +32,7 @@ export function CreateUserDialog() {
         <DialogHeader>
           <DialogTitle>Create Skill</DialogTitle>
           <DialogDescription>
-            Insert skill details here. Click save when you're done.
+            Insert skill details here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
