@@ -18,7 +18,7 @@ export type Course = {
   Instructor: string;
 };
 
-export const columns: ColumnDef<Course>[] = [
+export const Columns: ColumnDef<Course>[] = [
   {
     id: "select",
     header: ({ table }) => (
