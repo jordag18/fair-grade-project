@@ -1,25 +1,25 @@
-"use client"
+"use client";
 
-import { DotsHorizontalIcon } from "@radix-ui/react-icons"
-import { Row } from "@tanstack/react-table"
+import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import { Row } from "@tanstack/react-table";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 
 interface DataTableRowActionsProps<TData> {
-  row: Row<TData>
+  row: Row<TData>;
+  setSelectedCourse: (course: string) => void;
 }
 
 export function DataTableRowActions<TData>({
   row,
+  setSelectedCourse,
 }: DataTableRowActionsProps<TData>) {
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -32,14 +32,10 @@ export function DataTableRowActions<TData>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuItem>Edit</DropdownMenuItem>
-        <DropdownMenuItem>Make a copy</DropdownMenuItem>
-        <DropdownMenuItem>Favorite</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          Delete
+        <DropdownMenuItem onClick={() => setSelectedCourse(row.getValue("CourseID"))}>
+          Select
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

@@ -36,5 +36,5 @@ yarn-error.log*
 next-env.d.ts
 
 # .gitignore
-.env.local
+.env
 symmetric-ray-425503-d6-b10d3a717eaf.json

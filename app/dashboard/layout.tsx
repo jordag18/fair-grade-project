@@ -1,5 +1,5 @@
-import SideNav from "@/components/sidebar";
-import TopBar from "@/components/topbar-mainwindow";
+import DashboardProps from "@/components/dashboardProps";
+import { CourseProvider } from "@/context/CourseContext";
 
 export default function DashboardLayout({
   children,
@@ -7,17 +7,8 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col">
-      <TopBar />
-      <div className="flex w-full bg-slate-300">
-        <SideNav />
-        <div
-          className="flex w-full justify-center h-full-with-margin bg-slate-100 m-5"
-          style={{ "--top-margin": "10rem", marginTop: "1rem" }}
-        >
-          {children}
-        </div>
-      </div>
-    </div>
+    <DashboardProps>
+      {children}
+    </DashboardProps>
   );
 }

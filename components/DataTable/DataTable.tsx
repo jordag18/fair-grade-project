@@ -27,9 +27,6 @@ import {
 
 import { DataTablePagination } from "@/components/DataTable/DataTablePagnation";
 import { DataTableToolbar } from "@/components/DataTable/DataTableToolbar";
-import { CreateCourseDialog } from "../Course/CreateCourseDialog";
-import { ModifyCourseDialog } from "../Course/ModifyCourseDialog";
-import { DeleteCourseAlertDialog } from "../Course/DeleteCourseAlertDialog";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
