@@ -5,15 +5,15 @@ steps:
   args:
     - '-c'
     - |
-      echo "DATABASE_URL=$(gcloud secrets versions access latest --secret=${_DATABASE_URL})" >> .env.production && \
-      echo "GOOGLE_APPLICATION_CREDENTIALS=$(gcloud secrets versions access latest --secret=${_GOOGLE_APPLICATION_CREDENTIALS})" >> .env.production && \
-      echo "AUTH_SECRET=$(gcloud secrets versions access latest --secret=${_AUTH_SECRET})" >> .env.production && \
+      echo "DATABASE_URL=$(gcloud secrets versions access --secret=DATABASE_URL latest)" >> .env.production && \
+      echo "GOOGLE_APPLICATION_CREDENTIALS=$(gcloud secrets versions access --secret=GOOGLE_APPLICATION_CREDENTIALS latest)" >> .env.production && \
+      echo "AUTH_SECRET=$(gcloud secrets versions access --secret=AUTH_SECRET latest)" >> .env.production && \
       echo "AUTH_TRUST_HOST=https://fair-grade-app-vpz4vvqzlq-uc.a.run.app" >> .env.production && \
       echo "NEXTAUTH_URL=https://fair-grade-app-vpz4vvqzlq-uc.a.run.app" >> .env.production && \
-      echo "AUTH_GITHUB_ID=$(gcloud secrets versions access latest --secret=${_AUTH_GITHUB_ID})" >> .env.production && \
-      echo "AUTH_GITHUB_SECRET=$(gcloud secrets versions access latest --secret=${_AUTH_GITHUB_SECRET})" >> .env.production && \
-      echo "AUTH_GOOGLE_ID=$(gcloud secrets versions access latest --secret=${_AUTH_GOOGLE_ID})" >> .env.production && \
-      echo "AUTH_GOOGLE_SECRET=$(gcloud secrets versions access latest --secret=${_AUTH_GOOGLE_SECRET})" >> .env.production
+      echo "AUTH_GITHUB_ID=$(gcloud secrets versions access --secret=AUTH_GITHUB_ID latest)" >> .env.production && \
+      echo "AUTH_GITHUB_SECRET=$(gcloud secrets versions access --secret=AUTH_GITHUB_SECRET latest)" >> .env.production && \
+      echo "AUTH_GOOGLE_ID=$(gcloud secrets versions access --secret=AUTH_GOOGLE_ID latest)" >> .env.production && \
+      echo "AUTH_GOOGLE_SECRET=$(gcloud secrets versions access --secret=AUTH_GOOGLE_SECRET latest)" >> .env.production
   secretEnv: [
     'DATABASE_URL', 
     'GOOGLE_APPLICATION_CREDENTIALS', 
