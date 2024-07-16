@@ -40,7 +40,7 @@ steps:
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   id: 'Deploy to Cloud Run'
   entrypoint: gcloud
-  args: ['run', 'deploy', 'fair-grade-app', '--image', 'gcr.io/$PROJECT_ID/fair-grade-app', '--region', 'us-central1', '--platform', 'managed', '--allow-unauthenticated']
+  args: ['run', 'deploy', 'fair-grade-app', '--image', 'gcr.io/$PROJECT_ID/fair-grade-app', '--region', 'us-central1', '--platform', 'managed', '--allow-unauthenticated', '--set-env-vars', 'PORT=8080']
 
 images:
 - 'gcr.io/$PROJECT_ID/fair-grade-app'
