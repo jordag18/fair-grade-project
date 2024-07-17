@@ -31,7 +31,7 @@ export function ModifyUserDialog() {
         <DialogHeader>
           <DialogTitle>Modify User</DialogTitle>
           <DialogDescription>
-            Modify user details here. Click save when you're done.
+            Modify user details here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">

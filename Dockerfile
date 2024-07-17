@@ -10,28 +10,19 @@ COPY package.json package-lock.json ./
 # Install dependencies
 RUN npm install
 
+# Copy the Prisma schema file
+COPY prisma ./prisma
+
 # Copy the rest of the application code to the working directory
 COPY . .
 
-# Accept build arguments and set environment variables
-ARG AUTH_SECRET
-ARG AUTH_TRUST_HOST
-ARG AUTH_GITHUB_ID
-ARG AUTH_GITHUB_SECRET
-ARG AUTH_GOOGLE_ID
-ARG AUTH_GOOGLE_SECRET
-
-ENV AUTH_SECRET=$AUTH_SECRET
-ENV AUTH_TRUST_HOST=$AUTH_TRUST_HOST
-ENV AUTH_GITHUB_ID=$AUTH_GITHUB_ID
-ENV AUTH_GITHUB_SECRET=$AUTH_GITHUB_SECRET
-ENV AUTH_GOOGLE_ID=$AUTH_GOOGLE_ID
-ENV AUTH_GOOGLE_SECRET=$AUTH_GITHUB_SECRET
+# Run Prisma generate
+RUN npx prisma generate
 
 # Build the Next.js application
 RUN npm run build
 
-# Expose the port the app runs on
+# Ensure the application runs on port 3000
 EXPOSE 3000
 
 # Start the Next.js application

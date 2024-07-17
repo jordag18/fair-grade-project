@@ -24,7 +24,7 @@ export function CreateCourseDialog() {
         <DialogHeader>
           <DialogTitle>Create Course</DialogTitle>
           <DialogDescription>
-            Insert course details here. Click save when you're done.
+            Insert course details here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
