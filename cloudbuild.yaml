@@ -30,6 +30,3 @@ logsBucket: gs://744541105758-global-cloudbuild-logs
 
 options:
   defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
-
-substitutions:
-  PROJECT_ID: "your_google_project_id"
