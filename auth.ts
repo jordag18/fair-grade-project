@@ -24,6 +24,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   callbacks: {
     async signIn({ user }) {
+      console.log(process.env.DATABASE_URL)
       try {
         const existingUser = await prisma.user.findUnique({
           where: { email: user.email ?? "" },
