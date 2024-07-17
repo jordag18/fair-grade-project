@@ -43,6 +43,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return false;
       }
     },
+    async redirect({ url, baseUrl }) {
+      return url.startsWith(baseUrl) ? url : baseUrl;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
@@ -72,4 +75,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session;
     },
   },
+  debug: true,
 });
