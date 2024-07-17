@@ -17,31 +17,16 @@ COPY prisma ./prisma
 COPY . .
 
 # Copy the .env.production file created during the build process
-COPY .env.production .env.production
+COPY .env.production .env
 
 # Run Prisma generate
 RUN npx prisma generate
 
-# Accept build arguments and set environment variables
-ARG AUTH_SECRET
-ARG AUTH_TRUST_HOST
-ARG AUTH_GITHUB_ID
-ARG AUTH_GITHUB_SECRET
-ARG AUTH_GOOGLE_ID
-ARG AUTH_GOOGLE_SECRET
-
-ENV AUTH_SECRET=$AUTH_SECRET
-ENV AUTH_TRUST_HOST=$AUTH_TRUST_HOST
-ENV AUTH_GITHUB_ID=$AUTH_GITHUB_ID
-ENV AUTH_GITHUB_SECRET=$AUTH_GITHUB_SECRET
-ENV AUTH_GOOGLE_ID=$AUTH_GOOGLE_ID
-ENV AUTH_GOOGLE_SECRET=$AUTH_GOOGLE_SECRET
-
 # Build the Next.js application
 RUN npm run build
 
-# Ensure the application runs on port 8080
-EXPOSE 8080
+# Ensure the application runs on port 3000
+EXPOSE 3000
 
 # Start the Next.js application
 CMD ["npm", "start"]

@@ -1,35 +1,10 @@
 steps:
-- name: 'gcr.io/cloud-builders/gcloud'
-  id: 'Fetch secrets from Secret Manager'
-  entrypoint: 'bash'
-  args:
-    - '-c'
-    - |
-      echo "DATABASE_URL=$(gcloud secrets versions access --secret=DATABASE_URL latest)" >> .env.production && \
-      echo "GOOGLE_APPLICATION_CREDENTIALS=$(gcloud secrets versions access --secret=GOOGLE_APPLICATION_CREDENTIALS latest)" >> .env.production && \
-      echo "AUTH_SECRET=$(gcloud secrets versions access --secret=AUTH_SECRET latest)" >> .env.production && \
-      echo "AUTH_TRUST_HOST=https://fair-grade-app-vpz4vvqzlq-uc.a.run.app" >> .env.production && \
-      echo "NEXTAUTH_URL=https://fair-grade-app-vpz4vvqzlq-uc.a.run.app" >> .env.production && \
-      echo "AUTH_GITHUB_ID=$(gcloud secrets versions access --secret=AUTH_GITHUB_ID latest)" >> .env.production && \
-      echo "AUTH_GITHUB_SECRET=$(gcloud secrets versions access --secret=AUTH_GITHUB_SECRET latest)" >> .env.production && \
-      echo "AUTH_GOOGLE_ID=$(gcloud secrets versions access --secret=AUTH_GOOGLE_ID latest)" >> .env.production && \
-      echo "AUTH_GOOGLE_SECRET=$(gcloud secrets versions access --secret=AUTH_GOOGLE_SECRET latest)" >> .env.production
-  secretEnv: [
-    'DATABASE_URL', 
-    'GOOGLE_APPLICATION_CREDENTIALS', 
-    'AUTH_SECRET', 
-    'AUTH_GITHUB_ID', 
-    'AUTH_GITHUB_SECRET', 
-    'AUTH_GOOGLE_ID', 
-    'AUTH_GOOGLE_SECRET'
-  ]
-
 - name: 'gcr.io/cloud-builders/docker'
   id: 'Build Docker Image'
   args: [
     'build', 
     '-t', 'gcr.io/$PROJECT_ID/fair-grade-app',
-    '--build-arg', 'ENV_FILE=.env.production',
+    '--build-arg',
     '.'
   ]
 
@@ -40,27 +15,12 @@ steps:
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   id: 'Deploy to Cloud Run'
   entrypoint: gcloud
-  args: ['run', 'deploy', 'fair-grade-app', '--image', 'gcr.io/$PROJECT_ID/fair-grade-app', '--region', 'us-central1', '--platform', 'managed', '--allow-unauthenticated']
+  args: ['run', 'deploy', 'fair-grade-app', '--image', 'gcr.io/$PROJECT_ID/fair-grade-app', '--region', 'us-central1', '--platform', 'managed', '--allow-unauthenticated',
+   '--update-env-vars', 'DATABASE_URL=${_DATABASE_URL},GOOGLE_APPLICATION_CREDENTIALS=${_GOOGLE_APPLICATION_CREDENTIALS},AUTH_SECRET=${_AUTH_SECRET},AUTH_TRUST_HOST=${_AUTH_TRUST_HOST},NEXTAUTH_URL=${_NEXTAUTH_URL},AUTH_GITHUB_ID=${_AUTH_GITHUB_ID},AUTH_GITHUB_SECRET=${_AUTH_GITHUB_SECRET},AUTH_GOOGLE_ID=${_AUTH_GOOGLE_ID},AUTH_GOOGLE_SECRET=${_AUTH_GOOGLE_SECRET}'
+  ]
 
 images:
 - 'gcr.io/$PROJECT_ID/fair-grade-app'
-
-availableSecrets:
-  secretManager:
-  - versionName: projects/symmetric-ray-425503-d6/secrets/DATABASE_URL/versions/latest
-    env: 'DATABASE_URL'
-  - versionName: projects/symmetric-ray-425503-d6/secrets/GOOGLE_APPLICATION_CREDENTIALS/versions/latest
-    env: 'GOOGLE_APPLICATION_CREDENTIALS'
-  - versionName: projects/symmetric-ray-425503-d6/secrets/AUTH_SECRET/versions/latest
-    env: 'AUTH_SECRET'
-  - versionName: projects/symmetric-ray-425503-d6/secrets/AUTH_GITHUB_ID/versions/latest
-    env: 'AUTH_GITHUB_ID'
-  - versionName: projects/symmetric-ray-425503-d6/secrets/AUTH_GITHUB_SECRET/versions/latest
-    env: 'AUTH_GITHUB_SECRET'
-  - versionName: projects/symmetric-ray-425503-d6/secrets/AUTH_GOOGLE_ID/versions/latest
-    env: 'AUTH_GOOGLE_ID'
-  - versionName: projects/symmetric-ray-425503-d6/secrets/AUTH_GOOGLE_SECRET/versions/latest
-    env: 'AUTH_GOOGLE_SECRET'
 
 logsBucket: gs://744541105758-global-cloudbuild-logs
 
