@@ -25,3 +25,14 @@ logsBucket: gs://744541105758-global-cloudbuild-logs
 
 options:
   defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
+
+substitutions:
+  _DATABASE_URL: "projects/symmetric-ray-425503-d6/secrets/DATABASE_URL:latest"
+  _GOOGLE_APPLICATION_CREDENTIALS: "projects/symmetric-ray-425503-d6/secrets/GOOGLE_APPLICATION_CREDENTIALS:latest"
+  _AUTH_SECRET: "projects/symmetric-ray-425503-d6/secrets/AUTH_SECRET:latest"
+  _AUTH_TRUST_HOST: "projects/symmetric-ray-425503-d6/secrets/AUTH_TRUST_HOST:latest"
+  _NEXTAUTH_URL: "projects/symmetric-ray-425503-d6/secrets/NEXTAUTH_URL:latest"
+  _AUTH_GITHUB_ID: "projects/symmetric-ray-425503-d6/secrets/AUTH_GITHUB_ID:latest"
+  _AUTH_GITHUB_SECRET: "projects/symmetric-ray-425503-d6/secrets/AUTH_GITHUB_SECRET:latest"
+  _AUTH_GOOGLE_ID: "projects/symmetric-ray-425503-d6/secrets/AUTH_GOOGLE_ID:latest"
+  _AUTH_GOOGLE_SECRET: "projects/symmetric-ray-425503-d6/secrets/AUTH_GOOGLE_SECRET:latest"
