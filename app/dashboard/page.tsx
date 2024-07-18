@@ -18,7 +18,7 @@ const Dashboard: React.FC = async () => {
         redirect("dashboard/student/Courses")
     }
     else {
-        redirect("localhost:3000")
+        redirect("/")
     }
 }
 

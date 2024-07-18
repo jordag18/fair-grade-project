@@ -5,7 +5,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import prisma from "./lib/prisma";
 import { UserCourseRole } from './types';
 
-export const BASE_PATH = "http://localhost:3000";
+export const BASE_PATH = process.env.AUTH_TRUST_HOST;
 //export const BASE_PATH = "https://fair-grade-app-vpz4vvqzlq-uc.a.run.app";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -24,6 +24,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   callbacks: {
     async signIn({ user }) {
+      console.log(process.env.DATABASE_URL)
       try {
         const existingUser = await prisma.user.findUnique({
           where: { email: user.email ?? "" },
@@ -73,4 +74,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session;
     },
   },
+  debug: true,
 });
+
