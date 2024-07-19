@@ -56,7 +56,7 @@ export interface Assessment {
   AssessmentID: number
   AssessorID: string
   AssessedUserID: string
-  CourseID: number
+  CourseID: string
   Comment: string
   InstrumentType: string
   AssessmentDate: Date
@@ -68,21 +68,25 @@ export interface Assessment {
 export interface CourseSkill {
   SkillID: number
   SkillName: string
-  CourseID: number
+  CourseID: string
   AssessmentSkills: AssessmentSkill[]
   Courses: Course
 }
 
 export interface Course {
-  CourseID: number
+  CourseID: string
   CourseName: string
+  DateRange: string
+  TimeRange: string
+  Location: string
+  Instructor: string
   CourseSkills?: CourseSkill[]
   UserCourse?: UserCourse[]
 }
 
 export interface UserCourse {
   UserID: string
-  CourseID: number
+  CourseID: string
   Role: UserCourseRole
   Users: User
   Courses: Course

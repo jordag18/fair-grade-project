@@ -6,7 +6,6 @@ import prisma from "./lib/prisma";
 import { UserCourseRole } from './types';
 
 export const BASE_PATH = process.env.AUTH_TRUST_HOST;
-//export const BASE_PATH = "https://fair-grade-app-vpz4vvqzlq-uc.a.run.app";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -24,7 +23,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   callbacks: {
     async signIn({ user }) {
-      console.log(process.env.DATABASE_URL)
       try {
         const existingUser = await prisma.user.findUnique({
           where: { email: user.email ?? "" },
@@ -48,32 +46,39 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-
-        const userCourse = await prisma.userCourse.findFirst({
-          where: { UserID: user.id },
-        });
-
-        if (!userCourse) {
-          await prisma.userCourse.create({
-            data: {
-              UserID: user.id as string,
-              CourseID: 1,
-              Role: "Student",
-            },
+        try {
+          let userCourse = await prisma.userCourse.findFirst({
+            where: { UserID: user.id },
           });
-          token.role = "Student";
-        } else {
-          token.role = userCourse.Role;
+
+          if (!userCourse) {
+            if (typeof user.id === 'string') {
+              userCourse = await prisma.userCourse.create({
+                data: {
+                  UserID: user.id,
+                  CourseID: "No Courses",
+                  Role: "Student",
+                },
+              });
+              token.role = "Student";
+            } else {
+              throw new Error("User ID is not defined");
+            }
+          } else {
+            token.role = userCourse.Role;
+          }
+        } catch (error) {
+          console.error("Error in jwt callback:", error);
+          throw new Error("Error creating or fetching userCourse");
         }
       }
       return token;
     },
     async session({ session, token }) {
-      session.user.id = token.id as string; 
-      session.user.role = token.role as UserCourseRole; 
+      session.user.id = token.id as string;
+      session.user.role = token.role as UserCourseRole;
       return session;
     },
   },
   debug: true,
 });
-
