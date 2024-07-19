@@ -13,12 +13,13 @@ import ActionsCell from "@/components/Course/CourseActionsCell";
 export type Course = {
   CourseID: String;
   CourseName: string;
-  DateRange: string;
+  StartDate: Date;
+  EndDate: Date;
   TimeRange: string;
   Location: string;
   Instructor: string;
 };
-
+//TODO: Fix row display for start and end date
 export const Columns: ColumnDef<Course>[] = [
   {
     id: "select",

@@ -4,112 +4,11 @@ import { DataTable } from "../../../../components/DataTable/DataTable";
 import { CreateCourseDialog } from "@/components/Course/CreateCourseDialog";
 import { ModifyCourseDialog } from "@/components/Course/ModifyCourseDialog";
 import { DeleteCourseAlertDialog } from "@/components/Course/DeleteCourseAlertDialog";
-
-
-async function getData(): Promise<Course[]> {
-  // Fetch data from your API here.
-  return [
-    {
-      CourseID: "CS3432",
-      CourseName: "Computer Organization",
-      DateRange: "June 10 - July 8",
-      TimeRange: "9:20 - 12:45",
-      Location: "LART 108",
-      Instructor: "Dr. Eric Fruedenthal",
-    },
-    {
-      CourseID: "CS4175",
-      CourseName: "Parallel Computing",
-      DateRange: "June 10 - July 8",
-      TimeRange: "9:20 - 12:45",
-      Location: "CSB 117",
-      Instructor: "Dr. Eric Fruedenthal",
-    },
-    {
-      CourseID: "CS4375",
-      CourseName: "Operating Systems",
-      DateRange: "June 10 - July 8",
-      TimeRange: "9:20 - 12:45",
-      Location: "CS 128",
-      Instructor: "Dr. Eric Fruedenthal",
-    },
-    {
-      CourseID: "CS3432",
-      CourseName: "Computer Organization",
-      DateRange: "June 10 - July 8",
-      TimeRange: "9:20 - 12:45",
-      Location: "LART 108",
-      Instructor: "Dr. Eric Fruedenthal",
-    },
-    {
-      CourseID: "CS4175",
-      CourseName: "Parallel Computing",
-      DateRange: "June 10 - July 8",
-      TimeRange: "9:20 - 12:45",
-      Location: "CSB 117",
-      Instructor: "Dr. Eric Fruedenthal",
-    },
-    {
-      CourseID: "CS4375",
-      CourseName: "Operating Systems",
-      DateRange: "June 10 - July 8",
-      TimeRange: "9:20 - 12:45",
-      Location: "CS 128",
-      Instructor: "Dr. Eric Fruedenthal",
-    },
-    {
-      CourseID: "CS3432",
-      CourseName: "Computer Organization",
-      DateRange: "June 10 - July 8",
-      TimeRange: "9:20 - 12:45",
-      Location: "LART 108",
-      Instructor: "Dr. Eric Fruedenthal",
-    },
-    {
-      CourseID: "CS4175",
-      CourseName: "Parallel Computing",
-      DateRange: "June 10 - July 8",
-      TimeRange: "9:20 - 12:45",
-      Location: "CSB 117",
-      Instructor: "Dr. Eric Fruedenthal",
-    },
-    {
-      CourseID: "CS4375",
-      CourseName: "Operating Systems",
-      DateRange: "June 10 - July 8",
-      TimeRange: "9:20 - 12:45",
-      Location: "CS 128",
-      Instructor: "Dr. Eric Fruedenthal",
-    },
-    {
-      CourseID: "CS3432",
-      CourseName: "Computer Organization",
-      DateRange: "June 10 - July 8",
-      TimeRange: "9:20 - 12:45",
-      Location: "LART 108",
-      Instructor: "Dr. Eric Fruedenthal",
-    },
-    {
-      CourseID: "CS4175",
-      CourseName: "Parallel Computing",
-      DateRange: "June 10 - July 8",
-      TimeRange: "9:20 - 12:45",
-      Location: "CSB 117",
-      Instructor: "Dr. Eric Fruedenthal",
-    },
-    {
-      CourseID: "CS4375",
-      CourseName: "Operating Systems",
-      DateRange: "June 10 - July 8",
-      TimeRange: "9:20 - 12:45",
-      Location: "CS 128",
-      Instructor: "Dr. Eric Fruedenthal",
-    },
-  ];
-}
+import prisma from "@/lib/prisma";
 
 export default async function AdminCoursePage() {
-  const data = await getData();
+  //fix data to be reloaded on submission of new data
+  const data = await prisma.courses.findMany();
 
   return (
     <div className="flex mx-20 items-center content-center">

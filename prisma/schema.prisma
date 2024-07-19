@@ -109,7 +109,7 @@ model CourseSkills {
 }
 
 model Courses {
-  CourseID     String         @id @default(cuid())
+  CourseID     String         @id
   CourseName   String         @db.VarChar(100)
   StartDate    DateTime
   EndDate      DateTime
