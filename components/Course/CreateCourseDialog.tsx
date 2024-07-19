@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -14,8 +15,13 @@ import {
 import { CreateCourseForm } from "./CreateCourseForm";
 
 export function CreateCourseDialog() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleFormSubmit = () => {
+    setIsOpen(false);
+  };
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button className="font-semibold bg-sky-500 hover:bg-sky-600">
           Create Course
@@ -28,7 +34,7 @@ export function CreateCourseDialog() {
             Insert course details here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
-        <CreateCourseForm />
+        <CreateCourseForm onFormSubmit={handleFormSubmit} />
       </DialogContent>
     </Dialog>
   );

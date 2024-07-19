@@ -25,6 +25,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { toast } from "@/components/ui/use-toast";
+import { createCourse } from "./CreateCourseServerAction";
 
 const FormSchema = z.object({
   courseID: z.string().min(1, "Course ID is required"),
@@ -43,39 +44,32 @@ const FormSchema = z.object({
 
 type FormSchemaType = z.infer<typeof FormSchema>;
 
-export function CreateCourseForm() {
+interface CreateCourseFormProps {
+    onFormSubmit: () => void;
+  }
+
+export function CreateCourseForm({onFormSubmit}: CreateCourseFormProps) {
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(FormSchema),
   });
 
   const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
     try {
-      const response = await fetch("/api/courses", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          courseID: data.courseID,
-          courseName: data.courseName,
-          startDate: data.date.from,
-          endDate: data.date.to,
-          timeRange: data.timeRange,
-          location: data.location,
-          instructor: data.instructor,
-        }),
+      const newCourse = await createCourse({
+        courseID: data.courseID,
+        courseName: data.courseName,
+        startDate: data.date.from,
+        endDate: data.date.to,
+        timeRange: data.timeRange,
+        location: data.location,
+        instructor: data.instructor,
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to create course");
-      }
-
-      const newCourse = await response.json();
       console.log(newCourse);
       toast({
         title: "Course Created",
         description: `Course ${newCourse.CourseName} was created successfully.`,
       });
+      onFormSubmit();
     } catch (error) {
       console.error("Error creating course", error);
       toast({

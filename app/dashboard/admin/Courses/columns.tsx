@@ -3,12 +3,8 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "@/components/DataTable/DataTableColumnHeader";
-import { DropdownMenu, DropdownMenuLabel, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
-import { MoreHorizontal } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { useCourse } from "@/context/CourseContext";
 import ActionsCell from "@/components/Course/CourseActionsCell";
+import { format } from "date-fns";
 
 export type Course = {
   CourseID: String;
@@ -19,32 +15,14 @@ export type Course = {
   Location: string;
   Instructor: string;
 };
-//TODO: Fix row display for start and end date
+
+const formatDateRange = (startDate: Date, endDate: Date) => {
+  const start = format(new Date(startDate), "LLL dd, y");
+  const end = format(new Date(endDate), "LLL dd, y");
+  return `${start} - ${end}`;
+};
+
 export const Columns: ColumnDef<Course>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-        className="translate-y-[2px]"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-        className="translate-y-[2px]"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
   {
     accessorKey: "CourseID",
     header: ({ column }) => (
@@ -71,7 +49,9 @@ export const Columns: ColumnDef<Course>[] = [
       <DataTableColumnHeader column={column} title="Date Range" />
     ),
     cell: ({ row }) => (
-      <div className="w-[100px]">{row.getValue("DateRange")}</div>
+      <div className="w-[100px]">
+        {formatDateRange(row.original.StartDate, row.original.EndDate)}
+      </div>
     ),
   },
   {

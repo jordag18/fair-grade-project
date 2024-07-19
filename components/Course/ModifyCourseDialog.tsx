@@ -12,14 +12,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export function ModifyCourseDialog() {
+interface ModifyCourseDialogProps {
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+}
+
+
+export function ModifyCourseDialog({isOpen, onOpenChange}: ModifyCourseDialogProps) {
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button className="font-semibold bg-slate-500 hover:bg-slate-600">
-          Modify Course
-        </Button>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Modify Course</DialogTitle>

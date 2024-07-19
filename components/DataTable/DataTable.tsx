@@ -33,6 +33,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   columnKey: string;
   placeholder?: string;
+  actions?: (rowSelection: Record<string, boolean>) => React.ReactNode;
 }
 
 export function DataTable<TData, TValue>({
@@ -40,6 +41,7 @@ export function DataTable<TData, TValue>({
   data,
   columnKey,
   placeholder,
+  actions,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -73,6 +75,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
+      {actions && actions(rowSelection)}
       <DataTableToolbar
         table={table}
         columnKey={columnKey}
