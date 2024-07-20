@@ -75,6 +75,7 @@ export interface CourseSkill {
 
 export interface Course {
   CourseID: string
+  CourseTag: string
   CourseName: string
   DateRange: string
   TimeRange: string

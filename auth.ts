@@ -56,7 +56,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               userCourse = await prisma.userCourse.create({
                 data: {
                   UserID: user.id,
-                  CourseID: "No Courses",
+                  CourseID: "clytfxlnd000052wzwk0sky9w",
                   Role: "Student",
                 },
               });

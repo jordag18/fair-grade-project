@@ -28,7 +28,7 @@ import { toast } from "@/components/ui/use-toast";
 import { createCourse } from "./CreateCourseServerAction";
 
 const FormSchema = z.object({
-  courseID: z.string().min(1, "Course ID is required"),
+  courseTag: z.string().min(1, "Course tag is required"),
   courseName: z.string().min(1, "Course name is required"),
   date: z.object({
     from: z.date(),
@@ -56,7 +56,7 @@ export function CreateCourseForm({onFormSubmit}: CreateCourseFormProps) {
   const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
     try {
       const newCourse = await createCourse({
-        courseID: data.courseID,
+        courseTag: data.courseTag,
         courseName: data.courseName,
         startDate: data.date.from,
         endDate: data.date.to,
@@ -85,14 +85,14 @@ export function CreateCourseForm({onFormSubmit}: CreateCourseFormProps) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
       <FormField
           control={form.control}
-          name="courseID"
+          name="courseTag"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Course ID</FormLabel>
+              <FormLabel>Course Tag</FormLabel>
               <FormControl>
-                <Input placeholder="Enter Course ID" {...field} />
+                <Input placeholder="Enter Course Tag" {...field} />
               </FormControl>
-              <FormDescription>Give a name for your course</FormDescription>
+              <FormDescription>Give a tag for your course</FormDescription>
               <FormMessage />
             </FormItem>
           )}

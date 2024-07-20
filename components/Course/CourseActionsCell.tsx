@@ -22,7 +22,7 @@ const ActionsCell = ({ row }: { row: any }) => {
   const [isModifyDialogOpen, setIsModifyDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { setSelectedCourse } = useCourse();
-  const user = row.original;
+  const selectedRow = row.original;
 
   return (
     <Dialog
@@ -41,10 +41,12 @@ const ActionsCell = ({ row }: { row: any }) => {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => setSelectedCourse(user.CourseName)}>
+          <DropdownMenuItem onClick={() => setSelectedCourse(selectedRow.CourseName)}>
             Select Course
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setIsModifyDialogOpen(true)}>
+          <DropdownMenuItem onClick={() => {setIsModifyDialogOpen(true)
+            console.log(selectedRow)
+          }}>
             Modify Course
           </DropdownMenuItem>
           <DropdownMenuSeparator />
@@ -56,10 +58,12 @@ const ActionsCell = ({ row }: { row: any }) => {
       <ModifyCourseDialog
         isOpen={isModifyDialogOpen}
         onOpenChange={setIsModifyDialogOpen}
+        course = {selectedRow.CourseID}
       />
       <DeleteCourseDialog
         isOpen={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
+        course = {selectedRow.CourseID}
       />
     </Dialog>
   );

@@ -15,10 +15,11 @@ import { Label } from "@/components/ui/label";
 interface ModifyCourseDialogProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
+  course: string;
 }
 
 
-export function ModifyCourseDialog({isOpen, onOpenChange}: ModifyCourseDialogProps) {
+export function ModifyCourseDialog({isOpen, onOpenChange, course}: ModifyCourseDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">

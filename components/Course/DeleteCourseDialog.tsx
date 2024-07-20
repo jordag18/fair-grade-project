@@ -11,10 +11,11 @@ import { Button } from "../ui/button";
 interface DeleteCourseDialogProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
+  course: string;
 }
 
 
-export function DeleteCourseDialog({isOpen, onOpenChange}: DeleteCourseDialogProps) {
+export function DeleteCourseDialog({isOpen, onOpenChange, course}: DeleteCourseDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>

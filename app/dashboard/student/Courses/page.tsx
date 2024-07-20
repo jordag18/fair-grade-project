@@ -2,8 +2,6 @@
 import { Course, columns } from "./columns";
 import { DataTable } from "../../../../components/DataTable/DataTable";
 import { CreateCourseDialog } from "@/components/Course/CreateCourseDialog";
-import { ModifyCourseDialog } from "@/components/Course/ModifyCourseDialog";
-import { DeleteCourseAlertDialog } from "@/components/Course/DeleteCourseAlertDialog";
 
 async function getData(): Promise<Course[]> {
   // Fetch data from your API here.
@@ -114,10 +112,8 @@ export default async function AdminPage() {
     <div className="flex mx-20 items-center content-center">
       <div className="flex flex-col gap-y-2">
         <div className="flex justify-between">
-          <DeleteCourseAlertDialog />
           <div className="flex gap-x-2">
             <CreateCourseDialog />
-            <ModifyCourseDialog />
           </div>
         </div>
         <DataTable

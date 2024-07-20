@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 export async function createCourse(data: {
-  courseID: string;
+  courseTag: string;
   courseName: string;
   startDate: Date;
   endDate: Date;
@@ -15,7 +15,7 @@ export async function createCourse(data: {
   try {
     const newCourse = await prisma.courses.create({
       data: {
-        CourseID: data.courseID,
+        CourseTag: data.courseTag,
         CourseName: data.courseName,
         StartDate: data.startDate,
         EndDate: data.endDate,

@@ -7,7 +7,7 @@ import ActionsCell from "@/components/Course/CourseActionsCell";
 import { format } from "date-fns";
 
 export type Course = {
-  CourseID: String;
+  CourseTag: String;
   CourseName: string;
   StartDate: Date;
   EndDate: Date;
@@ -24,12 +24,12 @@ const formatDateRange = (startDate: Date, endDate: Date) => {
 
 export const Columns: ColumnDef<Course>[] = [
   {
-    accessorKey: "CourseID",
+    accessorKey: "CourseTag",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Course ID" />
+      <DataTableColumnHeader column={column} title="Course Tag" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("CourseID")}</div>
+      <div className="w-[80px]">{row.getValue("CourseTag")}</div>
     ),
     enableSorting: false,
     enableHiding: false,
