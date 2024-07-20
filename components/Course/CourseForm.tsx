@@ -37,8 +37,8 @@ const FormSchema = z.object({
       to: z.date(),
     })
     .refine(
-      (data) => data.from > addDays(new Date(), -1),
-      "Start date must be in the future"
+      (data) => data.from < data.to,
+      "Must be valid dates"
     ),
   timeRange: z.string().min(1, "Time range is required"),
   location: z.string().min(1, "Location is required"),

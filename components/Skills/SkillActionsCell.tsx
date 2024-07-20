@@ -13,10 +13,10 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { DeleteCourseDialog } from "./DeleteCourseDialog";
+import { DeleteSkillDialog } from "./DeleteSkillDialog";
 import { Dialog } from "../ui/dialog";
 import { useState } from "react";
-import { ModifyCourseDialog } from "./ModifyCourseDialog";
+import { ModifySkillDialog } from "./ModifySkillDialog";
 
 const ActionsCell = ({ row }: { row: any }) => {
   const [isModifyDialogOpen, setIsModifyDialogOpen] = useState(false);
@@ -41,29 +41,29 @@ const ActionsCell = ({ row }: { row: any }) => {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => {setSelectedCourse(selectedRow);
+          <DropdownMenuItem onClick={() => {;
             console.log("Selected Course:", selectedCourse)
           }}>
-            Select Course
+            Select Skill
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => {setIsModifyDialogOpen(true)}}>
-            Modify Course
+            Modify Skill
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)}>
-            Delete Course
+            Delete Skill
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <ModifyCourseDialog
+      <ModifySkillDialog
         isOpen={isModifyDialogOpen}
         onOpenChange={setIsModifyDialogOpen}
         initialData={selectedRow}
       />
-      <DeleteCourseDialog
+      <DeleteSkillDialog
         isOpen={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
-        courseID={selectedRow.CourseID}
+        skillID={selectedRow}
       />
     </Dialog>
   );

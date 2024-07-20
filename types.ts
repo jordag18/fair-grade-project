@@ -7,7 +7,7 @@ export interface User {
   image?: string
   createdAt: Date
   updatedAt: Date
-  role: UserCourseRole 
+  role: UserCourseRole
 }
 
 export interface Account {
@@ -45,7 +45,7 @@ export interface VerificationToken {
 
 export interface AssessmentSkill {
   AssessmentID: number
-  SkillID: number
+  SkillID: string
   Score: number
   Comment: string
   Date: Date
@@ -63,26 +63,40 @@ export interface Assessment {
   InstrumentDescription: string
   Users_Assessments_AssessorIDToUsers: User
   Users_Assessments_AssessedUserIDToUsers: User
+  Courses_Assessments: Course
+}
+
+export interface Skill {
+  SkillID: string
+  SkillName: string
+  AddedBy: string
+  SkillType: SkillType
+  User: User
+  CourseSkills: CourseSkill[]
+  AssessmentSkills: AssessmentSkill[]
 }
 
 export interface CourseSkill {
-  SkillID: number
+  SkillID: string
   SkillName: string
   CourseID: string
   AssessmentSkills: AssessmentSkill[]
   Courses: Course
+  Skills: Skill
 }
 
 export interface Course {
   CourseID: string
   CourseTag: string
   CourseName: string
-  DateRange: string
+  StartDate: Date
+  EndDate: Date
   TimeRange: string
   Location: string
   Instructor: string
   CourseSkills?: CourseSkill[]
   UserCourse?: UserCourse[]
+  Assessments?: Assessment[]
 }
 
 export interface UserCourse {
@@ -94,6 +108,7 @@ export interface UserCourse {
 }
 
 export type UserCourseRole = 'Admin' | 'Instructor' | 'TA' | 'IA' | 'Student'
+export type SkillType = 'Quiz' | 'Lab' | 'Professional' | 'Other'
 
 export interface CreateCourseInput {
   courseName: string

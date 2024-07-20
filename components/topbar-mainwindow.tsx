@@ -11,7 +11,7 @@ export default function TopBar({ userRole }: { userRole: string }) {
         {userRole} Dashboard
       </h3>
       <h3 className="absolute left-1/2 transform -translate-x-1/2 scroll-m-20 text-2xl font-semibold tracking-tight ml-5 mx-auto">
-        Selected Course: {selectedCourse}
+        Selected Course: {selectedCourse?.CourseName}
       </h3>
     </div>
   );
