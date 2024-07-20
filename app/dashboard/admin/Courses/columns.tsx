@@ -7,6 +7,7 @@ import ActionsCell from "@/components/Course/CourseActionsCell";
 import { format } from "date-fns";
 
 export type Course = {
+  CourseID: string;
   CourseTag: String;
   CourseName: string;
   StartDate: Date;

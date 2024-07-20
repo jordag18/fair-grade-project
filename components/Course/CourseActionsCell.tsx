@@ -14,7 +14,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { DeleteCourseDialog } from "./DeleteCourseDialog";
-import { Dialog, DialogTrigger } from "../ui/dialog";
+import { Dialog } from "../ui/dialog";
 import { useState } from "react";
 import { ModifyCourseDialog } from "./ModifyCourseDialog";
 
@@ -44,9 +44,7 @@ const ActionsCell = ({ row }: { row: any }) => {
           <DropdownMenuItem onClick={() => setSelectedCourse(selectedRow.CourseName)}>
             Select Course
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => {setIsModifyDialogOpen(true)
-            console.log(selectedRow)
-          }}>
+          <DropdownMenuItem onClick={() => {setIsModifyDialogOpen(true)}}>
             Modify Course
           </DropdownMenuItem>
           <DropdownMenuSeparator />
@@ -58,15 +56,16 @@ const ActionsCell = ({ row }: { row: any }) => {
       <ModifyCourseDialog
         isOpen={isModifyDialogOpen}
         onOpenChange={setIsModifyDialogOpen}
-        course = {selectedRow.CourseID}
+        initialData={selectedRow}
       />
       <DeleteCourseDialog
         isOpen={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
-        course = {selectedRow.CourseID}
+        courseID={selectedRow.CourseID}
       />
     </Dialog>
   );
 };
 
 export default ActionsCell;
+

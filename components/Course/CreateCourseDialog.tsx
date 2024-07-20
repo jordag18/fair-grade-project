@@ -5,14 +5,12 @@ import { useState } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogClose,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { CreateCourseForm } from "./CreateCourseForm";
+import { CreateCourseForm } from "./CourseForm";
 
 export function CreateCourseDialog() {
   const [isOpen, setIsOpen] = useState(false);
@@ -34,7 +32,7 @@ export function CreateCourseDialog() {
             Insert course details here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
-        <CreateCourseForm onFormSubmit={handleFormSubmit} />
+        <CreateCourseForm onFormSubmit={handleFormSubmit} isEditMode={false} />
       </DialogContent>
     </Dialog>
   );

@@ -1,5 +1,5 @@
 import DashboardProps from "@/components/dashboardProps";
-import { CourseProvider } from "@/context/CourseContext";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function DashboardLayout({
   children,
@@ -9,6 +9,7 @@ export default function DashboardLayout({
   return (
     <DashboardProps>
       {children}
+      <Toaster />
     </DashboardProps>
   );
 }
