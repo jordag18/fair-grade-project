@@ -1,7 +1,5 @@
 
-import { DeleteSkillAlertDialog } from "@/components/Skills/DeleteSkillAlertDialog";
-import { CreateSkillDialog } from "@/components/Skills/CreateSkillDialog";
-import { ModifySkillDialog } from "@/components/Skills/ModifySkillDialog";
+
 import { DataTable } from "@/components/DataTable/DataTable";
 import { Assessment, columns } from "./columns";
 
@@ -44,10 +42,7 @@ export default async function AdminAssessmentPage() {
       <div className="flex flex-col">
         <div className="flex flex-col gap-y-2">
           <div className="flex justify-between">
-            <DeleteSkillAlertDialog />
             <div className="flex gap-x-2">
-              <CreateSkillDialog />
-              <ModifySkillDialog />
             </div>
           </div>
         </div>

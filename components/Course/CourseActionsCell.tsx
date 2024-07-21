@@ -42,7 +42,6 @@ const ActionsCell = ({ row }: { row: any }) => {
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => {setSelectedCourse(selectedRow);
-            console.log("Selected Course:", selectedCourse)
           }}>
             Select Course
           </DropdownMenuItem>

@@ -24,11 +24,13 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { createSkill, modifySkill } from "./SkillServerActions";
+import { useUserId } from "@/lib/auth/useUser";
+import { Course } from "@/types";
 
 const FormSchema = z.object({
   skillID: z.string().optional(),
   skillName: z.string().min(1, "Skill name is required"),
-  addedBy: z.string().min(1, "Added by is required"),
+  addedBy: z.string().optional(),
   skillType: z.enum(["Quiz", "Lab", "Professional", "Other"], {
     required_error: "Skill type is required",
   }),
@@ -40,12 +42,12 @@ interface CreateSkillFormProps {
   onFormSubmit: () => void;
   initialData?: FormSchemaType;
   isEditMode?: boolean;
+  selectedCourse?: Course | null;
 }
 
 const mapInitialData = (data: any) => ({
   skillID: data.SkillID,
-  skillName: data.SkillName,
-  addedBy: data.AddedBy,
+  skillName: data.SkillName || "",
   skillType: data.SkillType,
 });
 
@@ -53,10 +55,10 @@ export function SkillForm({
   onFormSubmit,
   initialData,
   isEditMode = false,
+  selectedCourse,
 }: CreateSkillFormProps) {
-  const mappedInitialData = initialData
-    ? mapInitialData(initialData)
-    : undefined;
+  const mappedInitialData = initialData ? mapInitialData(initialData) : undefined;
+  console.log("mappedInitialData: ", mappedInitialData);
 
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(FormSchema),
@@ -65,11 +67,17 @@ export function SkillForm({
 
   const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
     try {
+      data.addedBy = await useUserId() as string;
+      console.log("Data before send: ", data);
+
       const response = isEditMode
         ? await modifySkill(data)
-        : await createSkill(data);
+        : await createSkill(data, selectedCourse?.CourseID as string);
+
+      console.log("Response received: ", response); 
 
       if (!response.success) {
+        console.log("Response error: ", response.error); 
         throw new Error(response.error);
       }
 
@@ -83,6 +91,7 @@ export function SkillForm({
       });
       onFormSubmit();
     } catch (error) {
+      console.error("Error in onSubmit: ", error); // Add this line to log the error
       toast({
         title: "Error",
         description: `Failed to ${isEditMode ? "modify" : "create"} the skill.`,
@@ -145,4 +154,3 @@ export function SkillForm({
     </Form>
   );
 }
-

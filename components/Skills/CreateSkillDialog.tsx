@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useCourse } from "@/context/CourseContext";
 import {
   Dialog,
   DialogContent,
@@ -12,10 +13,17 @@ import {
 } from "@/components/ui/dialog";
 import { SkillForm } from "./SkillForm";
 
-export function CreateSkillDialog() {
+interface CreateSkillDialogProps {
+  onSkillCreated: () => void;
+}
+
+export function CreateSkillDialog({ onSkillCreated }: CreateSkillDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const { getSelectedCourse } = useCourse();
+  const selectedCourse = getSelectedCourse();
 
   const handleFormSubmit = () => {
+    onSkillCreated();
     setIsOpen(false);
   };
   return (
@@ -32,7 +40,7 @@ export function CreateSkillDialog() {
             Insert course details here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
-        <SkillForm onFormSubmit={handleFormSubmit} isEditMode={false} />
+        <SkillForm onFormSubmit={handleFormSubmit} isEditMode={false} selectedCourse={selectedCourse} />
       </DialogContent>
     </Dialog>
   );

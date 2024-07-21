@@ -36,10 +36,7 @@ const FormSchema = z.object({
       from: z.date(),
       to: z.date(),
     })
-    .refine(
-      (data) => data.from < data.to,
-      "Must be valid dates"
-    ),
+    .refine((data) => data.from < data.to, "Must be valid dates"),
   timeRange: z.string().min(1, "Time range is required"),
   location: z.string().min(1, "Location is required"),
   instructor: z.string().min(1, "Instructor is required"),
@@ -55,15 +52,15 @@ interface CreateCourseFormProps {
 
 const mapInitialData = (data: any) => ({
   courseID: data.CourseID,
-  courseTag: data.CourseTag,
-  courseName: data.CourseName,
+  courseTag: data.CourseTag || "",
+  courseName: data.CourseName || "",
   date: {
     from: data.StartDate,
     to: data.EndDate,
   },
-  timeRange: data.TimeRange,
-  location: data.Location,
-  instructor: data.Instructor,
+  timeRange: data.TimeRange || "",
+  location: data.Location || "",
+  instructor: data.Instructor || "",
 });
 
 export function CreateCourseForm({
@@ -74,7 +71,7 @@ export function CreateCourseForm({
   const mappedInitialData = initialData
     ? mapInitialData(initialData)
     : undefined;
-
+  console.log("mappedInitialData: ", mappedInitialData);
 
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(FormSchema),

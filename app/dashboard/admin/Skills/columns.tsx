@@ -1,18 +1,21 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/DataTable/DataTableColumnHeader";
-//import { Skill } from "@/types";
 import ActionsCell from "@/components/Skills/SkillActionsCell";
+import { getUserById } from "@/lib/auth/getUserNameByIdServerAction";
 
 export interface Skill {
-  SkillID: string
-  SkillName: string
-  AddedBy: string
-  SkillType: String
+  SkillID: string;
+  SkillName: string;
+  AddedBy: string;
+  SkillType: String;
 }
 
-export const columns: ColumnDef<Skill>[] = [
+export const columns: (props: { refreshSkills: () => void }) => ColumnDef<Skill>[] = ({
+  refreshSkills,
+}) => [
   {
     accessorKey: "SkillName",
     header: ({ column }) => (
@@ -38,12 +41,23 @@ export const columns: ColumnDef<Skill>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Added By" />
     ),
-    cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("AddedBy")}</div>
-    ),
+    cell: ({ row }) => {
+      const userId = row.getValue("AddedBy");
+      const [userName, setUserName] = useState("Loading...");
+      useEffect(() => {
+        async function fetchUserName() {
+          const name = await getUserById(userId as string);
+          setUserName(name);
+        }
+        fetchUserName();
+      }, [userId]);
+
+      return <div className="w-[80px]">{userName}</div>;
+    },
   },
   {
     id: "actions",
-    cell: ActionsCell,
+    cell: ({ row }) => <ActionsCell row={row} refreshSkills={refreshSkills} />,
   },
 ];
+

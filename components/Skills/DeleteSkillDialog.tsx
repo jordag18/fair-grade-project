@@ -14,13 +14,14 @@ interface DeleteSkillDialogProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
   skillID: string;
+  refreshSkills: () => void;
 }
-
 
 export function DeleteSkillDialog({
   isOpen,
   onOpenChange,
   skillID,
+  refreshSkills,
 }: DeleteSkillDialogProps) {
   const handleDelete = async () => {
     const response = await deleteSelectedSkill(skillID);
@@ -30,6 +31,7 @@ export function DeleteSkillDialog({
         description: `Skill was deleted successfully.`,
       });
       onOpenChange(false);
+      refreshSkills();
     } else {
       toast({
         title: "Error",

@@ -1,24 +1,30 @@
+import { SkillForm, FormSchemaType } from "./SkillForm";
 import {
   Dialog,
   DialogContent,
+  DialogClose,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { FormSchemaType, SkillForm } from "./SkillForm";
+import { Button } from "@/components/ui/button";
 
 interface ModifySkillDialogProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
   initialData: FormSchemaType;
+  refreshSkills: () => void;
 }
 
 export function ModifySkillDialog({
   isOpen,
   onOpenChange,
   initialData,
+  refreshSkills,
 }: ModifySkillDialogProps) {
   const handleFormSubmit = () => {
+    refreshSkills();
     onOpenChange(false);
   };
 
@@ -28,7 +34,7 @@ export function ModifySkillDialog({
         <DialogHeader>
           <DialogTitle>Modify Skill</DialogTitle>
           <DialogDescription>
-            Modify course details here. Click save when you&apos;re done.
+            Modify skill details here. Click save when you're done.
           </DialogDescription>
         </DialogHeader>
         <SkillForm
@@ -36,6 +42,11 @@ export function ModifySkillDialog({
           initialData={initialData}
           isEditMode={true}
         />
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button variant="outline">Cancel</Button>
+          </DialogClose>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

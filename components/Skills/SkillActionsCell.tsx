@@ -18,7 +18,12 @@ import { Dialog } from "../ui/dialog";
 import { useState } from "react";
 import { ModifySkillDialog } from "./ModifySkillDialog";
 
-const ActionsCell = ({ row }: { row: any }) => {
+interface ActionsCellProps {
+  row: any;
+  refreshSkills: () => void;
+}
+
+const ActionsCell = ({ row, refreshSkills }: ActionsCellProps) => {
   const [isModifyDialogOpen, setIsModifyDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { setSelectedCourse, selectedCourse } = useCourse();
@@ -41,12 +46,14 @@ const ActionsCell = ({ row }: { row: any }) => {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => {;
-            console.log("Selected Course:", selectedCourse)
-          }}>
+          <DropdownMenuItem
+            onClick={() => {
+              console.log("Selected Course:", selectedCourse);
+            }}
+          >
             Select Skill
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => {setIsModifyDialogOpen(true)}}>
+          <DropdownMenuItem onClick={() => setIsModifyDialogOpen(true)}>
             Modify Skill
           </DropdownMenuItem>
           <DropdownMenuSeparator />
@@ -59,15 +66,16 @@ const ActionsCell = ({ row }: { row: any }) => {
         isOpen={isModifyDialogOpen}
         onOpenChange={setIsModifyDialogOpen}
         initialData={selectedRow}
+        refreshSkills={refreshSkills}
       />
       <DeleteSkillDialog
         isOpen={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
-        skillID={selectedRow}
+        skillID={selectedRow.SkillID}
+        refreshSkills={refreshSkills}
       />
     </Dialog>
   );
 };
 
 export default ActionsCell;
-

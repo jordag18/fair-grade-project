@@ -1,7 +1,6 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "@/components/DataTable/DataTableColumnHeader";
 import ActionsCell from "@/components/Course/CourseActionsCell";
 import { format } from "date-fns";

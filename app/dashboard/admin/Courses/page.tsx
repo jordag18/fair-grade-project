@@ -1,5 +1,4 @@
-//import { Course } from "@/types";
-import { Course, Columns } from "./columns";
+import { Columns } from "./columns";
 import { DataTable } from "../../../../components/DataTable/DataTable";
 import { CreateCourseDialog } from "@/components/Course/CreateCourseDialog";
 import prisma from "@/lib/prisma";
