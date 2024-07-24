@@ -2,96 +2,70 @@
 
 import { format } from "date-fns";
 import { ColumnDef } from "@tanstack/react-table";
-import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "@/components/DataTable/DataTableColumnHeader";
+import { User } from "@/types";
+import ActionsCell from "@/components/User/UsersActionsCell";
 
-export type User = {
-  Email: String;
-  Name: string;
-  Courses: string[];
-  Role: string;
-  DateAdded: Date;
-};
-
-export const columns: ColumnDef<User>[] = [
+export const columns: (props: {
+  refreshUsers: () => void;
+}) => ColumnDef<User>[] = ({ refreshUsers }) => [
   {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-        className="translate-y-[2px]"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-        className="translate-y-[2px]"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "Email",
+    accessorKey: "email",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Email" />
     ),
-    cell: ({ row }) => (
-      <div className="w-[200px]">{row.getValue("Email")}</div>
-    ),
+    cell: ({ row }) => <div className="w-[200px]">{row.getValue("email")}</div>,
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: "Name",
+    accessorKey: "name",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Name" />
     ),
-    cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("Name")}</div>
-    ),
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue("name")}</div>,
   },
   {
-    accessorKey: "Courses",
+    accessorKey: "courses",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Courses" />
     ),
     cell: ({ row }) => (
-        <div className="w-[80px]">
-        {row.getValue<string[]>("Courses").map((course, index, array) => (
+      <div className="w-[80px]">
+        {row.getValue<string[]>("courses").map((course, index, array) => (
           <span key={index}>
             {course}
-            {index < array.length - 1 && <>,<br/></>}
+            {index < array.length - 1 && (
+              <>
+                ,<br />
+              </>
+            )}
           </span>
         ))}
       </div>
     ),
   },
   {
-    accessorKey: "Role",
+    accessorKey: "role",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Role" />
     ),
-    cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("Role")}</div>
-    ),
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue("role")}</div>,
   },
   {
-    accessorKey: "DateAdded",
+    accessorKey: "createdAt",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Date Added" />
     ),
     cell: ({ row }) => {
-        const date: Date = row.getValue("DateAdded");
-        const formattedDate = format(date, "yyyy-MM-dd HH:mm:ss");
-        return <div className="w-[120px]">{formattedDate}</div>;
+      const date: Date = row.getValue("createdAt");
+      const formattedDate = format(date, "yyyy-MM-dd HH:mm:ss");
+      return <div className="w-[120px]">{formattedDate}</div>;
     },
   },
+  {
+    id: "actions",
+    cell: ({ row }) => <ActionsCell row={row} refreshUsers={refreshUsers} />,
+  },
 ];
+

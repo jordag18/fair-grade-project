@@ -1,29 +1,31 @@
-import { SkillForm, FormSchemaType } from "./SkillForm";
+"use client";
+
+import { AssessmentForm, FormSchemaType } from "./AssessmentForm";
 import {
   Dialog,
   DialogContent,
-  DialogClose,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
+  DialogFooter,
 } from "@/components/ui/dialog";
 
-interface ModifySkillDialogProps {
+interface ModifyAssessmentDialogProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
   initialData: FormSchemaType;
-  refreshSkills: () => void;
+  refreshAssessments: () => void;
 }
 
-export function ModifySkillDialog({
+export function ModifyAssessmentDialog({
   isOpen,
   onOpenChange,
   initialData,
-  refreshSkills,
-}: ModifySkillDialogProps) {
+  refreshAssessments,
+}: ModifyAssessmentDialogProps) {
+
   const handleFormSubmit = () => {
-    refreshSkills();
+    refreshAssessments();
     onOpenChange(false);
   };
 
@@ -31,15 +33,15 @@ export function ModifySkillDialog({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Modify Skill</DialogTitle>
+          <DialogTitle>Modify Assessment</DialogTitle>
           <DialogDescription>
-            Modify skill details here. Click save when you're done.
+            Modify the details of the assessment below. Click save when you're done.
           </DialogDescription>
         </DialogHeader>
-        <SkillForm
+        <AssessmentForm
           onFormSubmit={handleFormSubmit}
           initialData={initialData}
-          isEditMode={true}
+          isEditMode
         />
       </DialogContent>
     </Dialog>

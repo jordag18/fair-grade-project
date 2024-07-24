@@ -13,9 +13,9 @@ export interface Skill {
   SkillType: String;
 }
 
-export const columns: (props: { refreshSkills: () => void }) => ColumnDef<Skill>[] = ({
-  refreshSkills,
-}) => [
+export const columns: (props: {
+  refreshSkills: () => void;
+}) => ColumnDef<Skill>[] = ({ refreshSkills }) => [
   {
     accessorKey: "SkillName",
     header: ({ column }) => (
@@ -60,4 +60,3 @@ export const columns: (props: { refreshSkills: () => void }) => ColumnDef<Skill>
     cell: ({ row }) => <ActionsCell row={row} refreshSkills={refreshSkills} />,
   },
 ];
-

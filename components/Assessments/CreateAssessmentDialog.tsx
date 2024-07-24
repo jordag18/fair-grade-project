@@ -1,46 +1,48 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { useCourse } from "@/context/CourseContext";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { SkillForm } from "./SkillForm";
+import { useState } from "react";
+import { useCourse } from "@/context/CourseContext";
+import { AssessmentForm } from "./AssessmentForm";
+import { Button } from "../ui/button";
 
-interface CreateSkillDialogProps {
-  onSkillCreated: () => void;
+interface CreateAssessmentDialogProps {
+  onAssessmentCreated: () => void;
 }
 
-export function CreateSkillDialog({ onSkillCreated }: CreateSkillDialogProps) {
+export function CreateAssessmentDialog({
+  onAssessmentCreated,
+}: CreateAssessmentDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { getSelectedCourse } = useCourse();
   const selectedCourse = getSelectedCourse();
 
   const handleFormSubmit = () => {
-    onSkillCreated();
+    onAssessmentCreated();
     setIsOpen(false);
   };
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button className="font-semibold bg-sky-500 hover:bg-sky-600">
-          Create Skill
+          Create Assessment
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Create Skill</DialogTitle>
+          <DialogTitle>Create Assessment</DialogTitle>
           <DialogDescription>
-            Insert course details here. Click save when you&apos;re done.
+            Fill out the form below to create a new assessment.
           </DialogDescription>
         </DialogHeader>
-        <SkillForm
+        <AssessmentForm
           onFormSubmit={handleFormSubmit}
           isEditMode={false}
           selectedCourse={selectedCourse}

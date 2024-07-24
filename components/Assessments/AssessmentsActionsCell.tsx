@@ -13,17 +13,17 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { DeleteSkillDialog } from "./DeleteSkillDialog";
+import { DeleteAssessmentDialog } from "./DeleteAssessmentDialog";
 import { Dialog } from "../ui/dialog";
 import { useState } from "react";
-import { ModifySkillDialog } from "./ModifySkillDialog";
+import { ModifyAssessmentDialog } from "./ModifyAssessmentDialog";
 
 interface ActionsCellProps {
   row: any;
-  refreshSkills: () => void;
+  refreshAssessments: () => void;
 }
 
-const ActionsCell = ({ row, refreshSkills }: ActionsCellProps) => {
+const ActionsCell = ({ row, refreshAssessments }: ActionsCellProps) => {
   const [isModifyDialogOpen, setIsModifyDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { selectedCourse } = useCourse();
@@ -51,28 +51,28 @@ const ActionsCell = ({ row, refreshSkills }: ActionsCellProps) => {
               console.log("Selected Course:", selectedCourse);
             }}
           >
-            Select Skill
+            Select Assessment
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setIsModifyDialogOpen(true)}>
-            Modify Skill
+            Modify Assessment
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)}>
-            Delete Skill
+            Delete Assessment
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <ModifySkillDialog
+      <ModifyAssessmentDialog
         isOpen={isModifyDialogOpen}
         onOpenChange={setIsModifyDialogOpen}
         initialData={selectedRow}
-        refreshSkills={refreshSkills}
+        refreshAssessments={refreshAssessments}
       />
-      <DeleteSkillDialog
+      <DeleteAssessmentDialog
         isOpen={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
-        skillID={selectedRow.SkillID}
-        refreshSkills={refreshSkills}
+        assessmentID={selectedRow.AssessmentID}
+        refreshAssessments={refreshAssessments}
       />
     </Dialog>
   );

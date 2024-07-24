@@ -13,17 +13,17 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { DeleteSkillDialog } from "./DeleteSkillDialog";
+import { DeleteUserDialog } from "./DeleteUserDialog";
 import { Dialog } from "../ui/dialog";
 import { useState } from "react";
-import { ModifySkillDialog } from "./ModifySkillDialog";
+import { ModifyUserDialog } from "./ModifyUserDialog";
 
 interface ActionsCellProps {
   row: any;
-  refreshSkills: () => void;
+  refreshUsers: () => void;
 }
 
-const ActionsCell = ({ row, refreshSkills }: ActionsCellProps) => {
+const ActionsCell = ({ row, refreshUsers }: ActionsCellProps) => {
   const [isModifyDialogOpen, setIsModifyDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { selectedCourse } = useCourse();
@@ -51,28 +51,28 @@ const ActionsCell = ({ row, refreshSkills }: ActionsCellProps) => {
               console.log("Selected Course:", selectedCourse);
             }}
           >
-            Select Skill
+            Select User
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setIsModifyDialogOpen(true)}>
-            Modify Skill
+            Modify User
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)}>
-            Delete Skill
+            Delete User
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <ModifySkillDialog
+      <ModifyUserDialog
         isOpen={isModifyDialogOpen}
         onOpenChange={setIsModifyDialogOpen}
         initialData={selectedRow}
-        refreshSkills={refreshSkills}
+        refreshUsers={refreshUsers}
       />
-      <DeleteSkillDialog
+      <DeleteUserDialog
         isOpen={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
-        skillID={selectedRow.SkillID}
-        refreshSkills={refreshSkills}
+        userID={selectedRow.UserID}
+        refreshUsers={refreshUsers}
       />
     </Dialog>
   );
