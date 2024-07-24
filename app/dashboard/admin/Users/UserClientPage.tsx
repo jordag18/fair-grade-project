@@ -14,15 +14,17 @@ const UserClientPage = () => {
 
   useEffect(() => {
     if (selectedCourse) {
-      fetchUsersByCourseAndRole(selectedCourse.CourseID, "Student").then((data) => {
-        if (data.success && data.users) {
-          console.log("User Data: ", data.users);
-          setUsers(data.users);
-        } else {
-          console.error("Failed to fetch users:", data.error);
+      fetchUsersByCourseAndRole(selectedCourse.CourseID, "Student").then(
+        (data) => {
+          if (data.success && data.users) {
+            console.log("User Data: ", data.users);
+            setUsers(data.users);
+          } else {
+            console.error("Failed to fetch users:", data.error);
+          }
+          setLoading(false);
         }
-        setLoading(false);
-      });
+      );
     } else {
       setLoading(false);
     }
@@ -30,13 +32,15 @@ const UserClientPage = () => {
 
   const refreshUsers = () => {
     if (selectedCourse) {
-      fetchUsersByCourseAndRole(selectedCourse.CourseID, "Student").then((data) => {
-        if (data.success && data.users) {
-          setUsers(data.users);
-        } else {
-          console.error("Failed to refresh users:", data.error);
+      fetchUsersByCourseAndRole(selectedCourse.CourseID, "Student").then(
+        (data) => {
+          if (data.success && data.users) {
+            setUsers(data.users);
+          } else {
+            console.error("Failed to refresh users:", data.error);
+          }
         }
-      });
+      );
     }
   };
 
@@ -50,20 +54,19 @@ const UserClientPage = () => {
 
   return (
     <div className="flex mx-20 items-center content-center">
-      <div className="flex flex-col gap-y-2">
-        <div className="flex justify-between">
+      <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
+        <div className="flex justify-between"></div>
+        <div className="overflow-auto max-h-screen">
+          <DataTable
+            columns={columns({ refreshUsers })}
+            data={users}
+            columnKey={"name"}
+            placeholder="Filter Users..."
+          />
         </div>
-        <DataTable
-          columns={columns({ refreshUsers })}
-          data={users}
-          columnKey={"name"}
-          placeholder="Filter Users..."
-        />
       </div>
     </div>
   );
 };
 
 export default UserClientPage;
-
-

@@ -28,18 +28,20 @@ const AdminSkillClientPage = () => {
 
   return (
     <div className="flex mx-20 items-center content-center">
-      <div className="flex flex-col gap-y-2">
+      <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
         <div className="flex justify-between">
           <div className="flex gap-x-2">
             <CreateSkillDialog onSkillCreated={refreshSkills} />
           </div>
         </div>
+        <div className="overflow-auto max-h-screen">
         <DataTable
           columns={columns({ refreshSkills })}
           data={courseSkills?.map((cs) => cs.Skills) || []}
           columnKey={"SkillName"}
           placeholder="Filter Skill..."
         />
+        </div>
       </div>
     </div>
   );

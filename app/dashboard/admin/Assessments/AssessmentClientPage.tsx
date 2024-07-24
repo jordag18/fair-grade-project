@@ -40,21 +40,21 @@ const AssessmentClientPage = () => {
   }
 
   return (
-    <div className="flex mx-20 items-center content-center">
-      <div className="flex flex-col gap-y-2">
+    <div className="flex items-center content-center">
+      <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
         <div className="flex justify-between">
           <div className="flex gap-x-2">
-            <CreateAssessmentDialog
-              onAssessmentCreated={refreshAssessments}
-            />
+            <CreateAssessmentDialog onAssessmentCreated={refreshAssessments} />
           </div>
         </div>
-        <DataTable
-          columns={columns({ refreshAssessments })}
-          data={assessments}
-          columnKey={"Title"}
-          placeholder="Filter Assessments..."
-        />
+        <div className="overflow-auto max-h-screen">
+          <DataTable
+            columns={columns({ refreshAssessments })}
+            data={assessments}
+            columnKey={"Title"}
+            placeholder="Filter Assessments..."
+          />
+        </div>
       </div>
     </div>
   );
