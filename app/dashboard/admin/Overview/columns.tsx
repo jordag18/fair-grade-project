@@ -1,57 +1,53 @@
 "use client";
 
+import React from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "@/components/DataTable/DataTableColumnHeader";
 
-export type StudentOverview = {
-  StudentName: String;
-  SkillNames: String[];
-};
+export interface StudentSkill {
+  UserID: string;
+  SkillID: string;
+  Score: number;
+}
 
-export const columns: ColumnDef<StudentOverview>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-        className="translate-y-[2px]"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-        className="translate-y-[2px]"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "StudentName",
+export interface Skill {
+  SkillID: string;
+  SkillName: string;
+  SkillType: string;
+}
+
+export interface User {
+  id: string;
+  name: string | null;
+  skills: StudentSkill[];
+}
+
+export const columns = (skills: Skill[]): ColumnDef<User>[] => {
+  // Base column for student names
+  const baseColumns: ColumnDef<User>[] = [
+    {
+      accessorKey: "name",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Student Name" />
+      ),
+      cell: ({ row }) => <div className="w-[200px]">{row.getValue("name")}</div>,
+      enableSorting: false,
+      enableHiding: false,
+    },
+  ];
+
+  // Dynamic columns for each skill
+  const skillColumns: ColumnDef<User>[] = skills.map((skill) => ({
+    accessorKey: `skills.${skill.SkillID}.Score`,
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Student Name" />
+      <DataTableColumnHeader column={column} title={skill.SkillName} />
     ),
-    cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("StudentName")}</div>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "SkillNames",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Skills" />
-    ),
-    cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("SkillType")}</div>
-    ),
-  },
-];
+    cell: ({ row }) => {
+      const skillData = row.original.skills.find(s => s.SkillID === skill.SkillID);
+      return <div className="w-[100px]">{skillData ? skillData.Score : 'N/A'}</div>;
+    },
+  }));
+
+  // Combine base columns and skill columns
+  return [...baseColumns, ...skillColumns];
+};

@@ -91,7 +91,7 @@ export function SkillForm({
       });
       onFormSubmit();
     } catch (error) {
-      console.error("Error in onSubmit: ", error); // Add this line to log the error
+      console.error("Error in onSubmit: ", error);
       toast({
         title: "Error",
         description: `Failed to ${isEditMode ? "modify" : "create"} the skill.`,

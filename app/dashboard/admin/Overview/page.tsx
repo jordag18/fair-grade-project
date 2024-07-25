@@ -1,28 +1,7 @@
-import { StudentOverview, columns } from "./columns";
-import { DataTable } from "../../../../components/DataTable/DataTable";
-import { GenerateReportDialog } from "@/components/GenerateReportDialog";
+import OverviewClientPage from "./OverviewClientPage";
 
-async function getData(): Promise<StudentOverview[]> {
-  // Fetch data from your API here.
-  return [];
-}
-
-export default async function AdminOverviewPage() {
-  const data = await getData();
-
+export default function AdminOverviewPage() {
   return (
-    <div className="flex mx-20 items-center content-center">
-      <div className="flex flex-col gap-y-2">
-        <div className="flex justify-between">
-          <GenerateReportDialog />
-        </div>
-        <DataTable
-          columns={columns}
-          data={data}
-          columnKey={"SkillName"}
-          placeholder="Filter Skill..."
-        />
-      </div>
-    </div>
+      <OverviewClientPage />
   );
 }

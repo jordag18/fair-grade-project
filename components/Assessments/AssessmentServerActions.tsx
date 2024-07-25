@@ -19,6 +19,44 @@ export async function createAssessment(assessmentData: FormSchemaType) {
       },
     });
 
+    // Handle AssessmentSkills and StudentSkills
+    if (assessmentData.assessmentSkills && assessmentData.assessmentSkills.length > 0) {
+      await prisma.$transaction(
+        assessmentData.assessmentSkills.map((skill) => 
+          prisma.assessmentSkills.create({
+            data: {
+              AssessmentID: newAssessment.AssessmentID,
+              SkillID: skill.SkillID,
+              Score: skill.Score,
+            },
+          })
+        )
+      );
+
+      await prisma.$transaction(
+        assessmentData.assessmentSkills.map((skill) => 
+          prisma.studentSkills.upsert({
+            where: {
+              UserID_CourseID_SkillID: {
+                UserID: assessmentData.assessedUserID!,
+                SkillID: skill.SkillID,
+                CourseID: assessmentData.courseID!,
+              },
+            },
+            update: {
+              Score: skill.Score,
+            },
+            create: {
+              UserID: assessmentData.assessedUserID!,
+              SkillID: skill.SkillID,
+              CourseID: assessmentData.courseID!,
+              Score: skill.Score,
+            },
+          })
+        )
+      );
+    }
+
     revalidatePath("/assessments");
     return { success: true, assessment: newAssessment };
   } catch (error) {
@@ -41,6 +79,51 @@ export async function modifyAssessment(assessmentData: FormSchemaType) {
         InstrumentDescription: assessmentData.instrumentDescription,
       },
     });
+
+    // Handle AssessmentSkills and StudentSkills
+    if (assessmentData.assessmentSkills && assessmentData.assessmentSkills.length > 0) {
+      // Delete existing AssessmentSkills for this assessment
+      await prisma.assessmentSkills.deleteMany({
+        where: { AssessmentID: assessmentData.assessmentID! },
+      });
+
+      // Create new AssessmentSkills
+      await prisma.$transaction(
+        assessmentData.assessmentSkills.map((skill) =>
+          prisma.assessmentSkills.create({
+            data: {
+              AssessmentID: updatedAssessment.AssessmentID,
+              SkillID: skill.SkillID,
+              Score: skill.Score,
+            },
+          })
+        )
+      );
+
+      // Update StudentSkills
+      await prisma.$transaction(
+        assessmentData.assessmentSkills.map((skill) =>
+          prisma.studentSkills.upsert({
+            where: {
+              UserID_SkillID_CourseID: {
+                UserID: assessmentData.assessedUserID!,
+                SkillID: skill.SkillID,
+                CourseID: assessmentData.courseID!,
+              },
+            },
+            update: {
+              Score: skill.Score,
+            },
+            create: {
+              UserID: assessmentData.assessedUserID!,
+              SkillID: skill.SkillID,
+              CourseID: assessmentData.courseID!,
+              Score: skill.Score,
+            },
+          })
+        )
+      );
+    }
 
     revalidatePath("/assessments");
     return { success: true, assessment: updatedAssessment };

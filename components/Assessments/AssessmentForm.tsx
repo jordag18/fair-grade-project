@@ -30,12 +30,14 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { Course } from "@/types";
+import { Course, CourseSkill } from "@/types";
 import { useUserId } from "@/lib/auth/useUser";
+import { AssessmentSkillPopover } from "./AssessmentSkillsPopover";
 
 const FormSchema = z.object({
   assessmentID: z.string().optional(),
   assessmentTitle: z.string().min(1, "Assessment Title is required"),
+  assessedUserName: z.string().optional(),
   assessorID: z.string().optional(),
   assessedUserID: z.string().optional(),
   courseID: z.string().optional(),
@@ -45,6 +47,14 @@ const FormSchema = z.object({
   instrumentDescription: z
     .string()
     .min(1, "Instrument Description is required"),
+  assessmentSkills: z
+    .array(
+      z.object({
+        SkillID: z.string(),
+        Score: z.number(),
+      })
+    )
+    .optional(),
 });
 
 export type FormSchemaType = z.infer<typeof FormSchema>;
@@ -58,27 +68,30 @@ interface CreateAssessmentFormProps {
 
 const mapInitialData = (data: any) => ({
   assessmentID: data.AssessmentID,
-  assessmentTitle: data.AssessmentTitle || "",
+  assessmentTitle: data.Title || "",
   assessorID: data.AssessorID,
   assessedUserID: data.AssessedUserID || "",
+  asssessedUserName: data.AssessedUserName || "",
   courseID: data.CourseID,
   comment: data.Comment,
   instrumentType: data.InstrumentType,
   assessmentDate: data.AssessmentDate,
   instrumentDescription: data.InstrumentDescription,
+  assessmentSkills: data.AssessmentSkills || [],
 });
 
 export function AssessmentForm({
   onFormSubmit,
   initialData,
-  isEditMode = false,
+  isEditMode,
   selectedCourse,
 }: CreateAssessmentFormProps) {
   const [users, setUsers] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
- //TODO: fix displaying initial data for student and title, modifications should not replace current but add a new one with maybe a relation to previous 
+  const [assessmentSkills, setAssessmentSkills] = useState<CourseSkill[]>([]);
+
   useEffect(() => {
-    console.log("initial data: ", initialData)
+    console.log("initial data: ", initialData);
     if (selectedCourse) {
       fetchUsersByCourseAndRole(selectedCourse.CourseID, "Student").then(
         (response) => {
@@ -112,6 +125,8 @@ export function AssessmentForm({
     data.assessorID = (await useUserId()) as string;
     data.courseID = selectedCourse?.CourseID as string;
     data.assessmentDate = new Date();
+    data.assessmentSkills = assessmentSkills;
+    console.log("Assessment Submission data: ", data);
     try {
       const response = isEditMode
         ? await modifyAssessment(data)
@@ -151,7 +166,10 @@ export function AssessmentForm({
             <FormItem>
               <FormLabel>Student</FormLabel>
               <FormControl>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select student" />
                   </SelectTrigger>
@@ -170,7 +188,9 @@ export function AssessmentForm({
                   </SelectContent>
                 </Select>
               </FormControl>
-              <FormDescription>Specify the student being assessed</FormDescription>
+              <FormDescription>
+                Specify the student being assessed
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -227,12 +247,18 @@ export function AssessmentForm({
             </FormItem>
           )}
         />
-        <Button
-          type="submit"
-          className="font-semibold bg-sky-500 hover:bg-sky-600 text-white"
-        >
-          Save changes
-        </Button>
+        <div className="flex justify-between">
+          <AssessmentSkillPopover
+            selectedCourse={selectedCourse}
+            onSkillsChange={setAssessmentSkills}
+          />
+          <Button
+            type="submit"
+            className="font-semibold bg-sky-500 hover:bg-sky-600 text-white"
+          >
+            Save changes
+          </Button>
+        </div>
       </form>
     </Form>
   );

@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { columns } from "@/app/dashboard/admin/Skills/columns";
 import { DataTable } from "../DataTable/DataTable";
 import { CreateSkillDialog } from "@/components/Skills/CreateSkillDialog";
 import { useCourse } from "@/context/CourseContext";
 import { getCourseSkills } from "./SkillServerActions";
-import { Skill } from "@/types";
 
 const AdminSkillClientPage = () => {
   const { selectedCourse, courseSkills, setCourseSkills } = useCourse();

@@ -53,7 +53,9 @@ const ActionsCell = ({ row, refreshAssessments }: ActionsCellProps) => {
           >
             Select Assessment
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setIsModifyDialogOpen(true)}>
+          <DropdownMenuItem onClick={() => {setIsModifyDialogOpen(true);
+            console.log("selected row: ", selectedRow)
+          }}>
             Modify Assessment
           </DropdownMenuItem>
           <DropdownMenuSeparator />

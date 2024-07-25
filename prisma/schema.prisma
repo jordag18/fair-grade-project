@@ -21,6 +21,7 @@ model User {
   Assessments_Assessments_AssessedUserIDToUsers Assessments[] @relation("Assessments_AssessedUserIDToUsers")
   UserCourse                                    UserCourse[]
   Skills                                        Skills[]      @relation("SkillsAdded")
+  StudentSkills                                 StudentSkills[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -71,35 +72,35 @@ model VerificationToken {
 }
 
 model AssessmentSkills {
-  AssessmentID            String
-  SkillID                 String
-  Score                   Int
-  Skills                  Skills       @relation(fields: [SkillID], references: [SkillID], onDelete: Cascade, onUpdate: NoAction)
-  Assessments             Assessments? @relation(fields: [assessmentsAssessmentID], references: [AssessmentID])
-  assessmentsAssessmentID String?
+  AssessmentSkillID String @id @default(cuid())
+  AssessmentID      String
+  SkillID           String
+  Score             Int
+  Assessment        Assessments @relation(fields: [AssessmentID], references: [AssessmentID], onDelete: Cascade, onUpdate: NoAction)
+  Skills            Skills      @relation(fields: [SkillID], references: [SkillID], onDelete: Cascade, onUpdate: NoAction)
 
-  @@id([AssessmentID, SkillID])
-  @@index([SkillID])
+  @@index([SkillID], map: "SkillID")
+  @@index([AssessmentID], map: "AssessmentID")
 }
 
 model Assessments {
-  AssessmentID                            String             @id @default(cuid())
+  AssessmentID                            String   @id @default(cuid())
   AssessorID                              String
   AssessedUserID                          String
   CourseID                                String
-  Title                                   String             @db.VarChar(255)
-  Comment                                 String             @db.Text
-  InstrumentType                          String             @db.VarChar(100)
-  AssessmentDate                          DateTime           @db.DateTime(0)
-  InstrumentDescription                   String             @db.Text
-  Users_Assessments_AssessorIDToUsers     User               @relation("Assessments_AssessorIDToUsers", fields: [AssessorID], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  Users_Assessments_AssessedUserIDToUsers User               @relation("Assessments_AssessedUserIDToUsers", fields: [AssessedUserID], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  Courses_Assessments                     Courses            @relation(fields: [CourseID], references: [CourseID], onDelete: Cascade, onUpdate: NoAction)
+  Title                                   String   @db.VarChar(255)
+  Comment                                 String   @db.Text
+  InstrumentType                          String   @db.VarChar(100)
+  AssessmentDate                          DateTime @db.DateTime(0)
+  InstrumentDescription                   String   @db.Text
+  Users_Assessments_AssessorIDToUsers     User     @relation("Assessments_AssessorIDToUsers", fields: [AssessorID], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  Users_Assessments_AssessedUserIDToUsers User     @relation("Assessments_AssessedUserIDToUsers", fields: [AssessedUserID], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  Courses_Assessments                     Courses  @relation(fields: [CourseID], references: [CourseID], onDelete: Cascade, onUpdate: NoAction)
   AssessmentSkills                        AssessmentSkills[]
 
-  @@index([AssessedUserID])
-  @@index([AssessorID])
-  @@index([CourseID])
+  @@index([AssessedUserID], map: "AssessedUserID")
+  @@index([AssessorID], map: "AssessorID")
+  @@index([CourseID], map: "CourseID")
 }
 
 model Skills {
@@ -110,18 +111,18 @@ model Skills {
   User             User               @relation("SkillsAdded", fields: [AddedBy], references: [id], onDelete: Cascade, onUpdate: NoAction)
   CourseSkills     CourseSkills[]
   AssessmentSkills AssessmentSkills[]
+  StudentSkills    StudentSkills[]
 
-  @@index([AddedBy])
+  @@index([AddedBy], map: "AddedBy")
 }
 
 model CourseSkills {
-  SkillID  String
+  SkillID  String  @id @default(cuid())
   CourseID String
   Courses  Courses @relation(fields: [CourseID], references: [CourseID], onDelete: Cascade, onUpdate: NoAction)
   Skills   Skills  @relation(fields: [SkillID], references: [SkillID], onDelete: Cascade, onUpdate: NoAction)
 
-  @@id([SkillID, CourseID])
-  @@index([CourseID])
+  @@index([CourseID], map: "CourseID")
 }
 
 model Courses {
@@ -136,6 +137,9 @@ model Courses {
   CourseSkills CourseSkills[]
   UserCourse   UserCourse[]
   Assessments  Assessments[]
+  StudentSkills StudentSkills[]
+
+  @@index([CourseID], map: "CourseID")
 }
 
 model UserCourse {
@@ -146,7 +150,22 @@ model UserCourse {
   Courses  Courses         @relation(fields: [CourseID], references: [CourseID], onDelete: Cascade, onUpdate: NoAction)
 
   @@id([UserID, CourseID])
-  @@index([CourseID])
+  @@index([CourseID], map: "CourseID")
+}
+
+model StudentSkills {
+  UserID      String
+  CourseID    String
+  SkillID     String
+  Score       Int
+  Skills      Skills    @relation(fields: [SkillID], references: [SkillID], onDelete: Cascade, onUpdate: NoAction)
+  User        User      @relation(fields: [UserID], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  Courses     Courses   @relation(fields: [CourseID], references: [CourseID], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([UserID, CourseID, SkillID])
+  @@index([UserID], map: "UserID")
+  @@index([CourseID], map: "CourseID")
+  @@index([SkillID], map: "SkillID")
 }
 
 enum Skill_Type {

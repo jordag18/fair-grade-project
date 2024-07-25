@@ -41,7 +41,7 @@ export function ModifyAssessmentDialog({
         <AssessmentForm
           onFormSubmit={handleFormSubmit}
           initialData={initialData}
-          isEditMode
+          isEditMode={true}
         />
       </DialogContent>
     </Dialog>

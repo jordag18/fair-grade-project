@@ -13,6 +13,7 @@ const AssessmentClientPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("assessment columns: ", columns({ refreshAssessments }))
     if (selectedCourse) {
       getAssessmentsByCourse(selectedCourse.CourseID).then((data) => {
         setAssessments(data);
