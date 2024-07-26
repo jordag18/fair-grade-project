@@ -2,9 +2,7 @@ import { SkillForm, FormSchemaType } from "./SkillForm";
 import {
   Dialog,
   DialogContent,
-  DialogClose,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -16,12 +14,15 @@ interface ModifySkillDialogProps {
   refreshSkills: () => void;
 }
 
+//Dialog component for modifying a skill using the initial data from the table row
 export function ModifySkillDialog({
   isOpen,
   onOpenChange,
   initialData,
   refreshSkills,
 }: ModifySkillDialogProps) {
+
+  //uses refreshSkills callback function from AdminSkillClient page to refresh skill data table after form submission and close dialog
   const handleFormSubmit = () => {
     refreshSkills();
     onOpenChange(false);
@@ -33,7 +34,7 @@ export function ModifySkillDialog({
         <DialogHeader>
           <DialogTitle>Modify Skill</DialogTitle>
           <DialogDescription>
-            Modify skill details here. Click save when you're done.
+            Modify skill details here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
         <SkillForm

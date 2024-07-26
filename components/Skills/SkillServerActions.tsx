@@ -2,13 +2,26 @@
 
 import prisma from "@/lib/prisma";
 import { FormSchemaType } from "./SkillForm";
+import { Skill } from "@/types";
+
+export const getSkillData = (skills: any[]): Skill[] => {
+  return skills.map(skill => ({
+    SkillID: skill.SkillID,
+    SkillName: skill.SkillName,
+    AddedBy: skill.AddedBy,
+    SkillType: skill.SkillType,
+  }));
+};
 
 export async function createSkill(skillData: FormSchemaType, courseID: string) {
   try {
+    if (!skillData.addedBy) {
+      throw new Error("AddedBy is required");
+    }
     const newSkill = await prisma.skills.create({
       data: {
         SkillName: skillData.skillName,
-        AddedBy: skillData.addedBy,
+        AddedBy: skillData.addedBy,  // Ensuring addedBy is not undefined
         SkillType: skillData.skillType,
       },
     });
@@ -29,11 +42,14 @@ export async function createSkill(skillData: FormSchemaType, courseID: string) {
 
 export async function modifySkill(skillData: FormSchemaType) {
   try {
+    if (!skillData.addedBy) {
+      throw new Error("AddedBy is required");
+    }
     const updatedSkill = await prisma.skills.update({
       where: { SkillID: skillData.skillID! },
       data: {
         SkillName: skillData.skillName,
-        AddedBy: skillData.addedBy,
+        AddedBy: skillData.addedBy,  // Ensuring addedBy is not undefined
         SkillType: skillData.skillType,
       },
     });
@@ -45,8 +61,6 @@ export async function modifySkill(skillData: FormSchemaType) {
   }
 }
 
-
-//TODO: Modify to delete skill from selectedCourse
 export async function deleteSelectedSkill(skillID: string) {
   try {
     await prisma.skills.delete({
@@ -78,7 +92,6 @@ export async function getCourseSkills(courseID: string) {
   }
 }
 
-// Example usage
 (async () => {
   const courseID = 'your-course-id-here';
   const skills = await getCourseSkills(courseID);

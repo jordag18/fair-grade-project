@@ -23,6 +23,7 @@ interface ActionsCellProps {
   refreshSkills: () => void;
 }
 
+//Cell for skill data table to display a dropdown menu containing operations on the data table row.
 const ActionsCell = ({ row, refreshSkills }: ActionsCellProps) => {
   const [isModifyDialogOpen, setIsModifyDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -53,10 +54,12 @@ const ActionsCell = ({ row, refreshSkills }: ActionsCellProps) => {
           >
             Select Skill
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setIsModifyDialogOpen(true)}>
+          {/* Dropdown menu item to open the modify skill dialog */}
+          <DropdownMenuItem onClick={() => setIsModifyDialogOpen(true)}>  
             Modify Skill
           </DropdownMenuItem>
           <DropdownMenuSeparator />
+          {/* Dropdown menu item to open the delete skill dialog */}
           <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)}>
             Delete Skill
           </DropdownMenuItem>

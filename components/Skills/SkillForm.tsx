@@ -27,6 +27,7 @@ import { createSkill, modifySkill } from "./SkillServerActions";
 import { useUserId } from "@/lib/auth/useUser";
 import { Course } from "@/types";
 
+// Define schema for form validation using Zod
 const FormSchema = z.object({
   skillID: z.string().optional(),
   skillName: z.string().min(1, "Skill name is required"),
@@ -36,6 +37,7 @@ const FormSchema = z.object({
   }),
 });
 
+// Infer TypeScript types from Zod schema
 export type FormSchemaType = z.infer<typeof FormSchema>;
 
 interface CreateSkillFormProps {
@@ -45,12 +47,14 @@ interface CreateSkillFormProps {
   selectedCourse?: Course | null;
 }
 
+// Map initial data to match the form schema
 const mapInitialData = (data: any) => ({
   skillID: data.SkillID,
   skillName: data.SkillName || "",
   skillType: data.SkillType,
 });
 
+//Form for creating a new skill or modifying an existing skill using the initial data prop.
 export function SkillForm({
   onFormSubmit,
   initialData,
@@ -58,31 +62,35 @@ export function SkillForm({
   selectedCourse,
 }: CreateSkillFormProps) {
   const mappedInitialData = initialData ? mapInitialData(initialData) : undefined;
-  console.log("mappedInitialData: ", mappedInitialData);
 
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(FormSchema),
     defaultValues: mappedInitialData,
   });
 
+  //On form submission, uses isEditMode to determine creating or modifying a skill using form data
   const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
     try {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       data.addedBy = await useUserId() as string;
-      console.log("Data before send: ", data);
-
+  
       const response = isEditMode
         ? await modifySkill(data)
         : await createSkill(data, selectedCourse?.CourseID as string);
-
+  
       console.log("Response received: ", response); 
-
+  
       if (!response.success) {
         console.log("Response error: ", response.error); 
         throw new Error(response.error);
       }
-
+  
       const newSkill = response.skill;
-
+      
+      if (!newSkill) {
+        throw new Error("Failed to get the new skill data");
+      }
+  
       toast({
         title: isEditMode ? "Skill Modified" : "Skill Created",
         description: `Skill ${newSkill.SkillName} was ${

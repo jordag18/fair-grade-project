@@ -17,12 +17,15 @@ interface DeleteSkillDialogProps {
   refreshSkills: () => void;
 }
 
+//Dialog component that takes in skillID from row data and refreshSkills callback function from AdminSkillClientPage
 export function DeleteSkillDialog({
   isOpen,
   onOpenChange,
   skillID,
   refreshSkills,
 }: DeleteSkillDialogProps) {
+
+  //Deletes skill from database using skillID and refreshes skill table post deletion.
   const handleDelete = async () => {
     const response = await deleteSelectedSkill(skillID);
     if (response.success) {

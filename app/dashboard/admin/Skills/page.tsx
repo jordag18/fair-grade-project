@@ -1,4 +1,4 @@
-import AdminSkillClientPage from "@/components/Skills/AdminSkillClientPage";
+import AdminSkillClientPage from "./AdminSkillClientPage";
 
 export default async function AdminSkillPage() {
 

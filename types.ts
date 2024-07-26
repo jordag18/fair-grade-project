@@ -34,6 +34,7 @@ export interface Skill {
 export interface CourseSkill {
   SkillID: string;
   CourseID: string;
+  Skills: Skill
 }
 
 export interface UserCourse {

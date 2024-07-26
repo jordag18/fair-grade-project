@@ -1,25 +1,25 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { columns } from "@/app/dashboard/admin/Skills/columns";
-import { DataTable } from "../DataTable/DataTable";
+import { DataTable } from "@/components/DataTable/DataTable";
 import { CreateSkillDialog } from "@/components/Skills/CreateSkillDialog";
 import { useCourse } from "@/context/CourseContext";
-import { getCourseSkills } from "./SkillServerActions";
+import { getCourseSkills } from "@/components/Skills/SkillServerActions";
 
 const AdminSkillClientPage = () => {
   const { selectedCourse, courseSkills, setCourseSkills } = useCourse();
 
-  const refreshSkills = async () => {
+  const refreshSkills = useCallback(async () => {
     if (selectedCourse) {
       const skills = await getCourseSkills(selectedCourse.CourseID);
       setCourseSkills(skills);
     }
-  };
+  }, [selectedCourse, setCourseSkills]);
 
   useEffect(() => {
     refreshSkills();
-  }, [selectedCourse]);
+  }, [selectedCourse, refreshSkills]);
 
   if (!selectedCourse) {
     return <div>Please select a course to view its skills.</div>;
@@ -34,12 +34,12 @@ const AdminSkillClientPage = () => {
           </div>
         </div>
         <div className="overflow-auto max-h-screen">
-        <DataTable
-          columns={columns({ refreshSkills })}
-          data={courseSkills?.map((cs) => cs.Skills) || []}
-          columnKey={"SkillName"}
-          placeholder="Filter Skill..."
-        />
+          <DataTable
+            columns={columns({ refreshSkills })}
+            data={courseSkills?.map((cs) => cs.Skills) || []}
+            columnKey={"SkillName"}
+            placeholder="Filter Skill..."
+          />
         </div>
       </div>
     </div>

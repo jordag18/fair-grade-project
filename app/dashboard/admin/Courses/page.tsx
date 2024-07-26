@@ -7,7 +7,7 @@ import { fetchAllCourses } from "@/components/Course/CourseServerActions";
 export default async function AdminCoursePage() {
   const data: Course[] = await fetchAllCourses();
 
-  console.log("Courses data:", JSON.stringify(data, null, 2)); //server debug log on retrieved course data
+  //console.log("Courses data:", JSON.stringify(data, null, 2)); //server debug log on retrieved course data
 
   return (
     <div className="flex mx-20 items-center content-center">
