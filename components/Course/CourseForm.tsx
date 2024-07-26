@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { z } from "zod";
-import { addDays, format } from "date-fns";
+import { format } from "date-fns";
 import {
   Form,
   FormControl,
@@ -26,6 +26,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { toast } from "@/components/ui/use-toast";
 import { createCourse, modifyCourse } from "./CourseServerActions";
+import { Course } from "@/types";
 
 const FormSchema = z.object({
   courseID: z.string().optional(),
@@ -44,7 +45,7 @@ const FormSchema = z.object({
 
 export type FormSchemaType = z.infer<typeof FormSchema>;
 
-interface CreateCourseFormProps {
+interface CourseFormProps {
   onFormSubmit: () => void;
   initialData?: FormSchemaType;
   isEditMode?: boolean;
@@ -63,11 +64,11 @@ const mapInitialData = (data: any) => ({
   instructor: data.Instructor || "",
 });
 
-export function CreateCourseForm({
+export function CourseForm({
   onFormSubmit,
   initialData,
   isEditMode = false,
-}: CreateCourseFormProps) {
+}: CourseFormProps) {
   const mappedInitialData = initialData
     ? mapInitialData(initialData)
     : undefined;
@@ -88,7 +89,7 @@ export function CreateCourseForm({
         throw new Error(response.error);
       }
 
-      const newCourse = response.course;
+      const newCourse: any = response.course;
 
       toast({
         title: isEditMode ? "Course Modified" : "Course Created",

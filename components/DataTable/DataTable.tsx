@@ -28,6 +28,7 @@ import {
 import { DataTablePagination } from "./DataTablePagnation";
 import { DataTableToolbar } from "@/components/DataTable/DataTableToolbar";
 
+// Define the properties for the DataTable component
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -36,6 +37,7 @@ interface DataTableProps<TData, TValue> {
   actions?: (rowSelection: Record<string, boolean>) => React.ReactNode;
 }
 
+// DataTable component definition
 export function DataTable<TData, TValue>({
   columns,
   data,
@@ -43,6 +45,8 @@ export function DataTable<TData, TValue>({
   placeholder,
   actions,
 }: DataTableProps<TData, TValue>) {
+
+  //States for row selection, column visibility, column filters, and sorting.
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -51,6 +55,7 @@ export function DataTable<TData, TValue>({
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
+  //table intialization
   const table = useReactTable({
     data,
     columns,

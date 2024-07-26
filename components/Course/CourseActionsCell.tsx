@@ -18,6 +18,7 @@ import { Dialog } from "../ui/dialog";
 import { useState } from "react";
 import { ModifyCourseDialog } from "./ModifyCourseDialog";
 
+//Action dropdown menu for Course DataTable, displays operations for selecting, modifying, and deleting of the course displayed in the selected row
 const ActionsCell = ({ row }: { row: any }) => {
   const [isModifyDialogOpen, setIsModifyDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -42,10 +43,13 @@ const ActionsCell = ({ row }: { row: any }) => {
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => {setSelectedCourse(selectedRow);
+          console.log("Selected Course Data: ",  selectedRow)
           }}>
             Select Course
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => {setIsModifyDialogOpen(true)}}>
+          <DropdownMenuItem onClick={() => {setIsModifyDialogOpen(true)
+            console.log(selectedRow)
+          }}>
             Modify Course
           </DropdownMenuItem>
           <DropdownMenuSeparator />

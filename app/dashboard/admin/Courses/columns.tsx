@@ -4,17 +4,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/DataTable/DataTableColumnHeader";
 import ActionsCell from "@/components/Course/CourseActionsCell";
 import { format } from "date-fns";
+import { Course } from "@/types";
 
-export type Course = {
-  CourseID: string;
-  CourseTag: String;
-  CourseName: string;
-  StartDate: Date;
-  EndDate: Date;
-  TimeRange: string;
-  Location: string;
-  Instructor: string;
-};
 
 const formatDateRange = (startDate: Date, endDate: Date) => {
   const start = format(new Date(startDate), "LLL dd, y");
@@ -22,6 +13,8 @@ const formatDateRange = (startDate: Date, endDate: Date) => {
   return `${start} - ${end}`;
 };
 
+
+//array of column definitions of type Course, determines how each column and cell in the table should be rendered and what data from the DataTable data to be displayed.
 export const Columns: ColumnDef<Course>[] = [
   {
     accessorKey: "CourseTag",

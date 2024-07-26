@@ -10,14 +10,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { CreateCourseForm } from "./CourseForm";
+import { CourseForm } from "./CourseForm";
 
+//Dialog component for creating a new Course using data from Course Form.
 export function CreateCourseDialog() {
   const [isOpen, setIsOpen] = useState(false);
 
+  //close dialog on form submission.
   const handleFormSubmit = () => {
     setIsOpen(false);
   };
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -32,7 +35,7 @@ export function CreateCourseDialog() {
             Insert course details here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
-        <CreateCourseForm onFormSubmit={handleFormSubmit} isEditMode={false} />
+        <CourseForm onFormSubmit={handleFormSubmit}/>
       </DialogContent>
     </Dialog>
   );

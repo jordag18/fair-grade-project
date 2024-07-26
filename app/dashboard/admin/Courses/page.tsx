@@ -1,10 +1,13 @@
 import { Columns } from "./columns";
 import { DataTable } from "../../../../components/DataTable/DataTable";
 import { CreateCourseDialog } from "@/components/Course/CreateCourseDialog";
-import prisma from "@/lib/prisma";
+import { Course } from "@/types";
+import { fetchAllCourses } from "@/components/Course/CourseServerActions";
 
 export default async function AdminCoursePage() {
-  const data = await prisma.courses.findMany();
+  const data: Course[] = await fetchAllCourses();
+
+  console.log("Courses data:", JSON.stringify(data, null, 2)); //server debug log on retrieved course data
 
   return (
     <div className="flex mx-20 items-center content-center">
@@ -12,6 +15,7 @@ export default async function AdminCoursePage() {
         <div className="flex justify-between">
           <div className="flex gap-x-2">
             <CreateCourseDialog />
+            
           </div>
         </div>
         <div className="overflow-auto max-h-screen">

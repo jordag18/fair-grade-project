@@ -5,7 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { FormSchemaType, CreateCourseForm } from "./CourseForm";
+import { FormSchemaType, CourseForm } from "./CourseForm";
 
 interface ModifyCourseDialogProps {
   isOpen: boolean;
@@ -13,6 +13,7 @@ interface ModifyCourseDialogProps {
   initialData: FormSchemaType;
 }
 
+//Dialog component for modifying Course data from selected row
 export function ModifyCourseDialog({
   isOpen,
   onOpenChange,
@@ -31,7 +32,7 @@ export function ModifyCourseDialog({
             Modify course details here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
-        <CreateCourseForm
+        <CourseForm 
           onFormSubmit={handleFormSubmit}
           initialData={initialData}
           isEditMode={true}
