@@ -17,6 +17,7 @@ interface ModifyAssessmentDialogProps {
   refreshAssessments: () => void;
 }
 
+//Dialog for modifying an existing assessment in the selected row of the assessment data table.
 export function ModifyAssessmentDialog({
   isOpen,
   onOpenChange,
@@ -24,18 +25,20 @@ export function ModifyAssessmentDialog({
   refreshAssessments,
 }: ModifyAssessmentDialogProps) {
 
+  //uses callback function refreshAssessment from AssessmentClientPage to refresh assessment data table on form submission and close dialog
   const handleFormSubmit = () => {
     refreshAssessments();
     onOpenChange(false);
   };
+  console.log("modify dialog inital data: ", initialData)
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Modify Assessment</DialogTitle>
           <DialogDescription>
-            Modify the details of the assessment below. Click save when you're done.
+            Modify the details of the assessment below. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
         <AssessmentForm

@@ -17,12 +17,14 @@ interface DeleteAssessmentDialogProps {
   refreshAssessments: () => void;
 }
 
+//dialog component for deleting a assessment in the selected row of the assessment data table.
 export function DeleteAssessmentDialog({
   isOpen,
   onOpenChange,
   assessmentID,
   refreshAssessments,
 }: DeleteAssessmentDialogProps) {
+
   const handleDelete = async () => {
     const response = await deleteAssessment(assessmentID);
     if (response.success) {

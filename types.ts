@@ -53,15 +53,19 @@ export interface AssessmentSkill {
 
 export interface Assessment {
   AssessmentID: string;
-  AssessorID: string;
-  AssessedUserID: string;
-  CourseID: string;
   Title: string;
+  AssessorID: string | null;
+  AssessedUserID: string;
+  AssessedUserName: string | null;
+  CourseID: string;
   Comment: string;
   InstrumentType: string;
   AssessmentDate: Date;
   InstrumentDescription: string;
-  AssessmentSkills: AssessmentSkill[];
+  AssessmentSkills: {
+    SkillID: string;
+    Score: number;
+  }[];
 }
 
 export interface StudentSkill {

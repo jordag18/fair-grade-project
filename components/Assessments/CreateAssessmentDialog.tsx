@@ -17,6 +17,7 @@ interface CreateAssessmentDialogProps {
   onAssessmentCreated: () => void;
 }
 
+//Dialog that contains the assessment form to create a new assessment
 export function CreateAssessmentDialog({
   onAssessmentCreated,
 }: CreateAssessmentDialogProps) {
@@ -24,6 +25,7 @@ export function CreateAssessmentDialog({
   const { getSelectedCourse } = useCourse();
   const selectedCourse = getSelectedCourse();
 
+  //uses callback function onAssessmentCreated from AssessmentClientPage to refresh assessment data table after form submission and close dialog
   const handleFormSubmit = () => {
     onAssessmentCreated();
     setIsOpen(false);
@@ -44,7 +46,6 @@ export function CreateAssessmentDialog({
         </DialogHeader>
         <AssessmentForm
           onFormSubmit={handleFormSubmit}
-          isEditMode={false}
           selectedCourse={selectedCourse}
         />
       </DialogContent>

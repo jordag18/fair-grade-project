@@ -54,12 +54,12 @@ export const AssessmentSkillPopover: React.FC<AssessmentSkillPopoverProps> = ({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline">Select Skills</Button>
+        <Button variant="outline">Select Skills Pop</Button>
       </PopoverTrigger>
       <PopoverContent className="w-72">
         <div className="flex flex-col space-y-2">
           {skills.map((skill) => (
-            <div key={skill.SkillID} className="flex items-center space-x-2">
+            <div key={skill.SkillID} className="flex items-center space-x-10">
               <Checkbox
                 checked={skill.SkillID in selectedSkills}
                 onCheckedChange={(isChecked) =>
@@ -73,7 +73,7 @@ export const AssessmentSkillPopover: React.FC<AssessmentSkillPopoverProps> = ({
                   placeholder="Score"
                   value={selectedSkills[skill.SkillID]}
                   onChange={(e) => handleScoreChange(skill.SkillID, parseInt(e.target.value))}
-                  className="w-20 ml-auto"
+                  className="w-30 ml-auto"
                 />
               )}
             </div>

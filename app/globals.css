@@ -77,5 +77,16 @@
   .parent-div > * {
     @apply shadow-md;
   }
-  
+
+  /* Hide controls for Chrome, Safari, Edge, Opera */
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    @apply appearance-none m-0;
+  }
+
+  /* Hide controls for Firefox */
+  input[type="number"] {
+    @apply appearance-none;
+    -moz-appearance: textfield;
+  }
 }

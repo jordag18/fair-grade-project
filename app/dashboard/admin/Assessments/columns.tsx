@@ -30,6 +30,17 @@ export const columns: (props: {
     enableHiding: false,
   },
   {
+    accessorKey: "AssessedUserName",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Student" />
+    ),
+    cell: ({ row }) => (
+      <div className="w-[80px]">{row.getValue("AssessedUserName")}</div>
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
     accessorKey: "Comment",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Comment" />

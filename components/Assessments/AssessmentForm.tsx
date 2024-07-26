@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/select";
 import { Course, CourseSkill } from "@/types";
 import { useUserId } from "@/lib/auth/useUser";
-import { AssessmentSkillPopover } from "./AssessmentSkillsPopover";
+import { AssessmentSkillDrawer } from "./AssessmentSkillDrawer";
 
 const FormSchema = z.object({
   assessmentID: z.string().optional(),
@@ -71,7 +71,7 @@ const mapInitialData = (data: any) => ({
   assessmentTitle: data.Title || "",
   assessorID: data.AssessorID,
   assessedUserID: data.AssessedUserID || "",
-  asssessedUserName: data.AssessedUserName || "",
+  assessedUserName: data.AssessedUserName || "",
   courseID: data.CourseID,
   comment: data.Comment,
   instrumentType: data.InstrumentType,
@@ -122,6 +122,7 @@ export function AssessmentForm({
   });
 
   const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     data.assessorID = (await useUserId()) as string;
     data.courseID = selectedCourse?.CourseID as string;
     data.assessmentDate = new Date();
@@ -166,27 +167,31 @@ export function AssessmentForm({
             <FormItem>
               <FormLabel>Student</FormLabel>
               <FormControl>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select student" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {loading ? (
-                      <SelectItem value="Loading" disabled>
-                        Loading...
-                      </SelectItem>
-                    ) : (
-                      users.map((user) => (
-                        <SelectItem key={user.id} value={user.id}>
-                          {user.name}
+                {isEditMode ? (
+                  <Input value={mappedInitialData?.assessedUserName} disabled />
+                ) : (
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select student" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {loading ? (
+                        <SelectItem value="Loading" disabled>
+                          Loading...
                         </SelectItem>
-                      ))
-                    )}
-                  </SelectContent>
-                </Select>
+                      ) : (
+                        users.map((user) => (
+                          <SelectItem key={user.id} value={user.id}>
+                            {user.name}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                )}
               </FormControl>
               <FormDescription>
                 Specify the student being assessed
@@ -248,7 +253,7 @@ export function AssessmentForm({
           )}
         />
         <div className="flex justify-between">
-          <AssessmentSkillPopover
+          <AssessmentSkillDrawer
             selectedCourse={selectedCourse}
             onSkillsChange={setAssessmentSkills}
           />

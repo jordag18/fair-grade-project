@@ -23,6 +23,7 @@ interface ActionsCellProps {
   refreshAssessments: () => void;
 }
 
+//Cell for assessment data table to display a dropdown menu containing operations on the data table row.
 const ActionsCell = ({ row, refreshAssessments }: ActionsCellProps) => {
   const [isModifyDialogOpen, setIsModifyDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);

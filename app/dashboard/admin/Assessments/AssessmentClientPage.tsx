@@ -1,19 +1,30 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { DataTable } from "../../../../components/DataTable/DataTable";
 import { CreateAssessmentDialog } from "../../../../components/Assessments/CreateAssessmentDialog";
 import { useCourse } from "@/context/CourseContext";
 import { getAssessmentsByCourse } from "../../../../components/Assessments/AssessmentServerActions";
 import { columns } from "./columns";
+import { Assessment } from "@/types";
 
-const AssessmentClientPage = () => {
+//React function component to display the assessment dashboard with assessment data table and create assessment button
+const AssessmentClientPage: React.FC = () => {
   const { selectedCourse } = useCourse();
-  const [assessments, setAssessments] = useState([]);
+  const [assessments, setAssessments] = useState<Assessment[]>([]);
   const [loading, setLoading] = useState(true);
 
+  //Callback function to refresh the assessment data table
+  const refreshAssessments = useCallback(() => {
+    if (selectedCourse) {
+      getAssessmentsByCourse(selectedCourse.CourseID).then((data) => {
+        setAssessments(data);
+      });
+    }
+  }, [selectedCourse]);
+
+  //use effect to get assessments of selected course on page load
   useEffect(() => {
-    console.log("assessment columns: ", columns({ refreshAssessments }))
     if (selectedCourse) {
       getAssessmentsByCourse(selectedCourse.CourseID).then((data) => {
         setAssessments(data);
@@ -22,15 +33,7 @@ const AssessmentClientPage = () => {
     } else {
       setLoading(false);
     }
-  }, [selectedCourse]);
-
-  const refreshAssessments = () => {
-    if (selectedCourse) {
-      getAssessmentsByCourse(selectedCourse.CourseID).then((data) => {
-        setAssessments(data);
-      });
-    }
-  };
+  }, [selectedCourse, refreshAssessments]);
 
   if (loading) {
     return <div>Loading...</div>;
