@@ -1,5 +1,6 @@
 "use server";
 import prisma from "@/lib/prisma";
+import { Skill, User } from "@/types";
 
 export async function fetchCourseSkills(courseID: string) {
   try {
@@ -57,3 +58,5 @@ export async function fetchUsersWithSkillsAndAssessments(courseID: string) {
     return [];
   }
 }
+
+

@@ -17,12 +17,15 @@ import { DeleteCourseDialog } from "./DeleteCourseDialog";
 import { Dialog } from "../ui/dialog";
 import { useState } from "react";
 import { ModifyCourseDialog } from "./ModifyCourseDialog";
+import { useUserRole } from "@/context/UserRoleContext";
+import displayIfRole from "../DisplayIfRole";
 
 //Action dropdown menu for Course DataTable, displays operations for selecting, modifying, and deleting of the course displayed in the selected row
 const ActionsCell = ({ row }: { row: any }) => {
   const [isModifyDialogOpen, setIsModifyDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { setSelectedCourse, selectedCourse } = useCourse();
+  const { role } = useUserRole();
   const selectedRow = row.original;
 
   return (
@@ -42,20 +45,32 @@ const ActionsCell = ({ row }: { row: any }) => {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => {setSelectedCourse(selectedRow);
-          console.log("Selected Course Data: ",  selectedRow)
-          }}>
+          <DropdownMenuItem
+            onClick={() => {
+              setSelectedCourse(selectedRow);
+              console.log("Selected Course Data: ", selectedRow);
+            }}
+          >
             Select Course
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => {setIsModifyDialogOpen(true)
-            console.log(selectedRow)
-          }}>
-            Modify Course
-          </DropdownMenuItem>
+          {displayIfRole(
+            role,
+            <DropdownMenuItem
+              onClick={() => {
+                setIsModifyDialogOpen(true);
+                console.log(selectedRow);
+              }}
+            >
+              Modify Course
+            </DropdownMenuItem>
+          )}
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)}>
-            Delete Course
-          </DropdownMenuItem>
+          {displayIfRole(
+            role,
+            <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)}>
+              Delete Course
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
       <ModifyCourseDialog
@@ -73,4 +88,3 @@ const ActionsCell = ({ row }: { row: any }) => {
 };
 
 export default ActionsCell;
-

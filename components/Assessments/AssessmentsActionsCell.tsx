@@ -17,6 +17,8 @@ import { DeleteAssessmentDialog } from "./DeleteAssessmentDialog";
 import { Dialog } from "../ui/dialog";
 import { useState } from "react";
 import { ModifyAssessmentDialog } from "./ModifyAssessmentDialog";
+import { useUserRole } from "@/context/UserRoleContext";
+import displayIfRole from "../DisplayIfRole";
 
 interface ActionsCellProps {
   row: any;
@@ -29,6 +31,7 @@ const ActionsCell = ({ row, refreshAssessments }: ActionsCellProps) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { selectedCourse } = useCourse();
   const selectedRow = row.original;
+  const { role } = useUserRole();
 
   return (
     <Dialog
@@ -54,15 +57,24 @@ const ActionsCell = ({ row, refreshAssessments }: ActionsCellProps) => {
           >
             Select Assessment
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => {setIsModifyDialogOpen(true);
-            console.log("selected row: ", selectedRow)
-          }}>
-            Modify Assessment
-          </DropdownMenuItem>
+          {displayIfRole(
+            role,
+            <DropdownMenuItem
+              onClick={() => {
+                setIsModifyDialogOpen(true);
+                console.log("selected row: ", selectedRow);
+              }}
+            >
+              Modify Assessment
+            </DropdownMenuItem>
+          )}
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)}>
-            Delete Assessment
-          </DropdownMenuItem>
+          {displayIfRole(
+            role,
+            <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)}>
+              Delete Assessment
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
       <ModifyAssessmentDialog

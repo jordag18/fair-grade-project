@@ -17,6 +17,8 @@ import { DeleteSkillDialog } from "./DeleteSkillDialog";
 import { Dialog } from "../ui/dialog";
 import { useState } from "react";
 import { ModifySkillDialog } from "./ModifySkillDialog";
+import { useUserRole } from "@/context/UserRoleContext";
+import displayIfRole from "../DisplayIfRole";
 
 interface ActionsCellProps {
   row: any;
@@ -29,6 +31,7 @@ const ActionsCell = ({ row, refreshSkills }: ActionsCellProps) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { selectedCourse } = useCourse();
   const selectedRow = row.original;
+  const { role } = useUserRole();
 
   return (
     <Dialog
@@ -55,14 +58,20 @@ const ActionsCell = ({ row, refreshSkills }: ActionsCellProps) => {
             Select Skill
           </DropdownMenuItem>
           {/* Dropdown menu item to open the modify skill dialog */}
-          <DropdownMenuItem onClick={() => setIsModifyDialogOpen(true)}>  
-            Modify Skill
-          </DropdownMenuItem>
+          {displayIfRole(
+            role,
+            <DropdownMenuItem onClick={() => setIsModifyDialogOpen(true)}>
+              Modify Skill
+            </DropdownMenuItem>
+          )}
           <DropdownMenuSeparator />
           {/* Dropdown menu item to open the delete skill dialog */}
-          <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)}>
-            Delete Skill
-          </DropdownMenuItem>
+          {displayIfRole(
+            role,
+            <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)}>
+              Delete Skill
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
       <ModifySkillDialog

@@ -3,26 +3,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 
-const adminLinks = [
-  { name: "Courses", href: "/dashboard/admin/Courses" },
-  { name: "Skills", href: "/dashboard/admin/Skills" },
-  { name: "Assessments", href: "/dashboard/admin/Assessments" },
-  { name: "Users", href: "/dashboard/admin/Users" },
-  { name: "Overview", href: "/dashboard/admin/Overview" },
-];
-
-const instructorLinks = [
-  { name: "Courses", href: "/dashboard/instructor/Courses" },
-  { name: "Skills", href: "/dashboard/instructor/Skills" },
-  { name: "Assessments", href: "/dashboard/instructor/Assessments" },
-  { name: "Users", href: "/dashboard/instructor/Users" },
-  { name: "Overview", href: "/dashboard/instructor/Overview" },
+const moderatorLinks = [
+  { name: "Courses", href: "/dashboard/courses" },
+  { name: "Skills", href: "/dashboard/skills" },
+  { name: "Assessments", href: "/dashboard/assessments" },
+  { name: "Users", href: "/dashboard/users" },
+  { name: "Overview", href: "/dashboard/overview" },
 ];
 
 const studentLinks = [
-  { name: "Courses", href: "/dashboard/student/Courses" },
-  { name: "Skills", href: "/dashboard/student/Skills" },
-  { name: "Assessments", href: "/dashboard/student/Assessments" },
+  { name: "Courses", href: "/dashboard/courses" },
+  { name: "Skills", href: "/dashboard/skills" },
+  { name: "Assessments", href: "/dashboard/assessments" },
 ];
 
 const NavLinks = ({ userRole }: { userRole: string }) => {
@@ -31,10 +23,16 @@ const NavLinks = ({ userRole }: { userRole: string }) => {
 
   switch (userRole) {
     case "Admin":
-      links = adminLinks;
+      links = moderatorLinks;
       break;
     case "Instructor":
-      links = instructorLinks;
+      links = moderatorLinks;
+      break;
+    case "TA":
+      links = moderatorLinks;
+      break;
+    case "IA":
+      links = moderatorLinks;
       break;
     default:
       links = studentLinks;
@@ -50,7 +48,8 @@ const NavLinks = ({ userRole }: { userRole: string }) => {
           className={clsx(
             "flex h-[64px] grow items-center justify-center bg-slate-200 p-3 text-lg font-semibold hover:bg-slate-400 hover:border-black hover:border-2 hover:border-opacity-20 hover:text-white md:flex-none md:justify-start md:p-2 md:px-3",
             {
-              "bg-slate-400 text-white drop-shadow-2xl border-2 border-black border-opacity-20": pathname === link.href,
+              "bg-slate-400 text-white drop-shadow-2xl border-2 border-black border-opacity-20":
+                pathname === link.href,
             }
           )}
         >

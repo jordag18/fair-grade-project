@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { DataTable } from "../../../../components/DataTable/DataTable";
+import { DataTable } from "@/components/DataTable/DataTable";
 import { useCourse } from "@/context/CourseContext";
 import { fetchCourseSkills, fetchUsersWithSkillsAndAssessments } from "@/components/Overview/OverviewServerActions";
 import { columns, User } from "./columns";
