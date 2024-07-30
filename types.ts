@@ -86,6 +86,7 @@ export interface Course {
   TimeRange: string;
   Location: string;
   Instructor: string;
+  uniqueCode: string;
   CourseSkills: CourseSkill[];
   UserCourse: UserCourse[];
   Assessments: Assessment[];

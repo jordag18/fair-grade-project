@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useCallback } from "react";
-import { columns } from "@/app/dashboard/admin/Skills/columns";
+import { columns } from "./columns";
 import { DataTable } from "@/components/DataTable/DataTable";
 import { CreateSkillDialog } from "@/components/Skills/CreateSkillDialog";
 import { useCourse } from "@/context/CourseContext";

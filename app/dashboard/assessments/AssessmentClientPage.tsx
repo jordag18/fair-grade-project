@@ -7,15 +7,12 @@ import { useCourse } from "@/context/CourseContext";
 import { getAssessmentsByCourse } from "@/components/Assessments/AssessmentServerActions";
 import { columns } from "./columns";
 import { Assessment } from "@/types";
-import { useUserRole } from "@/context/UserRoleContext";
-import displayIfRole from "@/components/DisplayIfRole";
 
 //React function component to display the assessment dashboard with assessment data table and create assessment button
 const AssessmentClientPage: React.FC = () => {
   const { selectedCourse } = useCourse();
   const [assessments, setAssessments] = useState<Assessment[]>([]);
   const [loading, setLoading] = useState(true);
-  const { role } = useUserRole();
 
   //Callback function to refresh the assessment data table
   const refreshAssessments = useCallback(() => {
@@ -51,7 +48,7 @@ const AssessmentClientPage: React.FC = () => {
       <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
         <div className="flex justify-between">
           <div className="flex gap-x-2">
-            {displayIfRole(role, <CreateAssessmentDialog onAssessmentCreated={refreshAssessments} />)}
+            <CreateAssessmentDialog onAssessmentCreated={refreshAssessments} />
           </div>
         </div>
         <div className="overflow-auto max-h-screen">

@@ -63,7 +63,7 @@ export const AssessmentSkillDrawer: React.FC<AssessmentSkillDrawerProps> = ({
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button variant="outline">Select Skills Drawer</Button>
+        <Button variant="outline">Select Skills</Button>
       </DrawerTrigger>
       <DrawerContent>
         <div className="mx-auto w-full max-w-7xl">

@@ -126,17 +126,18 @@ model CourseSkills {
 }
 
 model Courses {
-  CourseID     String         @id @default(cuid())
-  CourseTag    String         @db.VarChar(100)
-  CourseName   String         @db.VarChar(100)
-  StartDate    DateTime
-  EndDate      DateTime
-  TimeRange    String         @db.VarChar(100)
-  Location     String         @db.VarChar(100)
-  Instructor   String         @db.VarChar(100)
-  CourseSkills CourseSkills[]
-  UserCourse   UserCourse[]
-  Assessments  Assessments[]
+  CourseID      String          @id @default(cuid())
+  CourseTag     String          @db.VarChar(100)
+  CourseName    String          @db.VarChar(100)
+  StartDate     DateTime
+  EndDate       DateTime
+  TimeRange     String          @db.VarChar(100)
+  Location      String          @db.VarChar(100)
+  Instructor    String          @db.VarChar(100)
+  uniqueCode    String          @unique
+  CourseSkills  CourseSkills[]
+  UserCourse    UserCourse[]
+  Assessments   Assessments[]
   StudentSkills StudentSkills[]
 
   @@index([CourseID], map: "CourseID")

@@ -2,6 +2,7 @@ import { getUserRole } from "@/lib/auth/getUserRoleServerAction"
 import { redirect } from "next/navigation";
 
 
+
 const Dashboard: React.FC = async () => {
     const role = await getUserRole();
 

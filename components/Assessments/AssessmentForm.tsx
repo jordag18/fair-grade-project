@@ -33,6 +33,7 @@ import {
 import { Course, CourseSkill } from "@/types";
 import { useUserId } from "@/lib/auth/useUser";
 import { AssessmentSkillDrawer } from "./AssessmentSkillDrawer";
+import { getUserById } from "@/lib/auth/getUserNameByIdServerAction";
 
 const FormSchema = z.object({
   assessmentID: z.string().optional(),
@@ -64,6 +65,7 @@ interface CreateAssessmentFormProps {
   initialData?: FormSchemaType;
   isEditMode?: boolean;
   selectedCourse?: Course | null;
+  isStudent?: boolean;
 }
 
 const mapInitialData = (data: any) => ({
@@ -76,7 +78,6 @@ const mapInitialData = (data: any) => ({
   comment: data.Comment,
   instrumentType: data.InstrumentType,
   assessmentDate: data.AssessmentDate,
-  instrumentDescription: data.InstrumentDescription,
   assessmentSkills: data.AssessmentSkills || [],
 });
 
@@ -85,13 +86,27 @@ export function AssessmentForm({
   initialData,
   isEditMode,
   selectedCourse,
+  isStudent,
 }: CreateAssessmentFormProps) {
   const [users, setUsers] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [assessmentSkills, setAssessmentSkills] = useState<CourseSkill[]>([]);
+  const [currentUser, setCurrentUser] = useState<{ id: string; name: string } | null>(null);
 
   useEffect(() => {
     console.log("initial data: ", initialData);
+
+    const fetchCurrentUser = async () => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const userId = await useUserId();
+      const userName = await getUserById(userId as string);
+      setCurrentUser({ id: userId, name: userName });
+    };
+
+    if (isStudent) {
+      fetchCurrentUser();
+    }
+
     if (selectedCourse) {
       fetchUsersByCourseAndRole(selectedCourse.CourseID, "Student").then(
         (response) => {
@@ -110,7 +125,7 @@ export function AssessmentForm({
     } else {
       setLoading(false);
     }
-  }, [selectedCourse]);
+  }, [selectedCourse, isStudent]);
 
   const mappedInitialData = initialData
     ? mapInitialData(initialData)
@@ -127,6 +142,13 @@ export function AssessmentForm({
     data.courseID = selectedCourse?.CourseID as string;
     data.assessmentDate = new Date();
     data.assessmentSkills = assessmentSkills;
+
+    if (isStudent && currentUser) {
+      data.assessorID = currentUser.id;
+      data.assessedUserID = currentUser.id;
+      data.assessedUserName = currentUser.name;
+    }
+
     console.log("Assessment Submission data: ", data);
     try {
       const response = isEditMode
@@ -136,8 +158,6 @@ export function AssessmentForm({
       if (!response.success) {
         throw new Error(response.error);
       }
-
-      const newAssessment = response.assessment;
 
       toast({
         title: isEditMode ? "Assessment Modified" : "Assessment Created",
@@ -167,8 +187,8 @@ export function AssessmentForm({
             <FormItem>
               <FormLabel>Student</FormLabel>
               <FormControl>
-                {isEditMode ? (
-                  <Input value={mappedInitialData?.assessedUserName} disabled />
+                {isEditMode || isStudent ? (
+                  <Input value={mappedInitialData?.assessedUserName || currentUser?.name} disabled />
                 ) : (
                   <Select
                     onValueChange={field.onChange}
@@ -268,3 +288,4 @@ export function AssessmentForm({
     </Form>
   );
 }
+
