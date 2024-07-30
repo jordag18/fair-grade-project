@@ -49,7 +49,7 @@ export async function modifySkill(skillData: FormSchemaType) {
       where: { SkillID: skillData.skillID! },
       data: {
         SkillName: skillData.skillName,
-        AddedBy: skillData.addedBy,  // Ensuring addedBy is not undefined
+        AddedBy: skillData.addedBy, 
         SkillType: skillData.skillType,
       },
     });
@@ -97,3 +97,27 @@ export async function getCourseSkills(courseID: string) {
   const skills = await getCourseSkills(courseID);
   console.log('Course skills:', skills);
 })();
+
+export async function getStudentSkillsByUser(courseID: string, userID: string) {
+  try {
+    const studentSkills = await prisma.studentSkills.findMany({
+      where: {
+        CourseID: courseID,
+        UserID: userID,
+      },
+      include: {
+        Skills: true,
+      },
+    });
+
+    return studentSkills.map(skill => ({
+      SkillID: skill.SkillID,
+      SkillName: skill.Skills?.SkillName || "Unknown Skill",
+      SkillType: skill.Skills?.SkillType || "Unknown Type",
+      Score: skill.Score,
+    }));
+  } catch (error) {
+    console.error("Error fetching student skills:", error);
+    throw new Error("Failed to fetch student skills");
+  }
+}
