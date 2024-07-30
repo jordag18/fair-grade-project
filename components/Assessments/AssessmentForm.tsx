@@ -125,7 +125,7 @@ export function AssessmentForm({
     } else {
       setLoading(false);
     }
-  }, [selectedCourse, isStudent]);
+  }, [selectedCourse, isStudent, initialData]);
 
   const mappedInitialData = initialData
     ? mapInitialData(initialData)

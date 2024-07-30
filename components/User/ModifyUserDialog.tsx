@@ -31,7 +31,7 @@ export function ModifyUserDialog({
         <DialogHeader>
           <DialogTitle>Modify User</DialogTitle>
           <DialogDescription>
-            Modify user role details here. Click save when you're done.
+            Modify user role details here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
       </DialogContent>
