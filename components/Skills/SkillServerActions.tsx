@@ -21,7 +21,7 @@ export async function createSkill(skillData: FormSchemaType, courseID: string) {
     const newSkill = await prisma.skills.create({
       data: {
         SkillName: skillData.skillName,
-        AddedBy: skillData.addedBy,  // Ensuring addedBy is not undefined
+        AddedBy: skillData.addedBy, 
         SkillType: skillData.skillType,
       },
     });

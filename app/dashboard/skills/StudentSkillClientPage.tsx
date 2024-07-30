@@ -14,7 +14,6 @@ const StudentSkillClientPage = () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const userId = await useUserId();
     if (selectedCourse && userId) {
-        console.log("selected Course ID: ", selectedCourse.CourseID, "user ID: ", userId)
       const skills = await getStudentSkillsByUser(selectedCourse.CourseID, userId);
       setStudentSkills(skills);
     }
