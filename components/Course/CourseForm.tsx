@@ -195,7 +195,7 @@ export function CourseForm({
             <FormItem>
               <FormLabel>Date</FormLabel>
               <FormControl>
-                <Popover>
+                <Popover modal={true}>
                   <PopoverTrigger asChild>
                     <Button
                       variant={"outline"}
@@ -219,7 +219,7 @@ export function CourseForm({
                       )}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
+                  <PopoverContent className="w-auto p-0" align="center">
                     <Calendar
                       initialFocus
                       mode="range"
