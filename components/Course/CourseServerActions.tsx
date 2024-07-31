@@ -192,6 +192,7 @@ export async function enrollInCourse(
         Role: "Student",
       },
     });
+    revalidatePath("/courses");
 
     return { success: true };
   } catch (error) {

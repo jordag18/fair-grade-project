@@ -12,7 +12,8 @@ import { useUserId } from "@/lib/auth/useUser";
 export default async function AdminCoursePage() {
   const role: any = await getUserRole();
   let data: Course[];
-
+  data = await fetchAllCourses(); //temp fix 
+  /*
   if (role === UserCourseRole.Admin) {
     data = await fetchAllCourses();
   } else {
@@ -22,6 +23,7 @@ export default async function AdminCoursePage() {
   }
 
   console.log("Course Data: ", data)
+  */
 
   return (
     <div className="flex mx-20 items-center content-center">
