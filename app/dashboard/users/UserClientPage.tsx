@@ -18,7 +18,7 @@ const UserClientPage = () => {
         (data) => {
           if (data.success && data.users) {
             console.log("User Data: ", data.users);
-            setUsers(data.users);
+            setUsers(data.users as any);
           } else {
             console.error("Failed to fetch users:", data.error);
           }
@@ -35,7 +35,7 @@ const UserClientPage = () => {
       fetchUsersByCourseAndRole(selectedCourse.CourseID, "Student").then(
         (data) => {
           if (data.success && data.users) {
-            setUsers(data.users);
+            setUsers(data.users as any);
           } else {
             console.error("Failed to refresh users:", data.error);
           }

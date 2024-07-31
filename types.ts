@@ -14,6 +14,7 @@ export enum UserCourseRole {
 }
 
 export interface User {
+  userID: any;
   id: string;
   name: string | null;
   username: string | null;
