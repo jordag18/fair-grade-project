@@ -100,6 +100,13 @@ export async function getCourseSkills(courseID: string) {
 
 export async function getStudentSkillsByUser(courseID: string, userID: string) {
   try {
+    // Fetch all course skills
+    const courseSkills = await prisma.courseSkills.findMany({
+      where: { CourseID: courseID },
+      include: { Skills: true },
+    });
+
+    // Fetch student skills
     const studentSkills = await prisma.studentSkills.findMany({
       where: {
         CourseID: courseID,
@@ -110,12 +117,24 @@ export async function getStudentSkillsByUser(courseID: string, userID: string) {
       },
     });
 
-    return studentSkills.map(skill => ({
-      SkillID: skill.SkillID,
-      SkillName: skill.Skills?.SkillName || "Unknown Skill",
-      SkillType: skill.Skills?.SkillType || "Unknown Type",
-      Score: skill.Score,
-    }));
+    // Map student skills to a dictionary for quick lookup
+    const studentSkillsMap = new Map<string, { Score: number }>();
+    studentSkills.forEach(skill => {
+      studentSkillsMap.set(skill.SkillID, { Score: skill.Score });
+    });
+
+    // Combine course skills and student skills
+    const combinedSkills = courseSkills.map(courseSkill => {
+      const studentSkill = studentSkillsMap.get(courseSkill.SkillID);
+      return {
+        SkillID: courseSkill.SkillID,
+        SkillName: courseSkill.Skills?.SkillName || "Unknown Skill",
+        SkillType: courseSkill.Skills?.SkillType || "Unknown Type",
+        Score: studentSkill ? studentSkill.Score : 0, // Default to 0 if student skill not found
+      };
+    });
+
+    return combinedSkills;
   } catch (error) {
     console.error("Error fetching student skills:", error);
     throw new Error("Failed to fetch student skills");

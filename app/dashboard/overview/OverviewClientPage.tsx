@@ -125,8 +125,8 @@ const OverviewClientPage = () => {
   const dynamicColumns = columns(skills);
 
   return (
-    <div className="flex mx-20 items-center content-center">
-      <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex overflow-auto max-h-screen">
+    <div className="flex mx-20 items-center content-center w-full">
+      <div className="h-full flex-1 flex-col space-y-8 p-8 md:flex overflow-auto max-h-screen">
         <DataTable
           columns={Array.isArray(dynamicColumns) ? dynamicColumns : []}
           data={dataWithPercentageRow}

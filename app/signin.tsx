@@ -3,6 +3,7 @@
 import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { handleGoogleSignIn } from "@/lib/auth/googleSignInServerAction";
+import { handleGitHubSignIn } from "@/lib/auth/githubSignInServerAction";
 
 export const SignInPage: React.FC = () => {
     return (
@@ -25,12 +26,13 @@ export const SignInPage: React.FC = () => {
                 Sign in with Google
               </Button>
               <Button
-                onClick={() => signIn("github")}
+                onClick={() => handleGitHubSignIn()}
                 className="mb-4 w-2/3 bg-slate-600"
               >
                 Sign in with GitHub
               </Button>
               <Button
+                disabled
                 onClick={() => signIn("utep")}
                 className="w-2/3 bg-orange-600"
               >
