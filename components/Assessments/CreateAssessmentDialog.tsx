@@ -43,20 +43,21 @@ export function CreateAssessmentDialog({
           Create Assessment
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[550px] max-h-screen overflow-hidden">
         <DialogHeader>
           <DialogTitle>Create Assessment</DialogTitle>
           <DialogDescription>
             Fill out the form below to create a new assessment.
           </DialogDescription>
         </DialogHeader>
-        <AssessmentForm
-          onFormSubmit={handleFormSubmit}
-          selectedCourse={selectedCourse}
-          isStudent={isStudent}
-        />
+        <div className="overflow-y-auto max-h-[75vh]">
+          <AssessmentForm
+            onFormSubmit={handleFormSubmit}
+            selectedCourse={selectedCourse}
+            isStudent={isStudent}
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );
 }
-

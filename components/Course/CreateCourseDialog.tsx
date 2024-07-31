@@ -28,14 +28,16 @@ export function CreateCourseDialog() {
           Create Course
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] max-h-screen overflow-hidden">
         <DialogHeader>
           <DialogTitle>Create Course</DialogTitle>
           <DialogDescription>
             Insert course details here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
-        <CourseForm onFormSubmit={handleFormSubmit}/>
+        <div className="overflow-y-auto max-h-[75vh]">
+          <CourseForm onFormSubmit={handleFormSubmit} />
+        </div>
       </DialogContent>
     </Dialog>
   );

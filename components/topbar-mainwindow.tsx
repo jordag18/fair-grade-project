@@ -9,9 +9,29 @@ import {
 import { useCourse } from "@/context/CourseContext";
 import displayIfRole from "@/components/DisplayIfRole";
 import { UserCourseRole } from "@/types";
+import { toast } from "./ui/use-toast";
 
 export default function TopBar({ userRole }: { userRole: string }) {
   const { selectedCourse } = useCourse();
+
+  const copyToClipboard = async () => {
+    if (selectedCourse?.uniqueCode) {
+      try {
+        await navigator.clipboard.writeText("Invitation to " + selectedCourse.CourseName + ", please enter this code to join the course: " + selectedCourse.uniqueCode);
+        toast({
+          title: "Copied!",
+          description: `Copied invite code ${selectedCourse.uniqueCode} to clipboard!`,
+        });
+      } catch (err) {
+        toast({
+          title: "Error",
+          description: `Failed to copy invite code!`,
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
 
   return (
     <div className="relative flex h-14 w-full bg-slate-200 items-center drop-shadow-md">
@@ -36,6 +56,9 @@ export default function TopBar({ userRole }: { userRole: string }) {
                   </h4>
                   <p className="text-sm">Code: {selectedCourse?.uniqueCode}</p>
                 </div>
+                <Button variant="outline" onClick={copyToClipboard}>
+                  Copy
+                </Button>
               </div>
             </HoverCardContent>
           </HoverCard>

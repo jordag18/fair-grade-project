@@ -25,18 +25,20 @@ export function ModifyCourseDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[500px] max-h-screen overflow-hidden">
         <DialogHeader>
           <DialogTitle>Modify Course</DialogTitle>
           <DialogDescription>
             Modify course details here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
-        <CourseForm 
-          onFormSubmit={handleFormSubmit}
-          initialData={initialData}
-          isEditMode={true}
-        />
+        <div className="overflow-y-auto max-h-[75vh]">
+          <CourseForm
+            onFormSubmit={handleFormSubmit}
+            initialData={initialData}
+            isEditMode={true}
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );

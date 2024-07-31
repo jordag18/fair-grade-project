@@ -65,16 +65,16 @@ export const AssessmentSkillDrawer: React.FC<AssessmentSkillDrawerProps> = ({
       <DrawerTrigger asChild>
         <Button variant="outline">Select Skills</Button>
       </DrawerTrigger>
-      <DrawerContent>
-        <div className="mx-auto w-full max-w-7xl">
+      <DrawerContent className="h-1/2">
+        <div className="mx-auto w-full max-w-7xl h-full flex flex-col">
           <DrawerHeader>
             <DrawerTitle>Select Skills</DrawerTitle>
             <DrawerDescription>
               Set the skills assessed and competency score.
             </DrawerDescription>
           </DrawerHeader>
-          <div className="p-4 pb-0 flex">
-            <div className="w-1/2 p-2 border-r">
+          <div className="p-4 pb-0 flex-1 flex overflow-hidden">
+            <div className="w-1/2 p-2 border-r overflow-y-auto">
               <h3 className="mb-2">Available Skills</h3>
               <div className="flex flex-col space-y-2">
                 {skills.map((skill) => (
@@ -94,7 +94,7 @@ export const AssessmentSkillDrawer: React.FC<AssessmentSkillDrawerProps> = ({
                 ))}
               </div>
             </div>
-            <div className="w-1/2 p-2">
+            <div className="w-1/2 p-2 overflow-y-auto">
               <h3 className="mb-2">Selected Skills</h3>
               <div className="flex flex-col space-y-2">
                 {Object.keys(selectedSkills).map((skillId) => {
@@ -159,4 +159,5 @@ export const AssessmentSkillDrawer: React.FC<AssessmentSkillDrawerProps> = ({
       </DrawerContent>
     </Drawer>
   );
+  
 };
