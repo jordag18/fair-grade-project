@@ -2,23 +2,24 @@ import { getUserRole } from "@/lib/auth/getUserRoleServerAction"
 import { redirect } from "next/navigation";
 
 
+
 const Dashboard: React.FC = async () => {
     const role = await getUserRole();
 
     if (role == "Admin") {
-        redirect("dashboard/admin/Courses");
+        redirect("dashboard/courses");
     }
     else if (role == "Instructor") {
-        redirect("dashboard/instructor/Courses");
+        redirect("dashboard/courses");
     }
     else if (role == "IA" || role == "TA") {
-        redirect("dashboard/ia/Courses");
+        redirect("dashboard/courses");
     }
     else if (role == "Student") {
-        redirect("dashboard/student/Courses")
+        redirect("dashboard/courses")
     }
     else {
-        redirect("localhost:3000")
+        redirect("/")
     }
 }
 

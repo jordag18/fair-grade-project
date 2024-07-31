@@ -17,7 +17,7 @@ export default async function DashboardProps({
         <div className="flex w-full bg-slate-300">
           <SideNav userRole={userRole as string} />
           <div
-            className="flex w-full justify-center h-full-with-margin bg-slate-100 m-5"
+            className="flex w-full justify-center h-full-with-margin bg-slate-100 m-5 overflow-x-auto"
             style={{ "--top-margin": "10rem", marginTop: "1rem" } as React.CSSProperties}
           >
             {children}

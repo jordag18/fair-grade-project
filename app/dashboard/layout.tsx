@@ -1,5 +1,6 @@
 import DashboardProps from "@/components/dashboardProps";
-import { CourseProvider } from "@/context/CourseContext";
+import { Toaster } from "@/components/ui/toaster";
+import { UserRoleProvider } from "@/context/UserRoleContext";
 
 export default function DashboardLayout({
   children,
@@ -7,8 +8,11 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <DashboardProps>
-      {children}
-    </DashboardProps>
+    <UserRoleProvider>
+      <DashboardProps>
+        {children}
+        <Toaster />
+      </DashboardProps>
+    </UserRoleProvider>
   );
 }

@@ -19,6 +19,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     GitHubProvider({
       clientId: process.env.AUTH_GITHUB_ID,
       clientSecret: process.env.AUTH_GITHUB_SECRET,
+      allowDangerousEmailAccountLinking: true,
     }),
   ],
   callbacks: {
@@ -43,37 +44,41 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return false;
       }
     },
-    async redirect({ url, baseUrl }) {
-      return url.startsWith(baseUrl) ? url : baseUrl;
-    },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-
-        const userCourse = await prisma.userCourse.findFirst({
-          where: { UserID: user.id },
-        });
-
-        if (!userCourse) {
-          await prisma.userCourse.create({
-            data: {
-              UserID: user.id as string,
-              CourseID: 1,
-              Role: "Student",
-            },
+        try {
+          let userCourse = await prisma.userCourse.findFirst({
+            where: { UserID: user.id },
           });
-          token.role = "Student";
-        } else {
-          token.role = userCourse.Role;
+
+          if (!userCourse) {
+            if (typeof user.id === 'string') {
+              userCourse = await prisma.userCourse.create({
+                data: {
+                  UserID: user.id,
+                  CourseID: "clytfxlnd000052wzwk0sky9w",
+                  Role: "Student",
+                },
+              });
+              token.role = "Student";
+            } else {
+              throw new Error("User ID is not defined");
+            }
+          } else {
+            token.role = userCourse.Role;
+          }
+        } catch (error) {
+          console.error("Error in jwt callback:", error);
+          throw new Error("Error creating or fetching userCourse");
         }
       }
       return token;
     },
     async session({ session, token }) {
-      session.user.id = token.id as string; 
-      session.user.role = token.role as UserCourseRole; 
+      session.user.id = token.id as string;
+      session.user.role = token.role as UserCourseRole;
       return session;
     },
   },
-  debug: true,
 });

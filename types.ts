@@ -1,107 +1,107 @@
+export enum SkillType {
+  Quiz = "Quiz",
+  Lab = "Lab",
+  Professional = "Professional",
+  Other = "Other",
+}
+
+export enum UserCourseRole {
+  Admin = "Admin",
+  Instructor = "Instructor",
+  TA = "TA",
+  IA = "IA",
+  Student = "Student",
+}
+
 export interface User {
-  id: string
-  name?: string
-  username?: string
-  email?: string
-  emailVerified?: Date
-  image?: string
-  createdAt: Date
-  updatedAt: Date
-  role: UserCourseRole 
+  userID: any;
+  id: string;
+  name: string | null;
+  username: string | null;
+  email: string | null;
+  emailVerified: Date | null;
+  image: string | null;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export interface Account {
-  id: string
-  userId: string
-  type: string
-  provider: string
-  providerAccountId: string
-  refresh_token?: string
-  access_token?: string
-  expires_at?: number
-  token_type?: string
-  scope?: string
-  id_token?: string
-  session_state?: string
-  refresh_token_expires_in?: number
-  createdAt: Date
-  updatedAt: Date
-}
-
-export interface Session {
-  id: string
-  sessionToken: string
-  userId: string
-  expires: Date
-  createdAt: Date
-  updatedAt: Date
-}
-
-export interface VerificationToken {
-  identifier: string
-  token: string
-  expires: Date
-}
-
-export interface AssessmentSkill {
-  AssessmentID: number
-  SkillID: number
-  Score: number
-  Comment: string
-  Date: Date
-  CourseSkills: CourseSkill
-}
-
-export interface Assessment {
-  AssessmentID: number
-  AssessorID: string
-  AssessedUserID: string
-  CourseID: number
-  Comment: string
-  InstrumentType: string
-  AssessmentDate: Date
-  InstrumentDescription: string
-  Users_Assessments_AssessorIDToUsers: User
-  Users_Assessments_AssessedUserIDToUsers: User
+export interface Skill {
+  SkillID: string;
+  SkillName: string;
+  AddedBy: string;
+  SkillType: string;
 }
 
 export interface CourseSkill {
-  SkillID: number
-  SkillName: string
-  CourseID: number
-  AssessmentSkills: AssessmentSkill[]
-  Courses: Course
-}
-
-export interface Course {
-  CourseID: number
-  CourseName: string
-  CourseSkills?: CourseSkill[]
-  UserCourse?: UserCourse[]
+  SkillID: string;
+  CourseID: string;
+  Skills: Skill
 }
 
 export interface UserCourse {
-  UserID: string
-  CourseID: number
-  Role: UserCourseRole
-  Users: User
-  Courses: Course
+  UserID: string;
+  CourseID: string;
+  Role: string;
+  Users: User;
 }
 
-export type UserCourseRole = 'Admin' | 'Instructor' | 'TA' | 'IA' | 'Student'
+export interface AssessmentSkill {
+  AssessmentSkillID: string;
+  AssessmentID: string;
+  SkillID: string;
+  Score: number;
+}
+
+export interface Assessment {
+  AssessmentID: string;
+  Title: string;
+  AssessorID: string | null;
+  AssessedUserID: string;
+  AssessedUserName: string | null;
+  CourseID: string;
+  Comment: string;
+  InstrumentType: string;
+  AssessmentDate: Date;
+  InstrumentDescription: string;
+  AssessmentSkills: {
+    SkillID: string;
+    Score: number;
+  }[];
+}
+
+export interface StudentSkill {
+  UserID: string;
+  CourseID: string;
+  SkillID: string;
+  Score: number;
+  User: User;
+  Skills: Skill;
+}
+
+export interface Course {
+  CourseID: string;
+  CourseTag: string;
+  CourseName: string;
+  StartDate: Date;
+  EndDate: Date;
+  TimeRange: string;
+  Location: string;
+  Instructor: string;
+  uniqueCode: string;
+  CourseSkills: CourseSkill[];
+  UserCourse: UserCourse[];
+  Assessments: Assessment[];
+  StudentSkills: StudentSkill[];
+}
 
 export interface CreateCourseInput {
-  courseName: string
+  courseName: string;
 }
 
 declare module 'next-auth' {
   interface Session {
     user: User & {
-      role: UserCourseRole
-    }
-  }
-
-  interface User {
-    role: UserCourseRole
+      role: UserCourseRole;
+    };
   }
 }

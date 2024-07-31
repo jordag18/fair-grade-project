@@ -1,30 +1,90 @@
 "use client";
 
 import { useCourse } from "@/context/CourseContext";
-import { DropdownMenu, DropdownMenuLabel, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@radix-ui/react-dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import { DeleteCourseDialog } from "./DeleteCourseDialog";
+import { Dialog } from "../ui/dialog";
+import { useState } from "react";
+import { ModifyCourseDialog } from "./ModifyCourseDialog";
+import { useUserRole } from "@/context/UserRoleContext";
+import displayIfRole from "../DisplayIfRole";
+import { UserCourseRole } from "@/types";
 
+//Action dropdown menu for Course DataTable, displays operations for selecting, modifying, and deleting of the course displayed in the selected row
 const ActionsCell = ({ row }: { row: any }) => {
-  const { setSelectedCourse } = useCourse();
-  const user = row.original;
+  const [isModifyDialogOpen, setIsModifyDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const { setSelectedCourse, selectedCourse } = useCourse();
+  const { role } = useUserRole();
+  const selectedRow = row.original;
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
-          <span className="sr-only">Open menu</span>
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem onClick={() => setSelectedCourse(user.CourseName)}>
-          Select Course
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Dialog
+      open={isModifyDialogOpen || isDeleteDialogOpen}
+      onOpenChange={
+        isModifyDialogOpen ? setIsModifyDialogOpen : setIsDeleteDialogOpen
+      }
+    >
+      <DropdownMenu modal={false}>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Open menu</span>
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={() => {
+              setSelectedCourse(selectedRow);
+              console.log("Selected Course Data: ", selectedRow);
+            }}
+          >
+            Select Course
+          </DropdownMenuItem>
+          {displayIfRole(
+            role as UserCourseRole,
+            <DropdownMenuItem
+              onClick={() => {
+                setIsModifyDialogOpen(true);
+                console.log(selectedRow);
+              }}
+            >
+              Modify Course
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuSeparator />
+          {displayIfRole(
+            role as UserCourseRole,
+            <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)}>
+              Delete Course
+            </DropdownMenuItem>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <ModifyCourseDialog
+        isOpen={isModifyDialogOpen}
+        onOpenChange={setIsModifyDialogOpen}
+        initialData={selectedRow}
+      />
+      <DeleteCourseDialog
+        isOpen={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        courseID={selectedRow.CourseID}
+      />
+    </Dialog>
   );
 };
 
