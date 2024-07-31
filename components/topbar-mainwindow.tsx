@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/hover-card";
 import { useCourse } from "@/context/CourseContext";
 import displayIfRole from "@/components/DisplayIfRole";
+import { UserCourseRole } from "@/types";
 
 export default function TopBar({ userRole }: { userRole: string }) {
   const { selectedCourse } = useCourse();
@@ -21,7 +22,7 @@ export default function TopBar({ userRole }: { userRole: string }) {
         Selected Course: {selectedCourse?.CourseName}
       </h3>
       {displayIfRole(
-        userRole,
+        userRole as UserCourseRole,
         <div className="ml-auto mr-5">
           <HoverCard>
             <HoverCardTrigger asChild>

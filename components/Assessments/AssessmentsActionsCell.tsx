@@ -19,6 +19,7 @@ import { useState } from "react";
 import { ModifyAssessmentDialog } from "./ModifyAssessmentDialog";
 import { useUserRole } from "@/context/UserRoleContext";
 import displayIfRole from "../DisplayIfRole";
+import { UserCourseRole } from "@/types";
 
 interface ActionsCellProps {
   row: any;
@@ -58,7 +59,7 @@ const ActionsCell = ({ row, refreshAssessments }: ActionsCellProps) => {
             Select Assessment
           </DropdownMenuItem>
           {displayIfRole(
-            role,
+            role as UserCourseRole,
             <DropdownMenuItem
               onClick={() => {
                 setIsModifyDialogOpen(true);
@@ -70,7 +71,7 @@ const ActionsCell = ({ row, refreshAssessments }: ActionsCellProps) => {
           )}
           <DropdownMenuSeparator />
           {displayIfRole(
-            role,
+            role as UserCourseRole,
             <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)}>
               Delete Assessment
             </DropdownMenuItem>

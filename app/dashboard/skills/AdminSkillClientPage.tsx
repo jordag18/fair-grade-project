@@ -8,6 +8,7 @@ import { useCourse } from "@/context/CourseContext";
 import { getCourseSkills } from "@/components/Skills/SkillServerActions";
 import displayIfRole from "@/components/DisplayIfRole";
 import { useUserRole } from "@/context/UserRoleContext";
+import { UserCourseRole } from "@/types";
 
 const AdminSkillClientPage = () => {
   const { selectedCourse, courseSkills, setCourseSkills } = useCourse();
@@ -34,7 +35,7 @@ const AdminSkillClientPage = () => {
       <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
         <div className="flex justify-between">
           <div className="flex gap-x-2">
-            {displayIfRole(role, <CreateSkillDialog onSkillCreated={refreshSkills} />)}
+            {displayIfRole(role as UserCourseRole, <CreateSkillDialog onSkillCreated={refreshSkills} />)}
           </div>
         </div>
         <div className="overflow-auto max-h-screen">

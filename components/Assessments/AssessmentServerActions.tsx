@@ -3,18 +3,23 @@
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { FormSchemaType } from "./AssessmentForm";
+import { UserCourseRole } from "@/types";
 
 export async function createAssessment(assessmentData: FormSchemaType) {
   try {
+    const assessorID = assessmentData.assessorID ?? '';
+    const assessedUserID = assessmentData.assessedUserID ?? '';
+    const courseID = assessmentData.courseID ?? '';
+
     const newAssessment = await prisma.assessments.create({
       data: {
-        AssessorID: assessmentData.assessorID,
-        AssessedUserID: assessmentData.assessedUserID,
+        AssessorID: assessorID,
+        AssessedUserID: assessedUserID,
         Title: assessmentData.assessmentTitle,
-        CourseID: assessmentData.courseID,
-        Comment: assessmentData.comment,
+        CourseID: courseID,
+        Comment: assessmentData.comment as string,
         InstrumentType: assessmentData.instrumentType,
-        AssessmentDate: assessmentData.assessmentDate,
+        AssessmentDate: assessmentData.assessmentDate ? new Date(assessmentData.assessmentDate) : new Date(),
         InstrumentDescription: assessmentData.instrumentDescription,
       },
     });
@@ -105,7 +110,7 @@ export async function modifyAssessment(assessmentData: FormSchemaType) {
         assessmentData.assessmentSkills.map((skill) =>
           prisma.studentSkills.upsert({
             where: {
-              UserID_SkillID_CourseID: {
+              UserID_CourseID_SkillID: {
                 UserID: assessmentData.assessedUserID!,
                 SkillID: skill.SkillID,
                 CourseID: assessmentData.courseID!,
@@ -132,6 +137,7 @@ export async function modifyAssessment(assessmentData: FormSchemaType) {
     return { success: false, error: "Failed to modify assessment" };
   }
 }
+
 
 export async function deleteAssessment(assessmentID: string) {
   try {
@@ -194,7 +200,7 @@ export async function fetchUsersByCourseAndRole(courseID: string, role: string) 
           UserCourse: {
             some: {
               CourseID: courseID,
-              Role: role,
+              Role: role as UserCourseRole,
             },
           },
         },

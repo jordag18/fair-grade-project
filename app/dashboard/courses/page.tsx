@@ -18,7 +18,7 @@ export default async function AdminCoursePage() {
   } else {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const userId = await useUserId();
-    data = await fetchUserCourses(userId);
+    data = await fetchUserCourses(userId as string);
   }
 
   console.log("Course Data: ", data)

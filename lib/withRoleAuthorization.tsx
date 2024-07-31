@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { getUserRole } from './auth/getUserRoleServerAction';
 import UnauthorizedPage from '@/components/UnauthorizedPage';
+import { UserCourseRole } from '@/types';
 export const withRoleAuthorization = (
   Component: React.ComponentType,
   allowedRoles: string[]
@@ -15,7 +16,7 @@ export const withRoleAuthorization = (
       const fetchRole = async () => {
         try {
           const role = await getUserRole();
-          setAuthorized(allowedRoles.includes(role));
+          setAuthorized(allowedRoles.includes(role as UserCourseRole));
         } catch (error) {
           console.error('Error fetching user role:', error);
           setAuthorized(false);

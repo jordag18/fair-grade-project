@@ -103,8 +103,4 @@ declare module 'next-auth' {
       role: UserCourseRole;
     };
   }
-
-  interface User {
-    role: UserCourseRole;
-  }
 }

@@ -4,8 +4,44 @@ import React, { useEffect, useState } from "react";
 import { DataTable } from "@/components/DataTable/DataTable";
 import { useCourse } from "@/context/CourseContext";
 import { fetchCourseSkills, fetchUsersWithSkillsAndAssessments } from "@/components/Overview/OverviewServerActions";
-import { columns, User } from "./columns";
-import { Skill } from "@/types";
+import { Column, ColumnDef } from "@tanstack/react-table";
+import { Skill, StudentSkill } from "@/types";
+import { DataTableColumnHeader } from "@/components/DataTable/DataTableColumnHeader";
+
+export interface User {
+  id: string;
+  name: string | null;
+  skills: StudentSkill[];
+}
+
+export type RowData = User | {
+  id: string;
+  name: string;
+  skills: { SkillID: string; Score: number; UserID: string; }[];
+};
+
+export const columns: (skills: Skill[]) => ColumnDef<RowData>[] = (skills) => [
+  {
+    accessorKey: "name",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Name" />
+    ),
+    cell: ({ row }) => (
+      <div className="w-[150px]">{row.getValue("name")}</div>
+    ),
+  },
+  ...skills.map(skill => ({
+    accessorKey: `skills.${skill.SkillID}`,
+    header: ({ column }: { column: Column<RowData, unknown> }) => (
+      <DataTableColumnHeader column={column} title={skill.SkillName} />
+    ),
+    cell: ({ row }: { row: { original: RowData } }) => {
+      const userSkills = (row.original as User).skills || [];
+      const skillData = userSkills.find(s => s.SkillID === skill.SkillID);
+      return <div className="w-[50px] text-center">{skillData ? skillData.Score : '-'}</div>;
+    },
+  })),
+];
 
 function calculateSkillPercentages(users: User[], skills: Skill[]): Record<string, number> {
   const skillScores: Record<string, { total: number, count: number }> = {};
@@ -35,8 +71,6 @@ function calculateSkillPercentages(users: User[], skills: Skill[]): Record<strin
   return skillPercentages;
 }
 
-
-
 const OverviewClientPage = () => {
   const { selectedCourse } = useCourse();
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -57,8 +91,8 @@ const OverviewClientPage = () => {
           })),
         }));
 
-        setSkills(courseSkills);
-        setUsers(mappedUsers);
+        setSkills(courseSkills as any);
+        setUsers(mappedUsers as any);
         setLoading(false);
       } else {
         setLoading(false);

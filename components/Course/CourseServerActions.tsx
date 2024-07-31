@@ -61,7 +61,7 @@ export async function fetchAllCourses(): Promise<Course[]> {
         },
       },
     });
-    return courses;
+    return courses as any;
   } catch (error) {
     console.error("Error fetching courses:", error);
     throw new Error("Failed to fetch courses");
@@ -101,7 +101,7 @@ export async function fetchUserCourses(userID: string): Promise<Course[]> {
         },
       },
     });
-    return courses;
+    return courses as any;
   } catch (error) {
     console.error("Error fetching courses for user:", error);
     throw new Error("Failed to fetch courses for user");

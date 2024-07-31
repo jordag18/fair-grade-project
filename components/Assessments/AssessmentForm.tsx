@@ -91,7 +91,7 @@ export function AssessmentForm({
   const [users, setUsers] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [assessmentSkills, setAssessmentSkills] = useState<CourseSkill[]>([]);
-  const [currentUser, setCurrentUser] = useState<{ id: string; name: string } | null>(null);
+  const [currentUser, setCurrentUser] = useState<{ id: any; name: string } | null>(null);
 
   useEffect(() => {
     console.log("initial data: ", initialData);
@@ -136,7 +136,7 @@ export function AssessmentForm({
     defaultValues: mappedInitialData,
   });
 
-  const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
+  const onSubmit: SubmitHandler<FormSchemaType> = async (data: any) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     data.assessorID = (await useUserId()) as string;
     data.courseID = selectedCourse?.CourseID as string;
@@ -274,7 +274,7 @@ export function AssessmentForm({
         />
         <div className="flex justify-between">
           <AssessmentSkillDrawer
-            selectedCourse={selectedCourse}
+            selectedCourse={selectedCourse as Course | null}
             onSkillsChange={setAssessmentSkills}
           />
           <Button

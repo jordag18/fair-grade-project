@@ -19,6 +19,7 @@ import { useState } from "react";
 import { ModifySkillDialog } from "./ModifySkillDialog";
 import { useUserRole } from "@/context/UserRoleContext";
 import displayIfRole from "../DisplayIfRole";
+import { UserCourseRole } from "@/types";
 
 interface ActionsCellProps {
   row: any;
@@ -59,7 +60,7 @@ const ActionsCell = ({ row, refreshSkills }: ActionsCellProps) => {
           </DropdownMenuItem>
           {/* Dropdown menu item to open the modify skill dialog */}
           {displayIfRole(
-            role,
+            role as UserCourseRole,
             <DropdownMenuItem onClick={() => setIsModifyDialogOpen(true)}>
               Modify Skill
             </DropdownMenuItem>
@@ -67,7 +68,7 @@ const ActionsCell = ({ row, refreshSkills }: ActionsCellProps) => {
           <DropdownMenuSeparator />
           {/* Dropdown menu item to open the delete skill dialog */}
           {displayIfRole(
-            role,
+            role as UserCourseRole,
             <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)}>
               Delete Skill
             </DropdownMenuItem>

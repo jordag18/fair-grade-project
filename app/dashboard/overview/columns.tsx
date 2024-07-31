@@ -20,10 +20,10 @@ export const columns: (skills: Skill[]) => ColumnDef<User>[] = (skills) => [
   },
   ...skills.map(skill => ({
     accessorKey: `skills.${skill.SkillID}`,
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title={skill.SkillName} />
+    header: ({ column }: { column: ColumnDef<User> }) => (
+      <DataTableColumnHeader column={column as any} title={skill.SkillName} />
     ),
-    cell: ({ row }) => {
+    cell: ({ row }: { row: { original: User } }) => {
       const userSkills = row.original.skills || [];
       const skillData = userSkills.find(s => s.SkillID === skill.SkillID);
       return <div className="w-[50px] text-center">{skillData ? skillData.Score : '-'}</div>;

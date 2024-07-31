@@ -15,7 +15,7 @@ const StudentSkillClientPage = () => {
     const userId = await useUserId();
     if (selectedCourse && userId) {
       const skills = await getStudentSkillsByUser(selectedCourse.CourseID, userId);
-      setStudentSkills(skills);
+      setStudentSkills(skills as any);
     }
   }, [selectedCourse, setStudentSkills]);
 

@@ -19,6 +19,7 @@ import { useState } from "react";
 import { ModifyCourseDialog } from "./ModifyCourseDialog";
 import { useUserRole } from "@/context/UserRoleContext";
 import displayIfRole from "../DisplayIfRole";
+import { UserCourseRole } from "@/types";
 
 //Action dropdown menu for Course DataTable, displays operations for selecting, modifying, and deleting of the course displayed in the selected row
 const ActionsCell = ({ row }: { row: any }) => {
@@ -54,7 +55,7 @@ const ActionsCell = ({ row }: { row: any }) => {
             Select Course
           </DropdownMenuItem>
           {displayIfRole(
-            role,
+            role as UserCourseRole,
             <DropdownMenuItem
               onClick={() => {
                 setIsModifyDialogOpen(true);
@@ -66,7 +67,7 @@ const ActionsCell = ({ row }: { row: any }) => {
           )}
           <DropdownMenuSeparator />
           {displayIfRole(
-            role,
+            role as UserCourseRole,
             <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)}>
               Delete Course
             </DropdownMenuItem>

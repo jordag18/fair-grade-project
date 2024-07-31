@@ -32,7 +32,7 @@ export const AssessmentSkillDrawer: React.FC<AssessmentSkillDrawerProps> = ({
 
   useEffect(() => {
     if (selectedCourse) {
-      fetchCourseSkills(selectedCourse.CourseID).then(setSkills);
+      fetchCourseSkills(selectedCourse.CourseID).then(setSkills as any);
     }
   }, [selectedCourse]);
 
@@ -57,7 +57,7 @@ export const AssessmentSkillDrawer: React.FC<AssessmentSkillDrawerProps> = ({
       SkillID: skillId,
       Score: selectedSkills[skillId],
     }));
-    onSkillsChange(courseSkills);
+    onSkillsChange(courseSkills as any);
   };
 
   return (
