@@ -6,16 +6,14 @@ import ActionsCell from "@/components/Course/CourseActionsCell";
 import { format } from "date-fns";
 import { Course } from "@/types";
 
-
 const formatDateRange = (startDate: Date, endDate: Date) => {
   const start = format(new Date(startDate), "LLL dd, y");
   const end = format(new Date(endDate), "LLL dd, y");
   return `${start} - ${end}`;
 };
 
-
 //array of column definitions of type Course, determines how each column and cell in the table should be rendered and what data from the DataTable data to be displayed.
-export const Columns: ColumnDef<Course>[] = [
+export const courseColumns: ColumnDef<Course>[] = [
   {
     accessorKey: "CourseTag",
     header: ({ column }) => (
