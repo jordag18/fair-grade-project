@@ -14,10 +14,10 @@ const AdminSkillClientPage = () => {
   const { selectedCourse, courseSkills, setCourseSkills } = useCourse();
   const { role } = useUserRole();
   
-
   const refreshSkills = useCallback(async () => {
     if (selectedCourse) {
       const skills = await getCourseSkills(selectedCourse.CourseID);
+      console.log("Skill Data", skills);
       setCourseSkills(skills);
     }
   }, [selectedCourse, setCourseSkills]);
@@ -41,7 +41,10 @@ const AdminSkillClientPage = () => {
         <div className="overflow-auto max-h-screen">
           <DataTable
             columns={columns({ refreshSkills })}
-            data={courseSkills?.map((cs) => cs.Skills) || []}
+            data={courseSkills?.map((cs) => ({
+              ...cs.Skills,
+              UserName: cs.Skills.User.name,
+            })) || []}
             columnKey={"SkillName"}
             placeholder="Filter Skill..."
           />

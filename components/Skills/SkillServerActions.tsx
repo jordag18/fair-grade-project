@@ -13,6 +13,7 @@ export const getSkillData = (skills: any[]): Skill[] => {
   }));
 };
 
+//Requires modification for CourseSkill unique id key
 export async function createSkill(skillData: FormSchemaType, courseID: string) {
   try {
     if (!skillData.addedBy) {
@@ -75,6 +76,7 @@ export async function deleteSelectedSkill(skillID: string) {
   }
 }
 
+//Requires modification for CourseSkill unique id key
 export async function getCourseSkills(courseID: string) {
   try {
     const courseSkills = await prisma.courseSkills.findMany({
@@ -82,7 +84,15 @@ export async function getCourseSkills(courseID: string) {
         CourseID: courseID,
       },
       include: {
-        Skills: true,
+        Skills: {
+          include: {
+            User: { // Assuming the relation name in the Skills model to the User model is 'User'
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
       },
     });
     return courseSkills;
@@ -91,12 +101,6 @@ export async function getCourseSkills(courseID: string) {
     throw error;
   }
 }
-
-(async () => {
-  const courseID = 'your-course-id-here';
-  const skills = await getCourseSkills(courseID);
-  console.log('Course skills:', skills);
-})();
 
 export async function getStudentSkillsByUser(courseID: string, userID: string) {
   try {

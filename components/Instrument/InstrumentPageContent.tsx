@@ -1,14 +1,15 @@
 import { Skill } from "@/types";
 import { DataTable } from "@/components/DataTable/DataTable";
+import { CreateInstrumentDialog } from "./CreateInstrumentDialog";
 import displayIfRole from "@/components/DisplayIfRole";
 import { UserCourseRole } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
-import { CreateInstrumentDialog } from "./CreateInstrumentDialog";
 
 interface InstrumentPageContentProps {
   data: Instrument[];
   role: UserCourseRole;
   columns: ColumnDef<Instrument>[];
+  refreshInstruments: () => void;
 }
 
 interface Instrument {
@@ -21,13 +22,13 @@ interface Instrument {
     UpdatedAt: Date;
   }
 
-const InstrumentPageContent: React.FC<InstrumentPageContentProps> = ({ data, role, columns }) => {
+const InstrumentPageContent: React.FC<InstrumentPageContentProps> = ({ data, role, columns, refreshInstruments, }) => {
   return (
     <div className="flex mx-20 items-center content-center">
       <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
         <div className="flex justify-between">
           <div className="flex gap-x-2 justify-between">
-            {displayIfRole(role, <CreateInstrumentDialog onInstrumentCreated={() => window.location.reload()} />)}
+            {displayIfRole(role, <CreateInstrumentDialog onInstrumentCreated={refreshInstruments} />)}
           </div>
         </div>
         <div className="overflow-auto max-h-screen">

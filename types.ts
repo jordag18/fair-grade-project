@@ -26,9 +26,10 @@ export interface User {
 }
 
 export interface Skill {
+  User?: any;
   SkillID: string;
   SkillName: string;
-  AddedBy: string;
+  AddedBy?: string;
   SkillType: string;
 }
 
@@ -93,6 +94,21 @@ export interface Course {
   Assessments: Assessment[];
   StudentSkills: StudentSkill[];
 }
+
+export interface Instrument {
+  InstrumentID: string;
+  InstrumentName: string;
+  CreatedBy: string;
+  CourseID: string;
+  Skills: {
+    SkillID: string;
+    SkillName: string;
+    SkillType: string;
+  }[];
+  CreatedAt: Date;
+  UpdatedAt: Date;
+}
+
 
 export interface CreateCourseInput {
   courseName: string;

@@ -117,18 +117,19 @@ model Skills {
   CourseSkills     CourseSkills[]
   AssessmentSkills AssessmentSkills[]
   StudentSkills    StudentSkills[]
+  InstrumentSkills InstrumentSkills[] 
 
   @@index([AddedBy], map: "AddedBy")
 }
 
 model CourseSkills {
-  SkillID                String      @id @default(cuid())
-  CourseID               String
-  Courses                Courses     @relation(fields: [CourseID], references: [CourseID], onDelete: Cascade, onUpdate: NoAction)
-  Skills                 Skills      @relation(fields: [SkillID], references: [SkillID], onDelete: Cascade, onUpdate: NoAction)
-  Instrument             Instrument? @relation(fields: [instrumentInstrumentID], references: [InstrumentID])
-  instrumentInstrumentID String?
+  id       String      @id @default(cuid())
+  SkillID  String
+  CourseID String
+  Courses  Courses     @relation(fields: [CourseID], references: [CourseID], onDelete: Cascade, onUpdate: NoAction)
+  Skills   Skills      @relation(fields: [SkillID], references: [SkillID], onDelete: Cascade, onUpdate: NoAction)
 
+  @@unique([CourseID, SkillID]) 
   @@index([CourseID], map: "CourseID")
 }
 
@@ -182,7 +183,7 @@ model Instrument {
   Name         String
   CreatedBy    String
   CourseID     String
-  Skills       CourseSkills[]
+  Skills       InstrumentSkills[]
   CreatedAt    DateTime       @default(now())
   UpdatedAt    DateTime       @updatedAt
   User         User           @relation("InstrumentsCreated", fields: [CreatedBy], references: [id], onDelete: Cascade, onUpdate: NoAction)
@@ -191,6 +192,17 @@ model Instrument {
 
   @@index([CourseID], map: "CourseID")
   @@index([CreatedBy], map: "CreatedBy")
+}
+
+model InstrumentSkills {
+  id            String      @id @default(cuid())
+  InstrumentID  String
+  SkillID       String
+  Instrument    Instrument @relation(fields: [InstrumentID], references: [InstrumentID], onDelete: Cascade, onUpdate: NoAction)
+  Skills        Skills     @relation(fields: [SkillID], references: [SkillID], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([InstrumentID, SkillID]) // Unique constraint for the combination
+  @@index([InstrumentID], map: "InstrumentID")
 }
 
 enum Skill_Type {

@@ -5,7 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { InstrumentForm } from "./InstrumentForm";
 
-export function CreateInstrumentDialog({ onInstrumentCreated }: { onInstrumentCreated: () => void }) {
+interface CreateInstrumentDialogProps {
+    onInstrumentCreated: () => void;
+  }
+
+export function CreateInstrumentDialog({ onInstrumentCreated }: CreateInstrumentDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleFormSubmit = () => {

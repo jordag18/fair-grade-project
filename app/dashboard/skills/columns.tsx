@@ -7,20 +7,6 @@ import ActionsCell from "@/components/Skills/SkillActionsCell";
 import { getUserById } from "@/lib/auth/getUserNameByIdServerAction";
 import { Skill } from "@/types";
 
-// Separate component for the AddedBy cell to use hooks
-const AddedByCell = ({ userId }: { userId: string }) => {
-  const [userName, setUserName] = useState("Loading...");
-
-  useEffect(() => {
-    async function fetchUserName() {
-      const name = await getUserById(userId);
-      setUserName(name);
-    }
-    fetchUserName();
-  }, [userId]);
-
-  return <div className="w-[80px]">{userName}</div>;
-};
 //array of column definitions of type Skill, determines how each column and cell in the table should be rendered and what data from the DataTable data to be displayed.
 export const columns: (props: {
   refreshSkills: () => void;
@@ -46,11 +32,11 @@ export const columns: (props: {
     ),
   },
   {
-    accessorKey: "AddedBy",
+    accessorKey: "UserName",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Added By" />
     ),
-    cell: ({ row }) => <AddedByCell userId={row.getValue("AddedBy")} />,
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue("UserName")}</div>,
   },
   {
     id: "actions",
