@@ -7,9 +7,9 @@ import { UserCourseRole } from "@/types";
 
 export async function createAssessment(assessmentData: FormSchemaType) {
   try {
-    const assessorID = assessmentData.assessorID ?? '';
-    const assessedUserID = assessmentData.assessedUserID ?? '';
-    const courseID = assessmentData.courseID ?? '';
+    const assessorID = assessmentData.assessorID ?? "";
+    const assessedUserID = assessmentData.assessedUserID ?? "";
+    const courseID = assessmentData.courseID ?? "";
 
     const newAssessment = await prisma.assessments.create({
       data: {
@@ -19,15 +19,20 @@ export async function createAssessment(assessmentData: FormSchemaType) {
         CourseID: courseID,
         Comment: assessmentData.comment as string,
         InstrumentType: assessmentData.instrumentType,
-        AssessmentDate: assessmentData.assessmentDate ? new Date(assessmentData.assessmentDate) : new Date(),
+        AssessmentDate: assessmentData.assessmentDate
+          ? new Date(assessmentData.assessmentDate)
+          : new Date(),
         InstrumentDescription: assessmentData.instrumentDescription,
       },
     });
 
     // Handle AssessmentSkills and StudentSkills
-    if (assessmentData.assessmentSkills && assessmentData.assessmentSkills.length > 0) {
+    if (
+      assessmentData.assessmentSkills &&
+      assessmentData.assessmentSkills.length > 0
+    ) {
       await prisma.$transaction(
-        assessmentData.assessmentSkills.map((skill) => 
+        assessmentData.assessmentSkills.map((skill) =>
           prisma.assessmentSkills.create({
             data: {
               AssessmentID: newAssessment.AssessmentID,
@@ -39,7 +44,7 @@ export async function createAssessment(assessmentData: FormSchemaType) {
       );
 
       await prisma.$transaction(
-        assessmentData.assessmentSkills.map((skill) => 
+        assessmentData.assessmentSkills.map((skill) =>
           prisma.studentSkills.upsert({
             where: {
               UserID_CourseID_SkillID: {
@@ -86,7 +91,10 @@ export async function modifyAssessment(assessmentData: FormSchemaType) {
     });
 
     // Handle AssessmentSkills and StudentSkills
-    if (assessmentData.assessmentSkills && assessmentData.assessmentSkills.length > 0) {
+    if (
+      assessmentData.assessmentSkills &&
+      assessmentData.assessmentSkills.length > 0
+    ) {
       // Delete existing AssessmentSkills for this assessment
       await prisma.assessmentSkills.deleteMany({
         where: { AssessmentID: assessmentData.assessmentID! },
@@ -138,7 +146,6 @@ export async function modifyAssessment(assessmentData: FormSchemaType) {
   }
 }
 
-
 export async function deleteAssessment(assessmentID: string) {
   try {
     await prisma.assessments.delete({
@@ -170,7 +177,7 @@ export async function getAssessmentsByCourse(courseID: string) {
       },
     });
 
-    return assessments.map(assessment => ({
+    return assessments.map((assessment) => ({
       AssessmentID: assessment.AssessmentID,
       Title: assessment.Title,
       AssessorID: assessment.Users_Assessments_AssessorIDToUsers.name,
@@ -181,7 +188,7 @@ export async function getAssessmentsByCourse(courseID: string) {
       InstrumentType: assessment.InstrumentType,
       AssessmentDate: assessment.AssessmentDate,
       InstrumentDescription: assessment.InstrumentDescription,
-      AssessmentSkills: assessment.AssessmentSkills.map(skill => ({
+      AssessmentSkills: assessment.AssessmentSkills.map((skill) => ({
         SkillID: skill.SkillID,
         SkillName: skill.Skills.SkillName,
         Score: skill.Score,
@@ -193,25 +200,28 @@ export async function getAssessmentsByCourse(courseID: string) {
   }
 }
 
-export async function fetchUsersByCourseAndRole(courseID: string, role: string) {
-    try {
-      const users = await prisma.user.findMany({
-        where: {
-          UserCourse: {
-            some: {
-              CourseID: courseID,
-              Role: role as UserCourseRole,
-            },
+export async function fetchUsersByCourseAndRole(
+  courseID: string,
+  role: string
+) {
+  try {
+    const users = await prisma.user.findMany({
+      where: {
+        UserCourse: {
+          some: {
+            CourseID: courseID,
+            Role: role as UserCourseRole,
           },
         },
-        select: {
-          id: true,
-          name: true,
-        },
-      });
-      return { success: true, users };
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      return { success: false, error: "Failed to fetch users" };
-    }
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+    return { success: true, users };
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return { success: false, error: "Failed to fetch users" };
   }
+}
