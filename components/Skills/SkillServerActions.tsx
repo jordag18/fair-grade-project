@@ -13,7 +13,6 @@ export const getSkillData = (skills: any[]): Skill[] => {
   }));
 };
 
-//Requires modification for CourseSkill unique id key
 export async function createSkill(skillData: FormSchemaType, courseID: string) {
   try {
     if (!skillData.addedBy) {
@@ -76,7 +75,6 @@ export async function deleteSelectedSkill(skillID: string) {
   }
 }
 
-//Requires modification for CourseSkill unique id key
 export async function getCourseSkills(courseID: string) {
   try {
     const courseSkills = await prisma.courseSkills.findMany({
@@ -86,7 +84,7 @@ export async function getCourseSkills(courseID: string) {
       include: {
         Skills: {
           include: {
-            User: { // Assuming the relation name in the Skills model to the User model is 'User'
+            User: { 
               select: {
                 name: true,
               },
