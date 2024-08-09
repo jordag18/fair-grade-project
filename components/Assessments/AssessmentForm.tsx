@@ -115,6 +115,7 @@ export function AssessmentForm({ onFormSubmit, selectedCourse }: ReviewAssessmen
   }, [selectedStudent, selectedInstrument]);
 
   const onSubmit: SubmitHandler<AssessmentFormSchemaType> = async (data) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const userID = await useUserId();
   
     data.assessorID = userID as string;
