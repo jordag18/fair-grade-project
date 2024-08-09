@@ -7,258 +7,243 @@ import { z } from "zod";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "../ui/textarea";
-import * as React from "react";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
-import {
-  createAssessment,
-  modifyAssessment,
-  fetchUsersByCourseAndRole,
-} from "./AssessmentServerActions";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
-import { Course, CourseSkill } from "@/types";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { useUserId } from "@/lib/auth/useUser";
-import { AssessmentSkillDrawer } from "./AssessmentSkillDrawer";
-import { getUserById } from "@/lib/auth/getUserNameByIdServerAction";
+import { toast } from "@/components/ui/use-toast";
+import { fetchInstrumentsByCourse } from "../Instrument/InstrumentServerActions";
+import {
+  fetchStudentsWithSelfAssessment,
+  fetchSelfAssessmentSkills,
+  createInstructorAssessment,
+  fetchSelfAssessmentID,
+} from "./AssessmentServerActions";
+import { Course, Skill, Instrument } from "@/types";
 
 const FormSchema = z.object({
-  assessmentID: z.string().optional(),
-  assessmentTitle: z.string().min(1, "Assessment Title is required"),
-  assessedUserName: z.string().optional(),
+  selfAssessmentID: z.string().optional(),
+  instrumentID: z.string().min(1, "Instrument is required"),
   assessorID: z.string().optional(),
   assessedUserID: z.string().optional(),
-  courseID: z.string().optional(),
-  comment: z.string().optional(),
-  instrumentType: z.string().min(1, "Instrument Type is required"),
-  assessmentDate: z.date().optional(),
-  instrumentDescription: z
-    .string()
-    .min(1, "Instrument Description is required"),
   assessmentSkills: z
     .array(
       z.object({
         SkillID: z.string(),
-        Score: z.number(),
+        initialScore: z.number(),
+        adjustedScore: z.number(),
+        approved: z.boolean(),
       })
     )
     .optional(),
+  comment: z.string().optional(),
 });
 
-export type FormSchemaType = z.infer<typeof FormSchema>;
+export type AssessmentFormSchemaType = z.infer<typeof FormSchema>;
 
-interface CreateAssessmentFormProps {
+interface ReviewAssessmentFormProps {
   onFormSubmit: () => void;
-  initialData?: FormSchemaType;
-  isEditMode?: boolean;
   selectedCourse?: Course | null;
-  isStudent?: boolean;
 }
 
-const mapInitialData = (data: any) => ({
-  assessmentID: data.AssessmentID,
-  assessmentTitle: data.Title || "",
-  assessorID: data.AssessorID,
-  assessedUserID: data.AssessedUserID || "",
-  assessedUserName: data.AssessedUserName || "",
-  courseID: data.CourseID,
-  comment: data.Comment,
-  instrumentType: data.InstrumentType,
-  assessmentDate: data.AssessmentDate,
-  assessmentSkills: data.AssessmentSkills || [],
-});
+interface Student {
+  id: string;
+  name: string | null;
+}
 
-export function AssessmentForm({
-  onFormSubmit,
-  initialData,
-  isEditMode,
-  selectedCourse,
-  isStudent,
-}: CreateAssessmentFormProps) {
-  const [users, setUsers] = useState<{ id: string; name: string }[]>([]);
+interface AssessmentSkill {
+  SkillID: string;
+  SkillName: string;
+  initialScore: number;
+  adjustedScore: number;
+  approved: boolean;
+}
+
+export function AssessmentForm({ onFormSubmit, selectedCourse }: ReviewAssessmentFormProps) {
+  const [instruments, setInstruments] = useState<Instrument[]>([]);
+  const [students, setStudents] = useState<Student[]>([]);
+  const [assessmentSkills, setAssessmentSkills] = useState<AssessmentSkill[]>([]);
   const [loading, setLoading] = useState(true);
-  const [assessmentSkills, setAssessmentSkills] = useState<CourseSkill[]>([]);
-  const [currentUser, setCurrentUser] = useState<{ id: any; name: string } | null>(null);
+  const [selectedInstrument, setSelectedInstrument] = useState("");
+  const [selectedStudent, setSelectedStudent] = useState("");
 
-  useEffect(() => {
-    console.log("initial data: ", initialData);
-
-    const fetchCurrentUser = async () => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const userId = await useUserId();
-      const userName = await getUserById(userId as string);
-      setCurrentUser({ id: userId, name: userName });
-    };
-
-    if (isStudent) {
-      fetchCurrentUser();
-    }
-
-    if (selectedCourse) {
-      fetchUsersByCourseAndRole(selectedCourse.CourseID, "Student").then(
-        (response) => {
-          if (response.success) {
-            const fetchedUsers = (response.users || []).map((user) => ({
-              id: user.id,
-              name: user.name || "",
-            }));
-            setUsers(fetchedUsers);
-          } else {
-            console.error(response.error);
-          }
-          setLoading(false);
-        }
-      );
-    } else {
-      setLoading(false);
-    }
-  }, [selectedCourse, isStudent, initialData]);
-
-  const mappedInitialData = initialData
-    ? mapInitialData(initialData)
-    : undefined;
-
-  const form = useForm<FormSchemaType>({
+  const form = useForm<AssessmentFormSchemaType>({
     resolver: zodResolver(FormSchema),
-    defaultValues: mappedInitialData,
+    defaultValues: {
+      instrumentID: "",
+      assessedUserID: "",
+      assessmentSkills: [],
+      comment: "",
+    },
   });
 
-  const onSubmit: SubmitHandler<FormSchemaType> = async (data: any) => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    data.assessorID = (await useUserId()) as string;
-    data.courseID = selectedCourse?.CourseID as string;
-    data.assessmentDate = new Date();
+  useEffect(() => {
+    const fetchInstruments = async () => {
+      if (selectedCourse) {
+        const instrumentsData = await fetchInstrumentsByCourse(selectedCourse.CourseID);
+        setInstruments(instrumentsData);
+      }
+    };
+    fetchInstruments();
+  }, [selectedCourse]);
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      if (selectedInstrument) {
+        const studentsData = await fetchStudentsWithSelfAssessment(selectedCourse?.CourseID as string, selectedInstrument);
+        setStudents(studentsData);
+      }
+    };
+    fetchStudents();
+  }, [selectedInstrument, selectedCourse]);
+
+  useEffect(() => {
+    const fetchSkills = async () => {
+      if (selectedStudent) {
+        const skillsData = await fetchSelfAssessmentSkills(selectedInstrument, selectedStudent);
+        console.log("Self-assessment data: ", skillsData)
+        setAssessmentSkills(skillsData);
+      }
+    };
+    fetchSkills();
+  }, [selectedStudent, selectedInstrument]);
+
+  const onSubmit: SubmitHandler<AssessmentFormSchemaType> = async (data) => {
+    const userID = await useUserId();
+  
+    data.assessorID = userID as string;
+  
     data.assessmentSkills = assessmentSkills;
 
-    if (isStudent && currentUser) {
-      data.assessorID = currentUser.id;
-      data.assessedUserID = currentUser.id;
-      data.assessedUserName = currentUser.name;
-    }
-
-    console.log("Assessment Submission data: ", data);
+    const selfAssessmentID = await fetchSelfAssessmentID({
+      instrumentID: selectedInstrument,
+      studentID: selectedStudent,
+      courseID: selectedCourse?.CourseID as string,
+    });
+  
+    data.selfAssessmentID = selfAssessmentID || undefined;
+    
+    console.log("Data before submission: ", data)
+    
     try {
-      const response = isEditMode
-        ? await modifyAssessment(data)
-        : await createAssessment(data);
-
+      const response = await createInstructorAssessment(data); 
+  
       if (!response.success) {
         throw new Error(response.error);
       }
-
+  
       toast({
-        title: isEditMode ? "Assessment Modified" : "Assessment Created",
-        description: `Assessment ${data.assessmentTitle} was ${
-          isEditMode ? "modified" : "created"
-        } successfully.`,
+        title: "Assessment Submitted",
+        description: `The assessment for the selected student was submitted successfully.`,
       });
-      onFormSubmit();
+      onFormSubmit(); 
     } catch (error) {
       toast({
         title: "Error",
-        description: `Failed to ${
-          isEditMode ? "modify" : "create"
-        } the assessment.`,
+        description: `Failed to submit the assessment.`,
         variant: "destructive",
       });
     }
+    
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="assessedUserID"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Student</FormLabel>
-              <FormControl>
-                {isEditMode || isStudent ? (
-                  <Input value={mappedInitialData?.assessedUserName || currentUser?.name} disabled />
-                ) : (
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
+        <FormItem>
+          <FormLabel>Select Instrument</FormLabel>
+          <Select
+            onValueChange={(value) => {
+              form.setValue("instrumentID", value);
+              setSelectedInstrument(value);
+              setSelectedStudent("");
+            }}
+            defaultValue={form.getValues("instrumentID")}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select an instrument" />
+            </SelectTrigger>
+            <SelectContent>
+              {instruments.map((instrument) => (
+                <SelectItem key={instrument.InstrumentID} value={instrument.InstrumentID}>
+                  {instrument.InstrumentName}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </FormItem>
+
+        <FormItem>
+          <FormLabel>Select Student</FormLabel>
+          <Select
+            onValueChange={(value) => {
+              form.setValue("assessedUserID", value);
+              setSelectedStudent(value);
+            }}
+            value={selectedStudent}
+            disabled={!selectedInstrument}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select a student" />
+            </SelectTrigger>
+            <SelectContent>
+              {students.map((student) => (
+                <SelectItem key={student.id} value={student.id}>
+                  {student.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </FormItem>
+
+        <FormItem>
+          <FormLabel>Review Assessment Skills</FormLabel>
+          <ScrollArea className="max-h-96">
+            {assessmentSkills.map((skill, index) => (
+              <div key={skill.SkillID} className="flex justify-between items-center p-2 border-b">
+                <div className="flex flex-col w-full">
+                  <span className="font-medium">{skill.SkillName}</span>
+                  <span className="text-sm text-gray-500">Initial Score: {skill.initialScore}</span>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="number"
+                    value={skill.adjustedScore}
+                    onChange={(e) => {
+                      const newScore = parseInt(e.target.value, 10);
+                      const updatedSkills = assessmentSkills.map((s, i) =>
+                        i === index ? { ...s, adjustedScore: newScore } : s
+                      );
+                      setAssessmentSkills(updatedSkills);
+                    }}
+                    className="w-16 p-1 border rounded-md text-center"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const updatedSkills = assessmentSkills.map((s, i) =>
+                        i === index ? { ...s, approved: !s.approved } : s
+                      );
+                      setAssessmentSkills(updatedSkills);
+                    }}
+                    className={`ml-2 px-2 py-1 rounded-md text-sm ${
+                      skill.approved ? "bg-green-500 text-white" : "bg-gray-300 text-black"
+                    }`}
                   >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select student" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {loading ? (
-                        <SelectItem value="Loading" disabled>
-                          Loading...
-                        </SelectItem>
-                      ) : (
-                        users.map((user) => (
-                          <SelectItem key={user.id} value={user.id}>
-                            {user.name}
-                          </SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
-                )}
-              </FormControl>
-              <FormDescription>
-                Specify the student being assessed
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="assessmentTitle"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Assessment Title</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter Title" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="instrumentType"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Instrument Type</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter Instrument Type" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="instrumentDescription"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Instrument Description</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter Instrument Description" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                    {skill.approved ? "Unapprove" : "Approve"}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </ScrollArea>
+        </FormItem>
+
         <FormField
           control={form.control}
           name="comment"
@@ -266,26 +251,20 @@ export function AssessmentForm({
             <FormItem>
               <FormLabel>Comment</FormLabel>
               <FormControl>
-                <Textarea placeholder="Enter Comment" {...field} />
+                <Textarea placeholder="Enter comment" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <div className="flex justify-between">
-          <AssessmentSkillDrawer
-            selectedCourse={selectedCourse as Course | null}
-            onSkillsChange={setAssessmentSkills}
-          />
-          <Button
-            type="submit"
-            className="font-semibold bg-sky-500 hover:bg-sky-600 text-white"
-          >
-            Save changes
-          </Button>
-        </div>
+
+        <Button
+          type="submit"
+          className="font-semibold bg-sky-500 hover:bg-sky-600 text-white"
+        >
+          Submit Assessment
+        </Button>
       </form>
     </Form>
   );
 }
-

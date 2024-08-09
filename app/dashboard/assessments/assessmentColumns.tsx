@@ -10,30 +10,48 @@ export const assessmentColumns: (props: {
   refreshAssessments: () => void;
 }) => ColumnDef<Assessment>[] = ({ refreshAssessments }) => [
   {
-    accessorKey: "assessmentTitle",
+    accessorKey: "InstrumentName",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Assessment Title" />
+      <DataTableColumnHeader column={column} title="Instrument Name" />
     ),
     cell: ({ row }) => (
-      <div className="w-[150px]">{row.getValue("assessmentTitle")}</div>
+      <div className="w-[150px]">{row.getValue("InstrumentName")}</div>
     ),
   },
   {
-    accessorKey: "assessmentDate",
+    accessorKey: "AssessmentDate",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Assessment Date" />
     ),
     cell: ({ row }) => (
-      <div className="w-[150px]">{row.getValue("assessmentDate")}</div>
+      <div className="w-[150px]">{new Date(row.getValue("AssessmentDate")).toLocaleString()}</div>
     ),
   },
   {
-    accessorKey: "assessorName",
+    accessorKey: "SelfAssessmentDate",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Assessor Name" />
+      <DataTableColumnHeader column={column} title="Student Assessment Date" />
     ),
     cell: ({ row }) => (
-      <div className="w-[150px]">{row.getValue("assessorName")}</div>
+      <div className="w-[150px]">{new Date(row.getValue("SelfAssessmentDate")).toLocaleString()}</div>
+    ),
+  },
+  {
+    accessorKey: "Assessor",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Coach" />
+    ),
+    cell: ({ row }) => (
+      <div className="w-[150px]">{row.getValue("Assessor")}</div>
+    ),
+  },
+  {
+    accessorKey: "AssessedUser",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Student" />
+    ),
+    cell: ({ row }) => (
+      <div className="w-[150px]">{row.getValue("AssessedUser")}</div>
     ),
   },
   {

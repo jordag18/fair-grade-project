@@ -76,8 +76,8 @@ const AssessmentClientPage = ({ userID }: { userID: any }) => {
             <DataTable
               columns={assessmentColumns({ refreshAssessments })}
               data={assessments}
-              columnKey={"assessmentID"}
-              placeholder="Filter Assessments..."
+              columnKey={"InstrumentName"}
+              placeholder="Filter by Instrument..."
             />
           )}
         </div>

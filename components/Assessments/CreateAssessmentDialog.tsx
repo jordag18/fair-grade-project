@@ -50,7 +50,6 @@ export function CreateAssessmentDialog({
           </DialogDescription>
         </DialogHeader>
         <div className="overflow-y-auto max-h-[75vh]">
-          {/* Conditionally render SelfAssessmentForm or AssessmentForm */}
           {isStudent ? (
             <SelfAssessmentForm
               onFormSubmit={handleFormSubmit}
@@ -60,7 +59,6 @@ export function CreateAssessmentDialog({
             <AssessmentForm
               onFormSubmit={handleFormSubmit}
               selectedCourse={selectedCourse}
-              isStudent={false}
             />
           )}
         </div>

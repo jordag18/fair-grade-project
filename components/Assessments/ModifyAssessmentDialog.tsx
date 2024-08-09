@@ -1,6 +1,6 @@
 "use client";
 
-import { AssessmentForm, FormSchemaType } from "./AssessmentForm";
+import { AssessmentForm, AssessmentFormSchemaType } from "./AssessmentForm";
 import {
   Dialog,
   DialogContent,
@@ -13,7 +13,7 @@ import {
 interface ModifyAssessmentDialogProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  initialData: FormSchemaType;
+  initialData: AssessmentFormSchemaType;
   refreshAssessments: () => void;
 }
 
@@ -29,7 +29,6 @@ export function ModifyAssessmentDialog({
     refreshAssessments();
     onOpenChange(false);
   };
-  console.log("modify dialog inital data: ", initialData);
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -44,8 +43,6 @@ export function ModifyAssessmentDialog({
         <div className="overflow-y-auto max-h-[75vh]">
           <AssessmentForm
             onFormSubmit={handleFormSubmit}
-            initialData={initialData}
-            isEditMode={true}
           />
         </div>
       </DialogContent>
