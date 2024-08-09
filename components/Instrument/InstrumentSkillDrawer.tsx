@@ -18,7 +18,7 @@ import { Course, Skill } from "@/types";
 interface InstrumentSkillDrawerProps {
   selectedCourse: Course | null;
   onSkillsChange: (skills: Skill[]) => void;
-  initialSelectedSkills?: Skill[]; // Add this prop
+  initialSelectedSkills?: Skill[];
 }
 
 export const InstrumentSkillDrawer: React.FC<InstrumentSkillDrawerProps> = ({

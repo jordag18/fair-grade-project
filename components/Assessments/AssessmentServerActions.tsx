@@ -290,3 +290,23 @@ export async function fetchSelfAssessmentID({
     return null;
   }
 }
+
+
+export async function deleteAssessment(assessmentID: string) {
+  try {
+    await prisma.$transaction(async (prisma) => {
+      await prisma.assessmentSkills.deleteMany({
+        where: { AssessmentID: assessmentID },
+      });
+
+      await prisma.assessments.delete({
+        where: { AssessmentID: assessmentID },
+      });
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting assessment:", error);
+    return { success: false, error: "Failed to delete assessment" };
+  }
+}
