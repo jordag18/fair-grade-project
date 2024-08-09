@@ -12,54 +12,26 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { fetchCourseSkills } from "../Overview/OverviewServerActions";
-import { Input } from "../ui/input";
-import { Course, CourseSkill, Skill } from "@/types";
+import { Input } from "@/components/ui/input";
+import { Skill, CourseSkill } from "@/types";
 
 interface AssessmentSkillDrawerProps {
-  selectedCourse: Course | null;
-  onSkillsChange: (skills: CourseSkill[]) => void;
+  skills: Skill[];
+  selectedSkills: { [key: string]: number };
+  onSelectSkill: (skillId: string) => void;
+  onRemoveSkill: (skillId: string) => void;
+  onScoreChange: (skillId: string, score: number) => void;
+  onApply: () => void;
 }
 
 export const AssessmentSkillDrawer: React.FC<AssessmentSkillDrawerProps> = ({
-  selectedCourse,
-  onSkillsChange,
+  skills,
+  selectedSkills,
+  onSelectSkill,
+  onRemoveSkill,
+  onScoreChange,
+  onApply,
 }) => {
-  const [skills, setSkills] = useState<Skill[]>([]);
-  const [selectedSkills, setSelectedSkills] = useState<{
-    [key: string]: number;
-  }>({});
-
-  useEffect(() => {
-    if (selectedCourse) {
-      fetchCourseSkills(selectedCourse.CourseID).then(setSkills as any);
-    }
-  }, [selectedCourse]);
-
-  const handleSelectSkill = (skillId: string) => {
-    setSelectedSkills((prev) => ({ ...prev, [skillId]: 0 }));
-  };
-
-  const handleRemoveSkill = (skillId: string) => {
-    setSelectedSkills((prev) => {
-      const newSelectedSkills = { ...prev };
-      delete newSelectedSkills[skillId];
-      return newSelectedSkills;
-    });
-  };
-
-  const handleScoreChange = (skillId: string, score: number) => {
-    setSelectedSkills((prev) => ({ ...prev, [skillId]: score }));
-  };
-
-  const handleApply = () => {
-    const courseSkills = Object.keys(selectedSkills).map((skillId) => ({
-      SkillID: skillId,
-      Score: selectedSkills[skillId],
-    }));
-    onSkillsChange(courseSkills as any);
-  };
-
   return (
     <Drawer>
       <DrawerTrigger asChild>
@@ -85,7 +57,7 @@ export const AssessmentSkillDrawer: React.FC<AssessmentSkillDrawerProps> = ({
                     <span className="w-full">{skill.SkillName}</span>
                     <Button
                       variant="outline"
-                      onClick={() => handleSelectSkill(skill.SkillID)}
+                      onClick={() => onSelectSkill(skill.SkillID)}
                       disabled={skill.SkillID in selectedSkills}
                     >
                       Add
@@ -109,7 +81,7 @@ export const AssessmentSkillDrawer: React.FC<AssessmentSkillDrawerProps> = ({
                         <Button
                           variant="outline"
                           onClick={() =>
-                            handleScoreChange(
+                            onScoreChange(
                               skillId,
                               Math.max(0, selectedSkills[skillId] - 1)
                             )
@@ -126,7 +98,7 @@ export const AssessmentSkillDrawer: React.FC<AssessmentSkillDrawerProps> = ({
                         <Button
                           variant="outline"
                           onClick={() =>
-                            handleScoreChange(
+                            onScoreChange(
                               skillId,
                               Math.min(3, selectedSkills[skillId] + 1)
                             )
@@ -136,7 +108,7 @@ export const AssessmentSkillDrawer: React.FC<AssessmentSkillDrawerProps> = ({
                         </Button>
                         <Button
                           variant="outline"
-                          onClick={() => handleRemoveSkill(skillId)}
+                          onClick={() => onRemoveSkill(skillId)}
                         >
                           Remove
                         </Button>
@@ -149,7 +121,7 @@ export const AssessmentSkillDrawer: React.FC<AssessmentSkillDrawerProps> = ({
           </div>
           <DrawerFooter>
             <DrawerClose asChild>
-              <Button onClick={handleApply}>Apply</Button>
+              <Button onClick={onApply}>Apply</Button>
             </DrawerClose>
             <DrawerClose asChild>
               <Button variant="outline">Cancel</Button>
@@ -159,5 +131,4 @@ export const AssessmentSkillDrawer: React.FC<AssessmentSkillDrawerProps> = ({
       </DrawerContent>
     </Drawer>
   );
-  
 };

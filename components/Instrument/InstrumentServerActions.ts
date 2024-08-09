@@ -146,4 +146,28 @@ interface Instrument {
     }
   }
 
+  export async function fetchSkillsByInstrument(instrumentID: string): Promise<Skill[]> {
+    try {
+      // Fetch the skills associated with the given instrument ID
+      const instrumentSkills = await prisma.instrumentSkills.findMany({
+        where: {
+          InstrumentID: instrumentID,
+        },
+        include: {
+          Skills: true,
+        },
+      });
+  
+      // Map the instrument skills to the Skill type
+      return instrumentSkills.map(instrumentSkill => ({
+        SkillID: instrumentSkill.Skills.SkillID,
+        SkillName: instrumentSkill.Skills.SkillName,
+        SkillType: instrumentSkill.Skills.SkillType,
+      }));
+    } catch (error) {
+      console.error('Error fetching skills for instrument:', error);
+      throw new Error('Failed to fetch skills for instrument');
+    }
+  }
+
   

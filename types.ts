@@ -56,18 +56,37 @@ export interface AssessmentSkill {
 export interface Assessment {
   AssessmentID: string;
   Title: string;
-  AssessorID: string | null;
+  AssessorID: string;
   AssessedUserID: string;
-  AssessedUserName: string | null;
   CourseID: string;
-  Comment: string;
-  InstrumentType: string;
+  InstrumentID: string;
   AssessmentDate: Date;
-  InstrumentDescription: string;
-  AssessmentSkills: {
-    SkillID: string;
-    Score: number;
-  }[];
+  Comment: string | null;
+  CreatedAt: Date;
+  UpdatedAt: Date;
+  Skills: AssessmentSkill[];
+}
+
+export interface AssessmentSkill {
+  AssessmentSkillID: string;
+  SkillID: string;
+  Score: number;
+  Comment: string | null;
+  Approved: boolean;
+}
+
+export interface SelfAssessment {
+  SelfAssessmentID: string;
+  assessmentDate: Date;
+  skills: SelfAssessmentSkill[];
+  comments: string | null;
+}
+
+export interface SelfAssessmentSkill {
+  SelfAssessmentSkillID: string;
+  skillName: string;
+  score: number;
+  comment: string | null;
 }
 
 export interface StudentSkill {

@@ -11,15 +11,15 @@ import {
 import { useState } from "react";
 import { useCourse } from "@/context/CourseContext";
 import { AssessmentForm } from "./AssessmentForm";
+import { SelfAssessmentForm } from "./SelfAssessmentForm"; // Import SelfAssessmentForm
 import { Button } from "../ui/button";
 import { useUserRole } from "@/context/UserRoleContext";
-import { UserCourseRole } from "@/types";
+import { Course, UserCourseRole } from "@/types";
 
 interface CreateAssessmentDialogProps {
   onAssessmentCreated: () => void;
 }
 
-//Dialog that contains the assessment form to create a new assessment
 export function CreateAssessmentDialog({
   onAssessmentCreated,
 }: CreateAssessmentDialogProps) {
@@ -30,7 +30,6 @@ export function CreateAssessmentDialog({
 
   const isStudent = role === UserCourseRole.Student;
 
-  //uses callback function onAssessmentCreated from AssessmentClientPage to refresh assessment data table after form submission and close dialog
   const handleFormSubmit = () => {
     onAssessmentCreated();
     setIsOpen(false);
@@ -51,11 +50,19 @@ export function CreateAssessmentDialog({
           </DialogDescription>
         </DialogHeader>
         <div className="overflow-y-auto max-h-[75vh]">
-          <AssessmentForm
-            onFormSubmit={handleFormSubmit}
-            selectedCourse={selectedCourse}
-            isStudent={isStudent}
-          />
+          {/* Conditionally render SelfAssessmentForm or AssessmentForm */}
+          {isStudent ? (
+            <SelfAssessmentForm
+              onFormSubmit={handleFormSubmit}
+              selectedCourse={selectedCourse as Course}
+            />
+          ) : (
+            <AssessmentForm
+              onFormSubmit={handleFormSubmit}
+              selectedCourse={selectedCourse}
+              isStudent={false}
+            />
+          )}
         </div>
       </DialogContent>
     </Dialog>

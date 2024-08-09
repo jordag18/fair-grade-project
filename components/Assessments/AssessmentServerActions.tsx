@@ -1,174 +1,63 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
-import { FormSchemaType } from "./AssessmentForm";
-import { UserCourseRole } from "@/types";
+import { Assessment } from "@/types";
 
-export async function createAssessment(assessmentData: FormSchemaType) {
+interface SelfAssessmentData {
+  StudentID: string;
+  InstrumentID: string;
+  CourseID: string;
+  Comment?: string;
+  Skills: { SkillID: string; Score: number; Comment?: string }[];
+}
+
+export async function createSelfAssessment(data: SelfAssessmentData) {
   try {
-    const assessorID = assessmentData.assessorID ?? "";
-    const assessedUserID = assessmentData.assessedUserID ?? "";
-    const courseID = assessmentData.courseID ?? "";
-
-    const newAssessment = await prisma.assessments.create({
+    const selfAssessment = await prisma.selfAssessments.create({
       data: {
-        AssessorID: assessorID,
-        AssessedUserID: assessedUserID,
-        Title: assessmentData.assessmentTitle,
-        CourseID: courseID,
-        Comment: assessmentData.comment as string,
-        InstrumentType: assessmentData.instrumentType,
-        AssessmentDate: assessmentData.assessmentDate
-          ? new Date(assessmentData.assessmentDate)
-          : new Date(),
-        InstrumentDescription: assessmentData.instrumentDescription,
+        StudentID: data.StudentID,
+        InstrumentID: data.InstrumentID,
+        CourseID: data.CourseID,
+        Comment: data.Comment,
+        SelfAssessmentSkills: {
+          create: data.Skills.map(skill => ({
+            SkillID: skill.SkillID,
+            Score: skill.Score,
+            Comment: skill.Comment,
+          })),
+        },
       },
     });
 
-    // Handle AssessmentSkills and StudentSkills
-    if (
-      assessmentData.assessmentSkills &&
-      assessmentData.assessmentSkills.length > 0
-    ) {
-      await prisma.$transaction(
-        assessmentData.assessmentSkills.map((skill) =>
-          prisma.assessmentSkills.create({
-            data: {
-              AssessmentID: newAssessment.AssessmentID,
-              SkillID: skill.SkillID,
-              Score: skill.Score,
-            },
-          })
-        )
-      );
-
-      await prisma.$transaction(
-        assessmentData.assessmentSkills.map((skill) =>
-          prisma.studentSkills.upsert({
-            where: {
-              UserID_CourseID_SkillID: {
-                UserID: assessmentData.assessedUserID!,
-                SkillID: skill.SkillID,
-                CourseID: assessmentData.courseID!,
-              },
-            },
-            update: {
-              Score: skill.Score,
-            },
-            create: {
-              UserID: assessmentData.assessedUserID!,
-              SkillID: skill.SkillID,
-              CourseID: assessmentData.courseID!,
-              Score: skill.Score,
-            },
-          })
-        )
-      );
-    }
-
-    revalidatePath("/assessments");
-    return { success: true, assessment: newAssessment };
+    return { success: true, selfAssessment };
   } catch (error) {
-    console.error("Error creating assessment:", error);
-    return { success: false, error: "Failed to create assessment" };
+    console.error("Error creating self-assessment:", error);
+    return { success: false, error: "Failed to create self-assessment" };
   }
 }
 
-export async function modifyAssessment(assessmentData: FormSchemaType) {
+// Function to fetch assessments by course ID
+export async function getAssessmentsByCourse(courseID: string): Promise<any[]> {
   try {
-    const updatedAssessment = await prisma.assessments.update({
-      where: { AssessmentID: assessmentData.assessmentID! },
-      data: {
-        AssessorID: assessmentData.assessorID,
-        AssessedUserID: assessmentData.assessedUserID,
-        CourseID: assessmentData.courseID,
-        Comment: assessmentData.comment,
-        InstrumentType: assessmentData.instrumentType,
-        AssessmentDate: assessmentData.assessmentDate,
-        InstrumentDescription: assessmentData.instrumentDescription,
-      },
-    });
-
-    // Handle AssessmentSkills and StudentSkills
-    if (
-      assessmentData.assessmentSkills &&
-      assessmentData.assessmentSkills.length > 0
-    ) {
-      // Delete existing AssessmentSkills for this assessment
-      await prisma.assessmentSkills.deleteMany({
-        where: { AssessmentID: assessmentData.assessmentID! },
-      });
-
-      // Create new AssessmentSkills
-      await prisma.$transaction(
-        assessmentData.assessmentSkills.map((skill) =>
-          prisma.assessmentSkills.create({
-            data: {
-              AssessmentID: updatedAssessment.AssessmentID,
-              SkillID: skill.SkillID,
-              Score: skill.Score,
-            },
-          })
-        )
-      );
-
-      // Update StudentSkills
-      await prisma.$transaction(
-        assessmentData.assessmentSkills.map((skill) =>
-          prisma.studentSkills.upsert({
-            where: {
-              UserID_CourseID_SkillID: {
-                UserID: assessmentData.assessedUserID!,
-                SkillID: skill.SkillID,
-                CourseID: assessmentData.courseID!,
-              },
-            },
-            update: {
-              Score: skill.Score,
-            },
-            create: {
-              UserID: assessmentData.assessedUserID!,
-              SkillID: skill.SkillID,
-              CourseID: assessmentData.courseID!,
-              Score: skill.Score,
-            },
-          })
-        )
-      );
-    }
-
-    revalidatePath("/assessments");
-    return { success: true, assessment: updatedAssessment };
-  } catch (error) {
-    console.error("Error modifying assessment:", error);
-    return { success: false, error: "Failed to modify assessment" };
-  }
-}
-
-export async function deleteAssessment(assessmentID: string) {
-  try {
-    await prisma.assessments.delete({
-      where: { AssessmentID: assessmentID },
-    });
-
-    revalidatePath("/assessments");
-    return { success: true };
-  } catch (error) {
-    console.error("Error deleting assessment:", error);
-    return { success: false, error: "Failed to delete assessment" };
-  }
-}
-
-export async function getAssessmentsByCourse(courseID: string) {
-  try {
+    // Fetch assessments for the given course ID
     const assessments = await prisma.assessments.findMany({
-      where: {
-        CourseID: courseID,
-      },
+      where: { CourseID: courseID },
       include: {
-        Users_Assessments_AssessorIDToUsers: true,
-        Users_Assessments_AssessedUserIDToUsers: true,
+        Users_Assessments_AssessorIDToUsers: {
+          select: {
+            name: true,
+          },
+        },
+        Users_Assessments_AssessedUserIDToUsers: {
+          select: {
+            name: true,
+          },
+        },
+        Instruments_Assessments: {
+          select: {
+            Name: true,
+          },
+        },
         AssessmentSkills: {
           include: {
             Skills: true,
@@ -177,51 +66,67 @@ export async function getAssessmentsByCourse(courseID: string) {
       },
     });
 
+    // Map the fetched data to the Assessment type
     return assessments.map((assessment) => ({
       AssessmentID: assessment.AssessmentID,
-      Title: assessment.Title,
-      AssessorID: assessment.Users_Assessments_AssessorIDToUsers.name,
-      AssessedUserID: assessment.AssessedUserID,
-      AssessedUserName: assessment.Users_Assessments_AssessedUserIDToUsers.name,
+      Assessor: assessment.Users_Assessments_AssessorIDToUsers?.name || "Unknown",
+      AssessedUser: assessment.Users_Assessments_AssessedUserIDToUsers?.name || "Unknown",
       CourseID: assessment.CourseID,
+      Instrument: assessment.Instruments_Assessments?.Name || "Unknown",
+      Title: assessment.Title,
       Comment: assessment.Comment,
-      InstrumentType: assessment.InstrumentType,
       AssessmentDate: assessment.AssessmentDate,
       InstrumentDescription: assessment.InstrumentDescription,
-      AssessmentSkills: assessment.AssessmentSkills.map((skill) => ({
+      Skills: assessment.AssessmentSkills.map((skill) => ({
         SkillID: skill.SkillID,
         SkillName: skill.Skills.SkillName,
+        SkillType: skill.Skills.SkillType,
         Score: skill.Score,
+        Approved: skill.Approved,
+        Comment: skill.Comment,
       })),
     }));
   } catch (error) {
-    console.error("Error fetching assessments by course:", error);
-    return [];
+    console.error("Error fetching assessments:", error);
+    throw new Error("Failed to fetch assessments");
   }
 }
 
-export async function fetchUsersByCourseAndRole(
-  courseID: string,
-  role: string
-) {
+export async function fetchSelfAssessments(courseID: string, userID: string) {
   try {
-    const users = await prisma.user.findMany({
+    const selfAssessments = await prisma.selfAssessments.findMany({
       where: {
-        UserCourse: {
-          some: {
-            CourseID: courseID,
-            Role: role as UserCourseRole,
+        CourseID: courseID,
+        StudentID: userID,
+      },
+      include: {
+        Instrument: true,
+        Assessments: true,
+        SelfAssessmentSkills: {
+          include: {
+            Skill: true,
           },
         },
       },
-      select: {
-        id: true,
-        name: true,
-      },
     });
-    return { success: true, users };
+
+    return selfAssessments.map(assessment => ({
+      SelfAssessmentID: assessment.SelfAssessmentID,
+      InstrumentID: assessment.InstrumentID,
+      InstrumentName: assessment.Instrument.Name,
+      assessmentDate: assessment.AssessmentDate,
+      Assessment: assessment.Assessments,
+      skills: assessment.SelfAssessmentSkills.map(skill => ({
+        SelfAssessmentSkillID: skill.SelfAssessmentSkillID,
+        skillName: skill.Skill.SkillName,
+        score: skill.Score,
+        comment: skill.Comment
+      })),
+      comments: assessment.Comment,
+      hasAssessments: assessment.Assessments.length > 0,
+    }));
   } catch (error) {
-    console.error("Error fetching users:", error);
-    return { success: false, error: "Failed to fetch users" };
+    console.error("Error fetching self-assessments:", error);
+    throw new Error("Failed to fetch self-assessments");
   }
 }

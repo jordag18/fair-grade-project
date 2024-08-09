@@ -1,63 +1,85 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { DataTable } from "@/components/DataTable/DataTable";
-import { CreateAssessmentDialog } from "@/components/Assessments/CreateAssessmentDialog";
 import { useCourse } from "@/context/CourseContext";
-import { getAssessmentsByCourse } from "@/components/Assessments/AssessmentServerActions";
-import { columns } from "./columns";
-import { Assessment } from "@/types";
+import { useUserRole } from "@/context/UserRoleContext";
+import {
+  getAssessmentsByCourse,
+  fetchSelfAssessments,
+} from "@/components/Assessments/AssessmentServerActions";
+import { UserCourseRole } from "@/types";
+import { assessmentColumns } from "./assessmentColumns";
+import { selfAssessmentColumns } from "./selfAssessmentColumns";
+import { CreateAssessmentDialog } from "@/components/Assessments/CreateAssessmentDialog";
 
-//React function component to display the assessment dashboard with assessment data table and create assessment button
-const AssessmentClientPage: React.FC = () => {
+const AssessmentClientPage = ({ userID }: { userID: any }) => {
   const { selectedCourse } = useCourse();
-  const [assessments, setAssessments] = useState<Assessment[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { role } = useUserRole();
+  const [assessments, setAssessments] = useState([]);
+  const [selfAssessments, setSelfAssessments] = useState([]);
 
-  //Callback function to refresh the assessment data table
-  const refreshAssessments = useCallback(() => {
+  const refreshAssessments = useCallback(async () => {
     if (selectedCourse) {
-      getAssessmentsByCourse(selectedCourse.CourseID).then((data) => {
-        setAssessments(data);
-      });
+      const data: any = await getAssessmentsByCourse(selectedCourse.CourseID);
+      console.log("Assessment Data:", data);
+      setAssessments(data);
     }
   }, [selectedCourse]);
 
-  //use effect to get assessments of selected course on page load
-  useEffect(() => {
+  const refreshSelfAssessments = useCallback(async () => {
     if (selectedCourse) {
-      getAssessmentsByCourse(selectedCourse.CourseID).then((data) => {
-        setAssessments(data);
-        setLoading(false);
-      });
-    } else {
-      setLoading(false);
+      const data: any = await fetchSelfAssessments(
+        selectedCourse.CourseID,
+        userID
+      );
+      console.log("Self Assessment Data:", data);
+      setSelfAssessments(data);
     }
-  }, [selectedCourse, refreshAssessments]);
+  }, [selectedCourse, userID]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  useEffect(() => {
+    if (role === UserCourseRole.Student) {
+      refreshSelfAssessments();
+    } else {
+      refreshAssessments();
+    }
+  }, [selectedCourse, role, refreshAssessments, refreshSelfAssessments]);
 
   if (!selectedCourse) {
-    return <div>Please select a course to view its assessments.</div>;
+    return <div>Please select a course to view the assessments.</div>;
   }
 
   return (
-    <div className="flex items-center content-center">
+    <div className="flex mx-20 items-center content-center">
       <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
         <div className="flex justify-between">
           <div className="flex gap-x-2">
-            <CreateAssessmentDialog onAssessmentCreated={refreshAssessments} />
+            <CreateAssessmentDialog
+              onAssessmentCreated={
+                role === UserCourseRole.Student
+                  ? refreshSelfAssessments
+                  : refreshAssessments
+              }
+            />
           </div>
         </div>
         <div className="overflow-auto max-h-screen">
-          <DataTable
-            columns={columns({ refreshAssessments })}
-            data={assessments}
-            columnKey={"Title"}
-            placeholder="Filter Assessments..."
-          />
+          {role === UserCourseRole.Student ? (
+            <DataTable
+              columns={selfAssessmentColumns({ refreshSelfAssessments })}
+              data={selfAssessments}
+              columnKey={"InstrumentName"}
+              placeholder="Filter by Instrument Name..."
+            />
+          ) : (
+            <DataTable
+              columns={assessmentColumns({ refreshAssessments })}
+              data={assessments}
+              columnKey={"assessmentID"}
+              placeholder="Filter Assessments..."
+            />
+          )}
         </div>
       </div>
     </div>
