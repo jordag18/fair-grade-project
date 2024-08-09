@@ -47,7 +47,6 @@ interface SelfAssessmentFormSchema {
   Comment?: string;
 }
 
-// Define the Zod schema for validation
 const selfAssessmentSchema = z.object({
   InstrumentID: z.string().optional(),
   Skills: z
@@ -101,7 +100,7 @@ export const SelfAssessmentForm: React.FC<{
 
   const handleInstrumentSelection = (instrumentID: string) => {
     setSelectedInstrumentID(instrumentID);
-    setValue("InstrumentID", instrumentID); // Set the InstrumentID in the form state
+    setValue("InstrumentID", instrumentID); 
   };
 
   useEffect(() => {
@@ -113,7 +112,7 @@ export const SelfAssessmentForm: React.FC<{
         const instrumentSkills = instrument.Skills.map((skill) => ({
           ...skill,
           Score: 0,
-          IsInstrumentSkill: true, // Mark as an instrument skill
+          IsInstrumentSkill: true, 
         }));
 
         setSelectedSkills(instrumentSkills);
@@ -129,7 +128,7 @@ export const SelfAssessmentForm: React.FC<{
         const courseSkills = await getCourseSkills(selectedCourse.CourseID);
         console.log("Fetched Course Skills: ", courseSkills);
 
-        // Transform the data into the expected Skill[] format
+        // Transform the data into the Skill[] format
         const transformedSkills = courseSkills.map((cs) => ({
           SkillID: cs.Skills.SkillID,
           SkillName: cs.Skills.SkillName,
@@ -189,8 +188,6 @@ export const SelfAssessmentForm: React.FC<{
         StudentID: StudentID || "",
       };
   
-      // Call the server action to save the self-assessment
-      console.log("Formatted Data before submission: ", formattedData);
       const result = await createSelfAssessment(formattedData as any);
   
       if (result.success) {

@@ -11,7 +11,7 @@ import {
 import { useState } from "react";
 import { useCourse } from "@/context/CourseContext";
 import { AssessmentForm } from "./AssessmentForm";
-import { SelfAssessmentForm } from "./SelfAssessmentForm"; // Import SelfAssessmentForm
+import { SelfAssessmentForm } from "./SelfAssessmentForm";
 import { Button } from "../ui/button";
 import { useUserRole } from "@/context/UserRoleContext";
 import { Course, UserCourseRole } from "@/types";
