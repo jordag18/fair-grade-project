@@ -24,9 +24,16 @@ const AssessmentClientPage = ({ userID }: { userID: any }) => {
   const refreshAssessments = useCallback(async () => {
     if (selectedCourse) {
       const data: any = await getAssessmentsByCourse(selectedCourse.CourseID);
-      const courseSkills: any = await fetchCourseSkills(selectedCourse.CourseID);
+      const courseSkills: any = await fetchCourseSkills(
+        selectedCourse.CourseID
+      );
       console.log("Assessment Data:", data);
-      console.log("Selected Course:", selectedCourse, "Course Skills:", courseSkills)
+      console.log(
+        "Selected Course:",
+        selectedCourse,
+        "Course Skills:",
+        courseSkills
+      );
       setAssessments(data);
       setCourseSkills(courseSkills);
     }
@@ -57,9 +64,9 @@ const AssessmentClientPage = ({ userID }: { userID: any }) => {
 
   return (
     <div className="flex mx-20 items-center content-center w-full">
-      <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
+      <div className="h-full flex-1 flex-col space-y-8 p-8 md:flex overflow-auto max-h-screen">
         <div className="flex justify-between">
-          <div className="flex gap-x-2">
+          <div className="flex gap-x-2 justify-between">
             <CreateAssessmentDialog
               onAssessmentCreated={
                 role === UserCourseRole.Student
@@ -69,23 +76,24 @@ const AssessmentClientPage = ({ userID }: { userID: any }) => {
             />
           </div>
         </div>
-        <div className="h-full flex-1 flex-col space-y-8 p-8 md:flex overflow-auto max-h-screen">
-          {role === UserCourseRole.Student ? (
-            <DataTable
-              columns={selfAssessmentColumns({ refreshSelfAssessments })}
-              data={selfAssessments}
-              columnKey={"InstrumentName"}
-              placeholder="Filter by Instrument Name..."
-            />
-          ) : (
-            <DataTable
-            columns={assessmentColumns({ refreshAssessments, courseSkills: courseSkills})}
-              data={assessments}
-              columnKey={"InstrumentName"}
-              placeholder="Filter by Instrument..."
-            />
-          )}
-        </div>
+        {role === UserCourseRole.Student ? (
+          <DataTable
+            columns={selfAssessmentColumns({ refreshSelfAssessments })}
+            data={selfAssessments}
+            columnKey={"InstrumentName"}
+            placeholder="Filter by Instrument Name..."
+          />
+        ) : (
+          <DataTable
+            columns={assessmentColumns({
+              refreshAssessments,
+              courseSkills: courseSkills,
+            })}
+            data={assessments}
+            columnKey={"InstrumentName"}
+            placeholder="Filter by Instrument..."
+          />
+        )}
       </div>
     </div>
   );

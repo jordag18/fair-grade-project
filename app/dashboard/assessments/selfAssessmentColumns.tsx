@@ -34,7 +34,7 @@ export const selfAssessmentColumns: (props: {
       <DataTableColumnHeader column={column} title="Assessment Status" />
     ),
     cell: ({ row }) => (
-      <div className="flex justify-center items-center h-full">
+      <div className="flex h-full">
         {row.getValue("hasAssessments") ? (
           <CheckCircleIcon className="w-6 h-6 text-green-500" />
         ) : (

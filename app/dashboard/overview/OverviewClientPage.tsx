@@ -7,6 +7,7 @@ import { fetchCourseSkills, fetchUsersWithSkillsAndAssessments } from "@/compone
 import { Column, ColumnDef } from "@tanstack/react-table";
 import { Skill, StudentSkill } from "@/types";
 import { DataTableColumnHeader } from "@/components/DataTable/DataTableColumnHeader";
+import { Button } from "@/components/ui/button";
 
 export interface User {
   id: string;
@@ -87,6 +88,7 @@ const OverviewClientPage = () => {
   return (
     <div className="flex mx-20 items-center content-center w-full">
       <div className="h-full flex-1 flex-col space-y-8 p-8 md:flex overflow-auto max-h-screen">
+        <Button>Text</Button>
         <DataTable
           columns={Array.isArray(dynamicColumns) ? dynamicColumns : []}
           data={users} 
