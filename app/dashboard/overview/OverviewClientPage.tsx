@@ -20,6 +20,7 @@ export type RowData = User | {
   skills: { SkillID: string; Score: number; UserID: string; }[];
 };
 
+
 export const columns: (skills: Skill[]) => ColumnDef<RowData>[] = (skills) => [
   {
     accessorKey: "name",
@@ -42,34 +43,6 @@ export const columns: (skills: Skill[]) => ColumnDef<RowData>[] = (skills) => [
     },
   })),
 ];
-
-function calculateSkillPercentages(users: User[], skills: Skill[]): Record<string, number> {
-  const skillScores: Record<string, { total: number, count: number }> = {};
-
-  // Initialize the skillScores object with skills
-  skills.forEach(skill => {
-    skillScores[skill.SkillID] = { total: 0, count: 0 };
-  });
-
-  // Calculate total scores and counts for each skill
-  users.forEach(user => {
-    user.skills.forEach(userSkill => {
-      if (skillScores[userSkill.SkillID]) {
-        skillScores[userSkill.SkillID].total += userSkill.Score;
-        skillScores[userSkill.SkillID].count += 1;
-      }
-    });
-  });
-
-  // Calculate the average percentage for each skill and format it to 2 decimal places
-  const skillPercentages: Record<string, number> = {};
-  Object.keys(skillScores).forEach(skillID => {
-    const { total, count } = skillScores[skillID];
-    skillPercentages[skillID] = count ? parseFloat(((total / (count * 3)) * 100).toFixed(2)) : 0;
-  });
-
-  return skillPercentages;
-}
 
 const OverviewClientPage = () => {
   const { selectedCourse } = useCourse();
@@ -109,19 +82,6 @@ const OverviewClientPage = () => {
     return <div>Please select a course to view the overview.</div>;
   }
 
-  // Calculate skill percentages
-  const skillPercentages = calculateSkillPercentages(users, skills);
-  const percentageRow = {
-    id: 'percentage-row',
-    name: 'Skill Averages (%)',
-    skills: skills.map(skill => ({
-      SkillID: skill.SkillID,
-      Score: skillPercentages[skill.SkillID] || 0,
-      UserID: 'percentage-row'
-    }))
-  };
-
-  const dataWithPercentageRow = [...users, percentageRow];
   const dynamicColumns = columns(skills);
 
   return (
@@ -129,7 +89,7 @@ const OverviewClientPage = () => {
       <div className="h-full flex-1 flex-col space-y-8 p-8 md:flex overflow-auto max-h-screen">
         <DataTable
           columns={Array.isArray(dynamicColumns) ? dynamicColumns : []}
-          data={dataWithPercentageRow}
+          data={users} 
           columnKey={"name"}
           placeholder="Filter Students..."
         />

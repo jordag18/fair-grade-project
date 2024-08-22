@@ -9,7 +9,7 @@ import { DataTableColumnHeaderAssessments } from "@/components/DataTable/DataTab
 
 export const assessmentColumns: (props: {
   refreshAssessments: () => void;
-  courseSkills: CourseSkill[]; 
+  courseSkills: any[]; 
 }) => ColumnDef<Assessment>[] = ({ refreshAssessments, courseSkills }) => {
   // Basic columns for instrument, assessment date, etc.
   const basicColumns: ColumnDef<Assessment>[] = [
@@ -68,7 +68,7 @@ export const assessmentColumns: (props: {
   const skillColumns: ColumnDef<Assessment>[] = courseSkills.map((skill) => ({
     accessorKey: `Skill_${skill.SkillID}`, // Unique key for each skill
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title={skill.Skills.SkillName} />
+      <DataTableColumnHeader column={column} title={skill.SkillName} />
     ),
     cell: ({ row }) => {
       // Find the skill score for this particular skill
