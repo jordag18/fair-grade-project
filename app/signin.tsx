@@ -4,6 +4,7 @@ import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { handleGoogleSignIn } from "@/lib/auth/googleSignInServerAction";
 import { handleGitHubSignIn } from "@/lib/auth/githubSignInServerAction";
+import { handleUTEPSignIn } from "@/lib/auth/microsoftEntraSignInServerAction";
 
 export const SignInPage: React.FC = () => {
     return (
@@ -32,8 +33,7 @@ export const SignInPage: React.FC = () => {
                 Sign in with GitHub
               </Button>
               <Button
-                disabled
-                onClick={() => signIn("utep")}
+                onClick={() => handleUTEPSignIn()}
                 className="w-2/3 bg-orange-600"
               >
                 Sign in with UTEP (SSO)

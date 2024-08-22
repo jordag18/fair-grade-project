@@ -90,3 +90,22 @@
     -moz-appearance: textfield;
   }
 }
+
+@layer components {
+  .rotate-letter {
+    display: inline-block;
+    transform-origin: center;
+    line-height: 1.50;
+    margin-bottom: -0.25rem;
+
+  }
+}
+
+@layer utilities {
+  .rotate-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+}

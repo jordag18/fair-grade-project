@@ -20,6 +20,7 @@ import { ModifyAssessmentDialog } from "./ModifyAssessmentDialog";
 import { useUserRole } from "@/context/UserRoleContext";
 import displayIfRole from "../DisplayIfRole";
 import { UserCourseRole } from "@/types";
+import { AssessmentDetailDialog } from "./AssessmentDetailDialog";
 
 interface ActionsCellProps {
   row: any;
@@ -30,16 +31,21 @@ interface ActionsCellProps {
 const ActionsCell = ({ row, refreshAssessments }: ActionsCellProps) => {
   const [isModifyDialogOpen, setIsModifyDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const { selectedCourse } = useCourse();
   const selectedRow = row.original;
   const { role } = useUserRole();
 
   return (
     <Dialog
-      open={isModifyDialogOpen || isDeleteDialogOpen}
-      onOpenChange={
-        isModifyDialogOpen ? setIsModifyDialogOpen : setIsDeleteDialogOpen
-      }
+      open={isModifyDialogOpen || isDeleteDialogOpen || isDetailDialogOpen}
+      onOpenChange={(open) => {
+        if (!open) {
+          setIsModifyDialogOpen(false);
+          setIsDeleteDialogOpen(false);
+          setIsDetailDialogOpen(false);
+        }
+      }}
     >
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
@@ -53,7 +59,8 @@ const ActionsCell = ({ row, refreshAssessments }: ActionsCellProps) => {
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={() => {
-              console.log("Selected Course:", selectedCourse);
+              setIsDetailDialogOpen(true);
+              console.log("Selected Row Data: ", selectedRow);
             }}
           >
             Select Assessment
@@ -89,6 +96,11 @@ const ActionsCell = ({ row, refreshAssessments }: ActionsCellProps) => {
         onOpenChange={setIsDeleteDialogOpen}
         assessmentID={selectedRow.AssessmentID}
         refreshAssessments={refreshAssessments}
+      />
+      <AssessmentDetailDialog
+        isOpen={isDetailDialogOpen}
+        onOpenChange={setIsDetailDialogOpen} 
+        assessment={selectedRow}
       />
     </Dialog>
   );

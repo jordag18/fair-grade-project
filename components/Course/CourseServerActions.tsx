@@ -42,7 +42,11 @@ export async function fetchAllCourses(): Promise<Course[]> {
         },
       },
       include: {
-        CourseSkills: true,
+        CourseSkills: {
+          include: {
+            Skills: true,
+          }
+        },
         UserCourse: {
           include: {
             Users: true,

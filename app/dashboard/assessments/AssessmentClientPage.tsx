@@ -23,6 +23,7 @@ const AssessmentClientPage = ({ userID }: { userID: any }) => {
     if (selectedCourse) {
       const data: any = await getAssessmentsByCourse(selectedCourse.CourseID);
       console.log("Assessment Data:", data);
+      console.log("Selected Course:", selectedCourse, "Course Skills:", selectedCourse.CourseSkills)
       setAssessments(data);
     }
   }, [selectedCourse]);
@@ -74,7 +75,7 @@ const AssessmentClientPage = ({ userID }: { userID: any }) => {
             />
           ) : (
             <DataTable
-              columns={assessmentColumns({ refreshAssessments })}
+            columns={assessmentColumns({ refreshAssessments, courseSkills: selectedCourse.CourseSkills })}
               data={assessments}
               columnKey={"InstrumentName"}
               placeholder="Filter by Instrument..."

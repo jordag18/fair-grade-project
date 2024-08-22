@@ -28,22 +28,22 @@ import {
 import { DataTablePagination } from "./DataTablePagnation";
 import { DataTableToolbar } from "@/components/DataTable/DataTableToolbar";
 
-// Define the properties for the DataTable component
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   columnKey: string;
   placeholder?: string;
   actions?: (rowSelection: Record<string, boolean>) => React.ReactNode;
+  headerHeight?: string;
 }
 
-// DataTable component definition
 export function DataTable<TData, TValue>({
   columns,
   data,
   columnKey,
   placeholder,
   actions,
+  headerHeight = "h-12",
 }: DataTableProps<TData, TValue>) {
 
   //States for row selection, column visibility, column filters, and sorting.
@@ -93,7 +93,7 @@ export function DataTable<TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} colSpan={header.colSpan}>
+                    <TableHead key={header.id} colSpan={header.colSpan} className={headerHeight}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
