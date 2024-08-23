@@ -112,7 +112,7 @@ interface Instrument {
         // Create the new instrument
         const newInstrument = await prisma.instrument.create({
           data: {
-            InstrumentID: instrumentData.InstrumentID, // Reuse the same ID or generate a new one
+            InstrumentID: instrumentData.InstrumentID,
             Name: instrumentData.InstrumentName,
             CreatedBy: instrumentData.CreatedBy,
             CourseID: instrumentData.CourseID,
@@ -134,7 +134,7 @@ interface Instrument {
         if (skills.length > 0) {
           await prisma.instrumentSkills.createMany({
             data: skills,
-            skipDuplicates: true, // Add this line to skip duplicates
+            skipDuplicates: true,
           });
         }
       });

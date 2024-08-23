@@ -165,8 +165,8 @@ export async function fetchAssessmentInstrumentSkills(instrumentID: string, asse
       SkillID: is.Skills.SkillID,
       SkillName: is.Skills.SkillName,
       initialScore: userSkillsMap.get(is.Skills.SkillID) || 0, // Use user's score or default to 0
-      adjustedScore: userSkillsMap.get(is.Skills.SkillID) || 0, // Same as initialScore for now
-      approved: false, // Default to false
+      adjustedScore: userSkillsMap.get(is.Skills.SkillID) || 0, 
+      approved: false, 
     }));
 
     return assessmentSkills;
@@ -185,7 +185,7 @@ export async function fetchSelfAssessmentSkills(instrumentID: string, assessedUs
         StudentID: assessedUserID,
       },
       orderBy: {
-        AssessmentDate: 'desc', // or 'updatedAt' depending on your schema
+        AssessmentDate: 'desc', 
       },
       include: {
         SelfAssessmentSkills: {
@@ -224,7 +224,7 @@ export async function fetchSelfAssessmentSkills(instrumentID: string, assessedUs
 
 export async function fetchStudentsWithSelfAssessmentStatus(courseID: string, instrumentID: string) {
   try {
-    // Step 1: Fetch all students enrolled in the specified course
+    // Fetch all students enrolled in the specified course
     const allStudents = await prisma.user.findMany({
       where: {
         UserCourse: {
@@ -239,7 +239,7 @@ export async function fetchStudentsWithSelfAssessmentStatus(courseID: string, in
       },
     });
 
-    // Step 2: Fetch students who have completed a self-assessment for the given instrument
+    // Fetch students who have completed a self-assessment for the given instrument
     const studentsWithSelfAssessment = await prisma.user.findMany({
       where: {
         SelfAssessments: {
@@ -254,12 +254,12 @@ export async function fetchStudentsWithSelfAssessmentStatus(courseID: string, in
       },
     });
 
-    // Step 3: Create a Set of student IDs who have completed the self-assessment
+    // Create a Set of student IDs who have completed the self-assessment
     const selfAssessmentStudentIds = new Set(
       studentsWithSelfAssessment.map((student) => student.id)
     );
 
-    // Step 4: Combine the results and add the `hasSelfAssessment` field
+    // Combine the results and add the `hasSelfAssessment` field
     const studentsWithStatus = allStudents.map((student) => ({
       ...student,
       hasSelfAssessment: selfAssessmentStudentIds.has(student.id),
