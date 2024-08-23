@@ -178,11 +178,14 @@ export async function fetchAssessmentInstrumentSkills(instrumentID: string, asse
 
 export async function fetchSelfAssessmentSkills(instrumentID: string, assessedUserID: string) {
   try {
-    // Fetch skills and initial scores for the given instrument and student
-    const selfAssessments = await prisma.selfAssessments.findMany({
+    // Fetch the most recent self-assessment for the given instrument and student
+    const selfAssessment = await prisma.selfAssessments.findFirst({
       where: {
         InstrumentID: instrumentID,
         StudentID: assessedUserID,
+      },
+      orderBy: {
+        AssessmentDate: 'desc', // or 'updatedAt' depending on your schema
       },
       include: {
         SelfAssessmentSkills: {
@@ -198,15 +201,18 @@ export async function fetchSelfAssessmentSkills(instrumentID: string, assessedUs
       },
     });
 
-    const assessmentSkills = selfAssessments.flatMap(selfAssessment =>
-      selfAssessment.SelfAssessmentSkills.map(sas => ({
-        SkillID: sas.Skill.SkillID,
-        SkillName: sas.Skill.SkillName,
-        initialScore: sas.Score,
-        adjustedScore: sas.Score, 
-        approved: false,
-      }))
-    );
+    if (!selfAssessment) {
+      // Return an empty array if no self-assessment is found
+      return [];
+    }
+
+    const assessmentSkills = selfAssessment.SelfAssessmentSkills.map(sas => ({
+      SkillID: sas.Skill.SkillID,
+      SkillName: sas.Skill.SkillName,
+      initialScore: sas.Score,
+      adjustedScore: sas.Score, 
+      approved: false,
+    }));
 
     return assessmentSkills;
   } catch (error) {
@@ -214,6 +220,7 @@ export async function fetchSelfAssessmentSkills(instrumentID: string, assessedUs
     throw new Error("Failed to fetch self-assessment skills");
   }
 }
+
 
 export async function fetchStudentsWithSelfAssessmentStatus(courseID: string, instrumentID: string) {
   try {
@@ -402,6 +409,9 @@ export async function fetchSelfAssessmentID({
         InstrumentID: instrumentID,
         StudentID: studentID,
         CourseID: courseID,
+      },
+      orderBy: {
+        AssessmentDate: 'desc',
       },
       select: {
         SelfAssessmentID: true,
