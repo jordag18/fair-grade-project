@@ -1,5 +1,9 @@
-import { ColumnDef } from "@tanstack/react-table";
+"use client";
+
+import React from "react";
 import { DataTableColumnHeader } from "@/components/DataTable/DataTableColumnHeader";
+import { DataTableColumnHeaderRotated } from "@/components/DataTable/DataTableColumnHeaderRotated";
+import { CustomColumnDef } from "@/components/DataTable/DataTable";
 import { Skill, StudentSkill } from "@/types";
 
 export interface User {
@@ -8,25 +12,50 @@ export interface User {
   skills: StudentSkill[];
 }
 
-export const columns: (skills: Skill[]) => ColumnDef<User>[] = (skills) => [
+export type RowData =
+  | User
+  | {
+      id: string;
+      name: string;
+      skills: { SkillID: string; Score: number; UserID: string }[];
+    };
+
+// Define the column for the name field
+export const nameColumns: CustomColumnDef<RowData>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Name" />
     ),
-    cell: ({ row }) => (
-      <div className="w-[150px]">{row.getValue("name")}</div>
-    ),
+    cell: ({ row }) => <div className="w-[150px]">{row.getValue("name")}</div>,
   },
-  ...skills.map(skill => ({
+];
+
+// Define the columns for the skills dynamically
+export const skillsColumns: (skills: Skill[]) => CustomColumnDef<RowData>[] = (
+  skills
+) =>
+  skills.map((skill) => ({
     accessorKey: `skills.${skill.SkillID}`,
-    header: ({ column }: { column: ColumnDef<User> }) => (
-      <DataTableColumnHeader column={column as any} title={skill.SkillName} />
+    header: ({ column }) => (
+      <DataTableColumnHeaderRotated column={column} title={skill.SkillName} />
     ),
-    cell: ({ row }: { row: { original: User } }) => {
-      const userSkills = row.original.skills || [];
-      const skillData = userSkills.find(s => s.SkillID === skill.SkillID);
-      return <div className="w-[50px] text-center">{skillData ? skillData.Score : '-'}</div>;
+    headerAlign: "top",
+    cell: ({ row }: { row: { original: RowData } }) => {
+      const userSkills = (row.original as User).skills || [];
+      const skillData = userSkills.find((s) => s.SkillID === skill.SkillID);
+      return (
+        <div className="text-center flex items-center justify-center">
+          {skillData ? skillData.Score : "-"}
+        </div>
+      );
     },
-  })),
+  }));
+
+// Combine name and skills columns
+export const columns: (skills: Skill[]) => CustomColumnDef<RowData>[] = (
+  skills
+) => [
+  ...nameColumns,
+  ...skillsColumns(skills),
 ];

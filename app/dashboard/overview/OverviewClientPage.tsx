@@ -8,42 +8,13 @@ import { Column, ColumnDef } from "@tanstack/react-table";
 import { Skill, StudentSkill } from "@/types";
 import { DataTableColumnHeader } from "@/components/DataTable/DataTableColumnHeader";
 import { Button } from "@/components/ui/button";
+import { columns } from "./columns";
 
 export interface User {
   id: string;
   name: string | null;
   skills: StudentSkill[];
 }
-
-export type RowData = User | {
-  id: string;
-  name: string;
-  skills: { SkillID: string; Score: number; UserID: string; }[];
-};
-
-
-export const columns: (skills: Skill[]) => ColumnDef<RowData>[] = (skills) => [
-  {
-    accessorKey: "name",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Name" />
-    ),
-    cell: ({ row }) => (
-      <div className="w-[150px]">{row.getValue("name")}</div>
-    ),
-  },
-  ...skills.map(skill => ({
-    accessorKey: `skills.${skill.SkillID}`,
-    header: ({ column }: { column: Column<RowData, unknown> }) => (
-      <DataTableColumnHeader column={column} title={skill.SkillName} />
-    ),
-    cell: ({ row }: { row: { original: RowData } }) => {
-      const userSkills = (row.original as User).skills || [];
-      const skillData = userSkills.find(s => s.SkillID === skill.SkillID);
-      return <div className="w-[50px] text-center">{skillData ? skillData.Score : '-'}</div>;
-    },
-  })),
-];
 
 const OverviewClientPage = () => {
   const { selectedCourse } = useCourse();
@@ -88,10 +59,10 @@ const OverviewClientPage = () => {
   return (
     <div className="flex mx-20 items-center content-center w-full">
       <div className="h-full flex-1 flex-col space-y-8 p-8 md:flex overflow-auto max-h-screen">
-        <Button>Text</Button>
         <DataTable
           columns={Array.isArray(dynamicColumns) ? dynamicColumns : []}
           data={users} 
+          headerHeight="h-72"
           columnKey={"name"}
           placeholder="Filter Students..."
         />

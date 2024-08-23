@@ -21,7 +21,7 @@ interface DataTableColumnHeaderProps<TData, TValue>
   title: string;
 }
 
-export function DataTableColumnHeaderAssessments<TData, TValue>({
+export function DataTableColumnHeaderRotated<TData, TValue>({
   column,
   title,
   className,

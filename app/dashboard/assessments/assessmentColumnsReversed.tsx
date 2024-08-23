@@ -5,7 +5,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/DataTable/DataTableColumnHeader";
 import { Assessment, CourseSkill } from "@/types";
 import ActionsCell from "@/components/Assessments/AssessmentsActionsCell";
-import { DataTableColumnHeaderAssessments } from "@/components/DataTable/DataTableColumnHeaderAssessments";
+import { DataTableColumnHeaderAssessments } from "@/components/DataTable/DataTableColumnHeaderRotated";
 
 export const assessmentColumnsReversed: (props: {
   assessments: any[];
@@ -34,23 +34,28 @@ export const assessmentColumnsReversed: (props: {
   ];
 
   // Dynamically add columns for each assessment
-  const assessmentColumns: ColumnDef<CourseSkill>[] = assessments.map((assessment) => ({
-    accessorKey: `Assessment_${assessment.AssessmentID}`, // Unique key for each assessment
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title={assessment.InstrumentName} />
-    ),
-    cell: ({ row }) => {
-      // Find the score for this particular skill in this assessment
-      const assessmentSkill = assessment.Skills.find(
-        (s: any) => s.SkillID === row.original.SkillID
-      );
-      return (
-        <div className="w-[100px]">
-          {assessmentSkill ? assessmentSkill.Score : "-"}
-        </div>
-      );
-    },
-  }));
+  const assessmentColumns: ColumnDef<CourseSkill>[] = assessments.map(
+    (assessment) => ({
+      accessorKey: `Assessment_${assessment.AssessmentID}`, // Unique key for each assessment
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={assessment.InstrumentName}
+        />
+      ),
+      cell: ({ row }) => {
+        // Find the score for this particular skill in this assessment
+        const assessmentSkill = assessment.Skills.find(
+          (s: any) => s.SkillID === row.original.SkillID
+        );
+        return (
+          <div className="w-[100px]">
+            {assessmentSkill ? assessmentSkill.Score : "-"}
+          </div>
+        );
+      },
+    })
+  );
 
   return [...basicColumns, ...assessmentColumns];
 };

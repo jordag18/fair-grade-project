@@ -6,6 +6,7 @@ import clsx from "clsx";
 const moderatorLinks = [
   { name: "Courses", href: "/dashboard/courses" },
   { name: "Skills", href: "/dashboard/skills" },
+  { name: "Instruments", href: "/dashboard/instruments" },
   { name: "Assessments", href: "/dashboard/assessments" },
   { name: "Users", href: "/dashboard/users" },
   { name: "Overview", href: "/dashboard/overview" },
@@ -13,6 +14,7 @@ const moderatorLinks = [
 
 const studentLinks = [
   { name: "Courses", href: "/dashboard/courses" },
+  { name: "Instruments", href: "/dashboard/instruments" },
   { name: "Skills", href: "/dashboard/skills" },
   { name: "Assessments", href: "/dashboard/assessments" },
 ];

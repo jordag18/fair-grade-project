@@ -22,7 +22,6 @@ export const courseColumns: ColumnDef<Course>[] = [
     cell: ({ row }) => (
       <div className="w-[80px]">{row.getValue("CourseTag")}</div>
     ),
-    enableSorting: false,
     enableHiding: false,
   },
   {

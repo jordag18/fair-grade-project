@@ -102,7 +102,7 @@ export function DataTable<TData, TValue>({
                     <TableHead
                       key={header.id}
                       colSpan={header.colSpan}
-                      className={`border-black border-2 h-96 max-w-2 align-${align}`}
+                      className={`border-black border-2 max-w-2 align-${align} ${headerHeight}`}
                     >
                       {header.isPlaceholder
                         ? null
