@@ -1,27 +1,27 @@
 
 import { Course, UserCourseRole } from "@/types";
-import { fetchAllCourses } from "@/components/Course/CourseServerActions";
+import { fetchAllCourses, fetchUserCourses } from "@/components/Course/CourseServerActions";
 import { getUserRole } from "@/lib/auth/getUserRoleServerAction";
 
 import AdminCoursePageClient from "./AdminCoursePageClient";
+import { useUserId } from "@/lib/auth/useUser";
 
 export default async function AdminCoursePage() {
-  const role: any = await getUserRole();
+  const role: UserCourseRole = await getUserRole() as UserCourseRole;
+  let courseData: Course[] = [];
 
-  let courseData: Course[] = await fetchAllCourses();
-  /*
-  if (role === UserCourseRole.Admin) {
-    data = await fetchAllCourses();
+  if (
+    role === UserCourseRole.Admin ||
+    role === UserCourseRole.Instructor ||
+    role === UserCourseRole.IA ||
+    role === UserCourseRole.TA
+  ) {
+    courseData = await fetchAllCourses();
   } else {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const userId = await useUserId();
-    data = await fetchUserCourses(userId as string);
+    courseData = await fetchUserCourses(userId as string);
   }
 
-  console.log("Course Data: ", data)
-  */
-
-  return (
-    <AdminCoursePageClient role={role} courseData={courseData} />
-  );
+  return <AdminCoursePageClient role={role} courseData={courseData} />;
 }
