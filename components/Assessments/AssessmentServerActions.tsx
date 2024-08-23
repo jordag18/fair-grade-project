@@ -126,6 +126,56 @@ export async function fetchSelfAssessments(courseID: string, userID: string) {
   }
 }
 
+export async function fetchAssessmentInstrumentSkills(instrumentID: string, assessedUserID: string) {
+  try {
+    // Fetch skills associated with the given instrument
+    const instrumentSkills = await prisma.instrumentSkills.findMany({
+      where: {
+        InstrumentID: instrumentID,
+      },
+      include: {
+        Skills: {
+          select: {
+            SkillID: true,
+            SkillName: true,
+          },
+        },
+      },
+    });
+
+    // Fetch the user's skills and their scores
+    const userSkills = await prisma.studentSkills.findMany({
+      where: {
+        UserID: assessedUserID,
+        SkillID: {
+          in: instrumentSkills.map(is => is.Skills.SkillID),
+        },
+      },
+      select: {
+        SkillID: true,
+        Score: true,
+      },
+    });
+
+    // Create a map of SkillID to Score for quick lookup
+    const userSkillsMap = new Map(userSkills.map(us => [us.SkillID, us.Score]));
+
+    // Map the fetched instrument skills to include the user's score or default to 0
+    const assessmentSkills = instrumentSkills.map((is) => ({
+      SkillID: is.Skills.SkillID,
+      SkillName: is.Skills.SkillName,
+      initialScore: userSkillsMap.get(is.Skills.SkillID) || 0, // Use user's score or default to 0
+      adjustedScore: userSkillsMap.get(is.Skills.SkillID) || 0, // Same as initialScore for now
+      approved: false, // Default to false
+    }));
+
+    return assessmentSkills;
+  } catch (error) {
+    console.error("Error fetching instrument skills:", error);
+    throw new Error("Failed to fetch instrument skills");
+  }
+}
+
 export async function fetchSelfAssessmentSkills(instrumentID: string, assessedUserID: string) {
   try {
     // Fetch skills and initial scores for the given instrument and student
@@ -165,6 +215,56 @@ export async function fetchSelfAssessmentSkills(instrumentID: string, assessedUs
   }
 }
 
+export async function fetchStudentsWithSelfAssessmentStatus(courseID: string, instrumentID: string) {
+  try {
+    // Step 1: Fetch all students enrolled in the specified course
+    const allStudents = await prisma.user.findMany({
+      where: {
+        UserCourse: {
+          some: {
+            CourseID: courseID,
+          },
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+
+    // Step 2: Fetch students who have completed a self-assessment for the given instrument
+    const studentsWithSelfAssessment = await prisma.user.findMany({
+      where: {
+        SelfAssessments: {
+          some: {
+            CourseID: courseID,
+            InstrumentID: instrumentID,
+          },
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    // Step 3: Create a Set of student IDs who have completed the self-assessment
+    const selfAssessmentStudentIds = new Set(
+      studentsWithSelfAssessment.map((student) => student.id)
+    );
+
+    // Step 4: Combine the results and add the `hasSelfAssessment` field
+    const studentsWithStatus = allStudents.map((student) => ({
+      ...student,
+      hasSelfAssessment: selfAssessmentStudentIds.has(student.id),
+    }));
+
+    return studentsWithStatus;
+  } catch (error) {
+    console.error("Error fetching students with self-assessment status:", error);
+    throw new Error("Failed to fetch students with self-assessment status");
+  }
+}
+
 export async function fetchStudentsWithSelfAssessment(courseID: string, instrumentID: string) {
   try {
     // Fetch students who have completed a self-assessment for the given instrument in the course
@@ -187,6 +287,30 @@ export async function fetchStudentsWithSelfAssessment(courseID: string, instrume
   } catch (error) {
     console.error("Error fetching students with self-assessment:", error);
     throw new Error("Failed to fetch students with self-assessment");
+  }
+}
+
+export async function fetchStudents(courseID: string) {
+  try {
+    // Fetch users who are enrolled in the specified course
+    const students = await prisma.user.findMany({
+      where: {
+        UserCourse: {
+          some: {
+            CourseID: courseID,
+          },
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+
+    return students;
+  } catch (error) {
+    console.error("Error fetching students for course:", error);
+    throw new Error("Failed to fetch students for course");
   }
 }
 

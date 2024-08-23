@@ -61,15 +61,12 @@ export const AssessmentDetailDialog = ({
               <strong>Assessment Date:</strong> {new Date(assessment.AssessmentDate).toLocaleDateString()}
             </div>
             <div>
-              <strong>Instrument Description:</strong> {assessment.InstrumentDescription}
-            </div>
-            <div>
               <strong>Skills:</strong>
               <ul>
                 {assessment.Skills.map((skill: any) => (
                   <li key={skill.SkillID}>
                     {skill.SkillName} (Type: {skill.SkillType}) - Score: {skill.Score} - Approved:{" "}
-                    {skill.Approved ? "Yes" : "No"} - Comment: {skill.Comment}
+                    {skill.Approved ? "Yes" : "No"} 
                   </li>
                 ))}
               </ul>
