@@ -63,7 +63,7 @@ const ActionsCell = ({ row, refreshAssessments }: ActionsCellProps) => {
               console.log("Selected Row Data: ", selectedRow);
             }}
           >
-            Select Assessment
+            View Assessment Details
           </DropdownMenuItem>
           {displayIfRole(
             role as UserCourseRole,

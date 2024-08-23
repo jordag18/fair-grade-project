@@ -20,6 +20,7 @@ import displayIfRole from "../DisplayIfRole";
 import { UserCourseRole } from "@/types";
 import { Instrument } from "@/types";
 import { Dialog } from "../ui/dialog";
+import { InstrumentDetailDialog } from "./InstrumentDetailDialog";
 
 interface InstrumentActionCellProps {
   row: {
@@ -34,15 +35,20 @@ const InstrumentActionCell: React.FC<InstrumentActionCellProps> = ({
 }) => {
   const [isModifyDialogOpen, setIsModifyDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const { role } = useUserRole();
   const selectedRow = row.original;
 
   return (
     <Dialog
       open={isModifyDialogOpen || isDeleteDialogOpen}
-      onOpenChange={
-        isModifyDialogOpen ? setIsModifyDialogOpen : setIsDeleteDialogOpen
-      }
+      onOpenChange={(open) => {
+        if (!open) {
+          setIsModifyDialogOpen(false);
+          setIsDeleteDialogOpen(false);
+          setIsDetailDialogOpen(false);
+        }
+      }}
     >
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
@@ -54,6 +60,14 @@ const InstrumentActionCell: React.FC<InstrumentActionCellProps> = ({
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={() => {
+              setIsDetailDialogOpen(true);
+              console.log("Selected Row Data: ", selectedRow);
+            }}
+          >
+            View Instrument Details
+          </DropdownMenuItem>
           {displayIfRole(
             role as UserCourseRole,
             <DropdownMenuItem
@@ -74,6 +88,11 @@ const InstrumentActionCell: React.FC<InstrumentActionCellProps> = ({
           )}
         </DropdownMenuContent>
       </DropdownMenu>
+      <InstrumentDetailDialog
+      isOpen={isDetailDialogOpen}
+      onOpenChange={setIsDetailDialogOpen}
+      instrument={selectedRow}
+       />
       <ModifyInstrumentDialog
         isOpen={isModifyDialogOpen}
         onOpenChange={setIsModifyDialogOpen}
