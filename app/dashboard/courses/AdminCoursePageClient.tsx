@@ -41,11 +41,11 @@ const AdminCoursePageClient: React.FC<AdminCoursePageClientProps> = ({ role, cou
       style={{ marginTop: "1rem" }}
     >
       <ResizablePanelGroup direction="horizontal" className="flex-grow h-full">
-        <ResizablePanel defaultSize={50} className="h-full" minSize={45}>
+        <ResizablePanel defaultSize={50} className="h-full" minSize={10}>
           <CoursePageContent data={courseData} role={role} columns={courseColumns} />
         </ResizablePanel>
         <ResizableHandle />
-        <ResizablePanel defaultSize={50} minSize={45}>
+        <ResizablePanel defaultSize={50} minSize={10}>
           {selectedCourse ? (
             <InstrumentPageContent 
               data={instrumentData} 
@@ -54,7 +54,7 @@ const AdminCoursePageClient: React.FC<AdminCoursePageClientProps> = ({ role, cou
               refreshInstruments={refreshInstruments}
             />
           ) : (
-            <div className="flex items-center justify-center h-full">
+            <div className="flex items-center justify-center h-full h-5">
               <span>Please select a course to view its instruments.</span>
             </div>
           )}

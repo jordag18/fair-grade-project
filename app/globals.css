@@ -92,20 +92,20 @@
 }
 
 @layer components {
-  .rotate-letter {
+  .rotate-text-container {
     display: inline-block;
     transform-origin: center;
-    line-height: 1.50;
+    line-height: 1.25;
     margin-bottom: -0.25rem;
-
+    transform: rotate(90deg);
   }
 }
 
 @layer utilities {
-  .rotate-text {
+  .centered-text {
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
+    text-align: center;
   }
 }

@@ -27,7 +27,7 @@ export function DataTableColumnHeaderAssessments<TData, TValue>({
   className,
 }: DataTableColumnHeaderProps<TData, TValue>) {
   if (!column.getCanSort()) {
-    return <div className={cn(className, "rotate-text")}>{rotateTitle(title)}</div>;
+    return <div className={cn(className, "rotate-text-container")}>{rotateTitle(title)}</div>;
   }
 
   return (
@@ -37,9 +37,9 @@ export function DataTableColumnHeaderAssessments<TData, TValue>({
           <Button
             variant="ghost"
             size="sm"
-            className="-ml-3 h-8 data-[state=open]:bg-accent"
+            className="-ml-3 h-8 data-[state=open]:bg-accent rotate-text-container"
           >
-            <span className="rotate-text">{rotateTitle(title)}</span>
+            <span>{title}</span>
             {column.getIsSorted() === "desc" ? (
               <ArrowDownIcon className="ml-2 h-4 w-4" />
             ) : column.getIsSorted() === "asc" ? (
@@ -72,9 +72,9 @@ export function DataTableColumnHeaderAssessments<TData, TValue>({
 // Utility function to rotate each letter in the title
 function rotateTitle(title: string): JSX.Element {
   return (
-    <span className="rotate-text">
+    <span className="rotate-text-container">
       {title.split("").map((char, index) => (
-        <span key={index} className="rotate-letter h-">
+        <span key={index} >
           {char}
         </span>
       ))}

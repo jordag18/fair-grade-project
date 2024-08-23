@@ -16,7 +16,7 @@ export const assessmentColumns: (props: {
     {
       accessorKey: "InstrumentName",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Instrument Name" />
+        <DataTableColumnHeader column={column} title="Instrument Name" className="text-center flex items-center justify-center"/>
       ),
       cell: ({ row }) => (
         <div className="w-[150px]">{row.getValue("InstrumentName")}</div>
@@ -25,7 +25,7 @@ export const assessmentColumns: (props: {
     {
       accessorKey: "AssessmentDate",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Assessment Date" />
+        <DataTableColumnHeader column={column} title="Assessment Date" className="text-center flex items-center justify-center"/>
       ),
       cell: ({ row }) => (
         <div className="w-[150px]">
@@ -36,7 +36,7 @@ export const assessmentColumns: (props: {
     {
       accessorKey: "SelfAssessmentDate",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Student Assessment Date" />
+        <DataTableColumnHeader column={column} title="Student Assessment Date" className="text-center flex items-center justify-center"/>
       ),
       cell: ({ row }) => (
         <div className="w-[150px]">
@@ -47,7 +47,7 @@ export const assessmentColumns: (props: {
     {
       accessorKey: "Assessor",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Coach" />
+        <DataTableColumnHeader column={column} title="Coach" className="text-center flex items-center justify-center" />
       ),
       cell: ({ row }) => (
         <div className="w-[150px]">{row.getValue("Assessor")}</div>
@@ -56,7 +56,7 @@ export const assessmentColumns: (props: {
     {
       accessorKey: "AssessedUser",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Student" />
+        <DataTableColumnHeader column={column} title="Student" className="text-center flex items-center justify-center"/>
       ),
       cell: ({ row }) => (
         <div className="w-[150px]">{row.getValue("AssessedUser")}</div>
@@ -68,7 +68,7 @@ export const assessmentColumns: (props: {
   const skillColumns: ColumnDef<Assessment>[] = courseSkills.map((skill) => ({
     accessorKey: `Skill_${skill.SkillID}`, // Unique key for each skill
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title={skill.SkillName} />
+      <DataTableColumnHeaderAssessments column={column} title={skill.SkillName}/>
     ),
     cell: ({ row }) => {
       // Find the skill score for this particular skill
@@ -76,7 +76,7 @@ export const assessmentColumns: (props: {
         (s) => s.SkillID === skill.SkillID
       );
       return (
-        <div className="w-[100px]">
+        <div className="text-center flex items-center justify-center">
           {assessmentSkill ? assessmentSkill.Score : "-"}
         </div>
       );

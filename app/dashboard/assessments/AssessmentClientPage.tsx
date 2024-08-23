@@ -92,6 +92,7 @@ const AssessmentClientPage = ({ userID }: { userID: any }) => {
             data={assessments}
             columnKey={"InstrumentName"}
             placeholder="Filter by Instrument..."
+            headerHeight="h-64"
           />
         )}
       </div>
