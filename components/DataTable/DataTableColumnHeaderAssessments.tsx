@@ -31,13 +31,13 @@ export function DataTableColumnHeaderAssessments<TData, TValue>({
   }
 
   return (
-    <div className={cn("flex items-center space-x-2", className)}>
+    <div className={cn("flex items-start space-x-2 rotate-90", className)}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
             size="sm"
-            className="-ml-3 h-8 data-[state=open]:bg-accent rotate-text-container"
+            className="h-8 data-[state=open]:bg-accent ml-7"
           >
             <span>{title}</span>
             {column.getIsSorted() === "desc" ? (

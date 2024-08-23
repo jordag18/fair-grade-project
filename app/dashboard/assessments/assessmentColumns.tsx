@@ -6,18 +6,20 @@ import { DataTableColumnHeader } from "@/components/DataTable/DataTableColumnHea
 import { Assessment, CourseSkill } from "@/types";
 import ActionsCell from "@/components/Assessments/AssessmentsActionsCell";
 import { DataTableColumnHeaderAssessments } from "@/components/DataTable/DataTableColumnHeaderAssessments";
+import { CustomColumnDef } from "@/components/DataTable/DataTable";
 
 export const assessmentColumns: (props: {
   refreshAssessments: () => void;
   courseSkills: any[]; 
-}) => ColumnDef<Assessment>[] = ({ refreshAssessments, courseSkills }) => {
+}) => CustomColumnDef<Assessment>[] = ({ refreshAssessments, courseSkills }) => {
   // Basic columns for instrument, assessment date, etc.
-  const basicColumns: ColumnDef<Assessment>[] = [
+  const basicColumns: CustomColumnDef<Assessment>[] = [
     {
       accessorKey: "InstrumentName",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Instrument Name" className="text-center flex items-center justify-center"/>
       ),
+      headerAlign: "center",
       cell: ({ row }) => (
         <div className="w-[150px]">{row.getValue("InstrumentName")}</div>
       ),
@@ -33,6 +35,7 @@ export const assessmentColumns: (props: {
         </div>
       ),
     },
+    /*
     {
       accessorKey: "SelfAssessmentDate",
       header: ({ column }) => (
@@ -62,14 +65,16 @@ export const assessmentColumns: (props: {
         <div className="w-[150px]">{row.getValue("AssessedUser")}</div>
       ),
     },
+    */
   ];
 
   // Dynamically add columns for each skill
-  const skillColumns: ColumnDef<Assessment>[] = courseSkills.map((skill) => ({
+  const skillColumns: CustomColumnDef<Assessment>[] = courseSkills.map((skill) => ({
     accessorKey: `Skill_${skill.SkillID}`, // Unique key for each skill
     header: ({ column }) => (
       <DataTableColumnHeaderAssessments column={column} title={skill.SkillName}/>
     ),
+    headerAlign: "top",
     cell: ({ row }) => {
       // Find the skill score for this particular skill
       const assessmentSkill = row.original.Skills.find(

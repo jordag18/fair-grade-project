@@ -28,8 +28,12 @@ import {
 import { DataTablePagination } from "./DataTablePagnation";
 import { DataTableToolbar } from "@/components/DataTable/DataTableToolbar";
 
+export type CustomColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue> & {
+  headerAlign?: "top" | "center";
+};
+
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
+  columns: CustomColumnDef<TData, TValue>[];
   data: TData[];
   columnKey: string;
   placeholder?: string;
@@ -45,7 +49,6 @@ export function DataTable<TData, TValue>({
   actions,
   headerHeight = "h-12",
 }: DataTableProps<TData, TValue>) {
-
   //States for row selection, column visibility, column filters, and sorting.
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -92,8 +95,15 @@ export function DataTable<TData, TValue>({
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
+                  const align =
+                    (header.column.columnDef as CustomColumnDef<TData>)
+                      .headerAlign || "center";
                   return (
-                    <TableHead key={header.id} colSpan={header.colSpan} className="border-black border-2 h-60 min-w-2">
+                    <TableHead
+                      key={header.id}
+                      colSpan={header.colSpan}
+                      className={`border-black border-2 h-96 max-w-2 align-${align}`}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
