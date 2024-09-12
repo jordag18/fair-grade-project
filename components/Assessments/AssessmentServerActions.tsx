@@ -1,8 +1,9 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { Assessment, SelfAssessment } from '@/types';
+import { Assessment, SelfAssessment } from "@/types";
 import { AssessmentFormSchemaType } from "./AssessmentForm";
+import { AssessmentType } from "@/app/dashboard/assessments/AssessmentClientPage copy";
 
 interface SelfAssessmentData {
   StudentID: string;
@@ -21,7 +22,7 @@ export async function createSelfAssessment(data: SelfAssessmentData) {
         CourseID: data.CourseID,
         Comment: data.Comment,
         SelfAssessmentSkills: {
-          create: data.Skills.map(skill => ({
+          create: data.Skills.map((skill) => ({
             SkillID: skill.SkillID,
             Score: skill.Score,
             Comment: skill.Comment,
@@ -34,6 +35,69 @@ export async function createSelfAssessment(data: SelfAssessmentData) {
   } catch (error) {
     console.error("Error creating self-assessment:", error);
     return { success: false, error: "Failed to create self-assessment" };
+  }
+}
+
+// Function to fetch assessments by course ID where the user is either the assessor or the assessed user
+export async function getUserAssessmentsByCourse(
+  courseID: string,
+  userID: string
+): Promise<any[]> {
+  try {
+    // Fetch assessments where the user is either the assessor or the assessed user
+    const assessments = await prisma.assessments.findMany({
+      where: {
+        CourseID: courseID,
+        OR: [
+          { AssessorID: userID }, // Match AssessorID with the given userID
+          { AssessedUserID: userID }, // Match AssessedUserID with the given userID
+        ],
+      },
+      include: {
+        Users_Assessments_AssessorIDToUsers: true,
+        Users_Assessments_AssessedUserIDToUsers: true,
+        Instruments_Assessments: true,
+        SelfAssessment_Assessments: true,
+        AssessmentSkills: {
+          include: {
+            Skills: true,
+          },
+        },
+      },
+    });
+
+    // Map the fetched data to the Assessment type
+    return assessments.map((assessment) => ({
+      AssessmentID: assessment.AssessmentID,
+      AssessorID: assessment.AssessorID,
+      Assessor:
+        assessment.Users_Assessments_AssessorIDToUsers?.name || "Unknown",
+      AssessedUserID: assessment.AssessedUserID,
+      AssessedUser:
+        assessment.Users_Assessments_AssessedUserIDToUsers?.name || "Unknown",
+      CourseID: assessment.CourseID,
+      InstrumentID: assessment.InstrumentID,
+      Instrument: assessment.Instruments_Assessments?.Name || "Unknown",
+      Title: assessment.Title,
+      Comment: assessment.Comment,
+      AssessmentDate: assessment.AssessmentDate,
+      InstrumentDescription: assessment.InstrumentDescription,
+      Skills: assessment.AssessmentSkills.map((skill) => ({
+        SkillID: skill.SkillID,
+        SkillName: skill.Skills.SkillName,
+        SkillType: skill.Skills.SkillType,
+        Score: skill.Score,
+        Approved: skill.Approved,
+        Comment: skill.Comment,
+      })),
+      SelfAssessmentDate: assessment.SelfAssessment_Assessments?.AssessmentDate,
+      Instrument_Assessment: assessment.Instruments_Assessments,
+      InstrumentName: assessment.Instruments_Assessments.Name,
+      SelfAssessment_Assessment: assessment.SelfAssessment_Assessments,
+    }));
+  } catch (error) {
+    console.error("Error fetching user assessments:", error);
+    throw new Error("Failed to fetch user assessments");
   }
 }
 
@@ -59,9 +123,14 @@ export async function getAssessmentsByCourse(courseID: string): Promise<any[]> {
     // Map the fetched data to the Assessment type
     return assessments.map((assessment) => ({
       AssessmentID: assessment.AssessmentID,
-      Assessor: assessment.Users_Assessments_AssessorIDToUsers?.name || "Unknown",
-      AssessedUser: assessment.Users_Assessments_AssessedUserIDToUsers?.name || "Unknown",
+      AssessorID: assessment.AssessorID,
+      Assessor:
+        assessment.Users_Assessments_AssessorIDToUsers?.name || "Unknown",
+      AssessedUserID: assessment.AssessedUserID,
+      AssessedUser:
+        assessment.Users_Assessments_AssessedUserIDToUsers?.name || "Unknown",
       CourseID: assessment.CourseID,
+      InstrumentID: assessment.InstrumentID,
       Instrument: assessment.Instruments_Assessments?.Name || "Unknown",
       Title: assessment.Title,
       Comment: assessment.Comment,
@@ -79,7 +148,6 @@ export async function getAssessmentsByCourse(courseID: string): Promise<any[]> {
       Instrument_Assessment: assessment.Instruments_Assessments,
       InstrumentName: assessment.Instruments_Assessments.Name,
       SelfAssessment_Assessment: assessment.SelfAssessment_Assessments,
-
     }));
   } catch (error) {
     console.error("Error fetching assessments:", error);
@@ -105,17 +173,17 @@ export async function fetchSelfAssessments(courseID: string, userID: string) {
       },
     });
 
-    return selfAssessments.map(assessment => ({
+    return selfAssessments.map((assessment) => ({
       SelfAssessmentID: assessment.SelfAssessmentID,
       InstrumentID: assessment.InstrumentID,
       InstrumentName: assessment.Instrument.Name,
       assessmentDate: assessment.AssessmentDate,
       Assessment: assessment.Assessments,
-      skills: assessment.SelfAssessmentSkills.map(skill => ({
+      skills: assessment.SelfAssessmentSkills.map((skill) => ({
         SelfAssessmentSkillID: skill.SelfAssessmentSkillID,
         skillName: skill.Skill.SkillName,
         score: skill.Score,
-        comment: skill.Comment
+        comment: skill.Comment,
       })),
       comments: assessment.Comment,
       hasAssessments: assessment.Assessments.length > 0,
@@ -126,7 +194,10 @@ export async function fetchSelfAssessments(courseID: string, userID: string) {
   }
 }
 
-export async function fetchAssessmentInstrumentSkills(instrumentID: string, assessedUserID: string) {
+export async function fetchAssessmentInstrumentSkills(
+  instrumentID: string,
+  assessedUserID: string
+) {
   try {
     // Fetch skills associated with the given instrument
     const instrumentSkills = await prisma.instrumentSkills.findMany({
@@ -148,7 +219,7 @@ export async function fetchAssessmentInstrumentSkills(instrumentID: string, asse
       where: {
         UserID: assessedUserID,
         SkillID: {
-          in: instrumentSkills.map(is => is.Skills.SkillID),
+          in: instrumentSkills.map((is) => is.Skills.SkillID),
         },
       },
       select: {
@@ -158,15 +229,17 @@ export async function fetchAssessmentInstrumentSkills(instrumentID: string, asse
     });
 
     // Create a map of SkillID to Score for quick lookup
-    const userSkillsMap = new Map(userSkills.map(us => [us.SkillID, us.Score]));
+    const userSkillsMap = new Map(
+      userSkills.map((us) => [us.SkillID, us.Score])
+    );
 
     // Map the fetched instrument skills to include the user's score or default to 0
     const assessmentSkills = instrumentSkills.map((is) => ({
       SkillID: is.Skills.SkillID,
       SkillName: is.Skills.SkillName,
       initialScore: userSkillsMap.get(is.Skills.SkillID) || 0, // Use user's score or default to 0
-      adjustedScore: userSkillsMap.get(is.Skills.SkillID) || 0, 
-      approved: false, 
+      adjustedScore: userSkillsMap.get(is.Skills.SkillID) || 0,
+      approved: false,
     }));
 
     return assessmentSkills;
@@ -176,7 +249,10 @@ export async function fetchAssessmentInstrumentSkills(instrumentID: string, asse
   }
 }
 
-export async function fetchSelfAssessmentSkills(instrumentID: string, assessedUserID: string) {
+export async function fetchSelfAssessmentSkills(
+  instrumentID: string,
+  assessedUserID: string
+) {
   try {
     // Fetch the most recent self-assessment for the given instrument and student
     const selfAssessment = await prisma.selfAssessments.findFirst({
@@ -185,7 +261,7 @@ export async function fetchSelfAssessmentSkills(instrumentID: string, assessedUs
         StudentID: assessedUserID,
       },
       orderBy: {
-        AssessmentDate: 'desc', 
+        AssessmentDate: "desc",
       },
       include: {
         SelfAssessmentSkills: {
@@ -206,11 +282,11 @@ export async function fetchSelfAssessmentSkills(instrumentID: string, assessedUs
       return [];
     }
 
-    const assessmentSkills = selfAssessment.SelfAssessmentSkills.map(sas => ({
+    const assessmentSkills = selfAssessment.SelfAssessmentSkills.map((sas) => ({
       SkillID: sas.Skill.SkillID,
       SkillName: sas.Skill.SkillName,
       initialScore: sas.Score,
-      adjustedScore: sas.Score, 
+      adjustedScore: sas.Score,
       approved: false,
     }));
 
@@ -221,8 +297,10 @@ export async function fetchSelfAssessmentSkills(instrumentID: string, assessedUs
   }
 }
 
-
-export async function fetchStudentsWithSelfAssessmentStatus(courseID: string, instrumentID: string) {
+export async function fetchStudentsWithSelfAssessmentStatus(
+  courseID: string,
+  instrumentID: string
+) {
   try {
     // Fetch all students enrolled in the specified course
     const allStudents = await prisma.user.findMany({
@@ -267,12 +345,18 @@ export async function fetchStudentsWithSelfAssessmentStatus(courseID: string, in
 
     return studentsWithStatus;
   } catch (error) {
-    console.error("Error fetching students with self-assessment status:", error);
+    console.error(
+      "Error fetching students with self-assessment status:",
+      error
+    );
     throw new Error("Failed to fetch students with self-assessment status");
   }
 }
 
-export async function fetchStudentsWithSelfAssessment(courseID: string, instrumentID: string) {
+export async function fetchStudentsWithSelfAssessment(
+  courseID: string,
+  instrumentID: string
+) {
   try {
     // Fetch students who have completed a self-assessment for the given instrument in the course
     const students = await prisma.user.findMany({
@@ -321,9 +405,132 @@ export async function fetchStudents(courseID: string) {
   }
 }
 
-export async function createInstructorAssessment(data: AssessmentFormSchemaType) {
+export async function CreateOrUpdateAssessment(data: AssessmentType) {
   try {
-    const { selfAssessmentID, assessorID, instrumentID, assessedUserID, assessmentSkills, comment } = data;
+    const {
+      AssessorID,
+      AssessedUserID,
+      AssessmentID,
+      CourseID,
+      InstrumentID,
+      Comment,
+      Skills,
+      Title,
+    } = data;
+
+    console.log("Assessment Data Sent",data)
+
+    // Fetch Instrument Description
+    const instrument = await prisma.instrument.findUnique({
+      where: { InstrumentID },
+    });
+
+    if (!instrument) {
+      throw new Error("Instrument not found");
+    }
+
+    await prisma.$transaction(async (prisma) => {
+      // Check if the assessment already exists
+      const existingAssessment = await prisma.assessments.findUnique({
+        where: { AssessmentID },
+      });
+
+      let newAssessment;
+
+      if (existingAssessment) {
+        // Update the existing assessment
+        newAssessment = await prisma.assessments.update({
+          where: { AssessmentID },
+          data: {
+            InstrumentID: InstrumentID as string,
+            AssessedUserID: AssessedUserID as string,
+            AssessorID: AssessorID as string,
+            CourseID: CourseID as string,
+            Title: `Assessment - ${new Date().toLocaleDateString()}`,
+            Comment: Comment || "",
+            AssessmentDate: new Date(),
+            InstrumentDescription: data.InstrumentDescription,
+          },
+        });
+
+        // Optional: Remove or update existing skills if needed
+        await prisma.assessmentSkills.deleteMany({
+          where: { AssessmentID },
+        });
+
+      } else {
+        // Create a new assessment
+        newAssessment = await prisma.assessments.create({
+          data: {
+            AssessmentID,
+            InstrumentID: InstrumentID as string,
+            AssessedUserID: AssessedUserID as string,
+            AssessorID: AssessorID as string,
+            CourseID: CourseID as string,
+            Title: `Assessment - ${new Date().toLocaleDateString()}`,
+            Comment: Comment || "",
+            AssessmentDate: new Date(),
+            InstrumentDescription: instrument.Name || "Unknown Instrument",
+          },
+        });
+      }
+
+      // Handle each assessment skill
+      for (const skill of Skills || []) {
+        // Add skill to AssessmentSkills
+        await prisma.assessmentSkills.create({
+          data: {
+            AssessmentID: newAssessment.AssessmentID,
+            SkillID: skill.SkillID,
+            Score: skill.Score,
+            Approved: skill.approved,
+          },
+        });
+
+        // If approved, update StudentSkills
+        if (skill.approved) {
+          await prisma.studentSkills.upsert({
+            where: {
+              UserID_CourseID_SkillID: {
+                UserID: AssessedUserID as string,
+                CourseID: newAssessment.CourseID,
+                SkillID: skill.SkillID,
+              },
+            },
+            update: {
+              Score: skill.Score,
+            },
+            create: {
+              UserID: AssessedUserID as string,
+              CourseID: newAssessment.CourseID,
+              SkillID: skill.SkillID,
+              Score: skill.Score,
+            },
+          });
+        }
+      }
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error creating or updating assessment:", error);
+    return { success: false, error: "Failed to create or update assessment" };
+  }
+}
+
+
+export async function createInstructorAssessment(
+  data: AssessmentFormSchemaType
+) {
+  try {
+    const {
+      selfAssessmentID,
+      assessorID,
+      instrumentID,
+      assessedUserID,
+      assessmentSkills,
+      comment,
+    } = data;
 
     // Fetch Instrument Description
     const instrument = await prisma.instrument.findUnique({
@@ -333,7 +540,6 @@ export async function createInstructorAssessment(data: AssessmentFormSchemaType)
     if (!instrument) {
       throw new Error("Instrument not found");
     }
-
 
     await prisma.$transaction(async (prisma) => {
       // Create a new assessment review
@@ -411,7 +617,7 @@ export async function fetchSelfAssessmentID({
         CourseID: courseID,
       },
       orderBy: {
-        AssessmentDate: 'desc',
+        AssessmentDate: "desc",
       },
       select: {
         SelfAssessmentID: true,
@@ -424,7 +630,6 @@ export async function fetchSelfAssessmentID({
     return null;
   }
 }
-
 
 export async function deleteAssessment(assessmentID: string) {
   try {

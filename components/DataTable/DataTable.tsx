@@ -28,7 +28,10 @@ import {
 import { DataTablePagination } from "./DataTablePagnation";
 import { DataTableToolbar } from "@/components/DataTable/DataTableToolbar";
 
-export type CustomColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue> & {
+export type CustomColumnDef<TData, TValue = unknown> = ColumnDef<
+  TData,
+  TValue
+> & {
   headerAlign?: "top" | "center";
 };
 
@@ -39,6 +42,10 @@ interface DataTableProps<TData, TValue> {
   placeholder?: string;
   actions?: (rowSelection: Record<string, boolean>) => React.ReactNode;
   headerHeight?: string;
+  initialSorting?: { id: string; desc: boolean };
+  enableSecondToolbar?: boolean;
+  secondColumnKey?: string;
+  secondPlaceholder?: string;
 }
 
 export function DataTable<TData, TValue>({
@@ -48,17 +55,16 @@ export function DataTable<TData, TValue>({
   placeholder,
   actions,
   headerHeight = "h-12",
+  initialSorting,
+  enableSecondToolbar = false,
+  secondColumnKey,
+  secondPlaceholder,
 }: DataTableProps<TData, TValue>) {
-  //States for row selection, column visibility, column filters, and sorting.
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [sorting, setSorting] = React.useState<SortingState>(initialSorting ? [initialSorting] : []);
 
-  //table intialization
   const table = useReactTable({
     data,
     columns,
@@ -81,35 +87,46 @@ export function DataTable<TData, TValue>({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
+    // Function to determine the row class based on row data
+    const getRowClassName = (row: any) => {
+      // Example logic to color rows based on a hypothetical `status` property
+      if (row.InstrumentDescription == "Student-Assessment") {
+        return "bg-purple-100"; // Apply green background for rows with a SelfAssessmentID
+      }
+      else if (row.InstrumentDescription == "Assessment") {
+        return "bg-blue-100";
+      }
+      return "bg-white"; // Default background for other rows
+    };
+  
+
   return (
     <div className="space-y-4">
       {actions && actions(rowSelection)}
-      <DataTableToolbar
-        table={table}
-        columnKey={columnKey}
-        placeholder={placeholder}
-      />
+      <div className="flex space-x-2">
+        <DataTableToolbar
+          table={table}
+          columnKey={columnKey}
+          placeholder={placeholder}
+        />
+        {enableSecondToolbar && (
+          <DataTableToolbar
+            table={table}
+            columnKey={secondColumnKey || columnKey}
+            placeholder={secondPlaceholder}
+          />
+        )}
+      </div>
       <div className="rounded-md border">
         <Table>
           <TableHeader className="border-black border-2">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
-                  const align =
-                    (header.column.columnDef as CustomColumnDef<TData>)
-                      .headerAlign || "center";
+                  const align = (header.column.columnDef as CustomColumnDef<TData>).headerAlign || "center";
                   return (
-                    <TableHead
-                      key={header.id}
-                      colSpan={header.colSpan}
-                      className={`border-black border-2 max-w-2 align-${align} ${headerHeight}`}
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                    <TableHead key={header.id} colSpan={header.colSpan} className={`border-black border-2 align-${align} ${headerHeight}`}>
+                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
                   );
                 })}
@@ -119,26 +136,17 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"} className={getRowClassName(row.original)}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="border-black border-2">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                    <TableCell key={cell.id} className="border-black border-2 p-2 flex-col items-center justify-center text-center">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>
@@ -150,3 +158,4 @@ export function DataTable<TData, TValue>({
     </div>
   );
 }
+

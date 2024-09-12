@@ -27,14 +27,14 @@ export function DataTableToolbar<TData>({
           placeholder={placeholder}
           value={(table.getColumn(columnKey)?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn(columnKey)?.setFilterValue(event.target.value)
+            table.getColumn(columnKey)?.setFilterValue(event.target.value) // Set the filter value directly
           }
           className="h-8 w-[150px] lg:w-[250px]"
         />
         {isFiltered && (
           <Button
             variant="ghost"
-            onClick={() => table.resetColumnFilters()}
+            onClick={() => table.resetColumnFilters()} // Reset all filters
             className="h-8 px-2 lg:px-3"
           >
             Reset
