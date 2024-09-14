@@ -102,6 +102,7 @@ const AssessmentClientPage = ({
 }: AssessmentClientPageProps) => {
   const { selectedCourse } = useCourse();
   const { role } = useUserRole();
+  const [currentAssessedUser, setCurrentAssessedUser] = useState<Student | null>(null);
   const [assessments, setAssessments] = useState<AssessmentType[]>([]);
   const [selfAssessments, setSelfAssessments] = useState([]);
   const [courseSkills, setCourseSkills] = useState<AssessmentSkill[]>([]);
@@ -120,6 +121,7 @@ const AssessmentClientPage = ({
   const [selectedStudent, setSelectedStudent] = useState("");
   const [editingAssessment, setEditingAssessment] =
     useState<AssessmentType | null>(null);
+    
 
   const refreshAssessments = useCallback(async () => {
     if (selectedCourse) {
@@ -240,13 +242,17 @@ const AssessmentClientPage = ({
 
   const addBlankAssessment = () => {
     const isStudent = role === UserCourseRole.Student;
-
+  
     const newAssessmentData = {
       AssessmentID: Math.random().toString(36).substr(2, 9),
       AssessorID: session?.user.id,
       Assessor: session?.user?.name || "",
-      AssessedUserID: isStudent ? session?.user.id : "", // Set to current user's ID if student
-      AssessedUser: isStudent ? session?.user?.name || "Unknown" : "", // Set to current user's name if student
+      AssessedUserID: isStudent
+        ? session?.user.id
+        : currentAssessedUser?.id || "", // Set to current selected user's ID if not a student
+      AssessedUser: isStudent
+        ? session?.user?.name || "Unknown"
+        : currentAssessedUser?.name || "Unknown", // Set to current selected user's name if not a student
       CourseID: selectedCourse?.CourseID || "",
       Instrument: "",
       Title: "",
@@ -262,7 +268,7 @@ const AssessmentClientPage = ({
         approved: false,
       })),
     };
-
+  
     const newAssessment = AssessmentSchema.parse(newAssessmentData);
     setValue("assessments", [...watch("assessments"), newAssessment]);
   };
@@ -280,10 +286,14 @@ const AssessmentClientPage = ({
   // Handler to update assessments based on the selected student
   const handleSelectStudent = async (studentID: any) => {
     if (studentID) {
+      const student = students.find((s) => s.id === studentID);
+      setCurrentAssessedUser(student || null);
+
       const data = await getUserAssessmentsByCourse(
         (selectedCourse as Course).CourseID,
         studentID
       );
+
       const validatedData = data
         .map((item: any) => ({
           ...item,
@@ -303,6 +313,17 @@ const AssessmentClientPage = ({
   useEffect(() => {
     fetchInstruments();
   }, [selectedCourse]);
+
+    // Automatically set the current assessed user to the logged-in user if the role is Student
+    useEffect(() => {
+      if (role === UserCourseRole.Student && session?.user) {
+        setCurrentAssessedUser({
+          id: session.user.id,
+          name: session.user.name || "Unknown",
+        });
+        setSelectedStudent(session.user.id); // Set the selected student to the current user
+      }
+    }, [role, session]);
 
 
   const fetchCourseStudents = useCallback(async () => {
@@ -368,6 +389,8 @@ const AssessmentClientPage = ({
               <SelectScrollable
                 students={students}
                 onSelectStudent={handleSelectStudent}
+                disabled={role === UserCourseRole.Student} 
+                selectedStudent={selectedStudent}
               />
               <div className="flex gap-x-2 justify-between">
                 <Button onClick={addBlankAssessment}>Add Assessment</Button>
@@ -417,9 +440,6 @@ const AssessmentClientPage = ({
                 placeholder="Filter by Instrument..."
                 headerHeight="h-72"
                 initialSorting={{ id: "AssessmentDate", desc: true }}
-                enableSecondToolbar
-                secondColumnKey="AssessedUserID"
-                secondPlaceholder="Filter by Student..."
               />
             )}
           </div>
@@ -454,9 +474,13 @@ const PrintAssessmentsButton = () => {
 };
 
 // Modify the SelectScrollable component to accept props
-export function SelectScrollable({ students, onSelectStudent }: any) {
+export function SelectScrollable({ students, onSelectStudent, disabled, selectedStudent }: any) {
   return (
-    <Select onValueChange={(value) => onSelectStudent(value)}>
+    <Select
+      onValueChange={(value) => onSelectStudent(value)}
+      value={selectedStudent.id} 
+      disabled={disabled} 
+    >
       <SelectTrigger className="w-[280px]">
         <SelectValue placeholder="Select a student" />
       </SelectTrigger>

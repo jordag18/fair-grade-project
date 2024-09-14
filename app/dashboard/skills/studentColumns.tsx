@@ -20,7 +20,7 @@ function getScoreColor(score: number): string {
         <DataTableColumnHeader column={column} title="Skill Name" />
       ),
       cell: ({ row }) => (
-        <div className="w-[80px]">{row.getValue("SkillName")}</div>
+        <div className="w-[80px] flex items-center justify-center text-center">{row.getValue("SkillName")}</div>
       ),
       enableSorting: false,
       enableHiding: false,

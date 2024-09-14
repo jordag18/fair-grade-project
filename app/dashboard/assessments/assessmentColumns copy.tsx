@@ -59,7 +59,7 @@ export const assessmentColumns: (props: {
         <DataTableColumnHeader
           column={column}
           title="Instrument"
-          className="text-center flex items-center justify-center min-w-max"
+          className="text-center flex items-center justify-center w-20 pl-7"
         />
       ),
       accessorFn: (row) => row.Instrument_Assessment?.Name || "", // Define how to access the nested property for filtering
@@ -81,7 +81,7 @@ export const assessmentColumns: (props: {
                 await CreateOrUpdateAssessment(row.original);
               }}
               disabled={isDisabled}
-              defaultValue={getValues(`assessments.${row.index}.InstrumentID`)} // Access InstrumentID from the nested object
+              defaultValue={getValues(`assessments.${row.index}.InstrumentID`)} 
             >
               <SelectTrigger className="w-full">
                 {/* Display the currently selected instrument name */}
@@ -93,7 +93,7 @@ export const assessmentColumns: (props: {
                 {instruments.map((instrument) => (
                   <SelectItem
                     key={instrument.InstrumentID}
-                    value={instrument.InstrumentID} // Use InstrumentID as the value
+                    value={instrument.InstrumentID} 
                   >
                     {instrument.InstrumentName}{" "}
                     {/* Display the Instrument Name */}
@@ -106,8 +106,8 @@ export const assessmentColumns: (props: {
       },
       // Define the filtering logic using the nested name
       filterFn: (row, columnId, filterValue) => {
-        const instrumentName: string = row.getValue(columnId); // Access the nested property value
-        return instrumentName.toLowerCase().includes(filterValue.toLowerCase()); // Apply filter logic
+        const instrumentName: string = row.getValue(columnId);
+        return instrumentName.toLowerCase().includes(filterValue.toLowerCase()); 
       },
     },
     {
@@ -115,18 +115,15 @@ export const assessmentColumns: (props: {
       header: ({ column }) => (
         <DataTableColumnHeader
           column={column}
-          title="Assessment Date"
-          className="text-center flex items-center justify-center"
+          title="Date"
+          className="text-center flex items-center justify-center w-12 pl-6"
         />
       ),
       cell: ({ row }) => {
-        // Access the form context to handle state updates
         const { setValue, watch } = useFormContext();
 
-        // Watch the current value of the AssessmentDate field
         const assessmentDate = watch(`assessments.${row.index}.AssessmentDate`);
 
-        // Extract just the date portion for display in the input
         const formattedDate = assessmentDate
           ? new Date(assessmentDate).toLocaleDateString("en-GB", {
               day: "2-digit",
@@ -141,9 +138,9 @@ export const assessmentColumns: (props: {
             disabled={true}
             onChange={async (e) => {
               // Combine the selected date with the existing time or use current time if none exists
-              const selectedDate = e.target.value; // This is in 'YYYY-MM-DD' format
+              const selectedDate = e.target.value;
 
-              // Preserve the current time or use the default to avoid losing the time component
+
               const existingTime = assessmentDate
                 ? new Date(assessmentDate).toISOString().split("T")[1]
                 : "00:00:00.000Z";
@@ -160,10 +157,9 @@ export const assessmentColumns: (props: {
                 shouldValidate: true,
               });
 
-              // Save the changes to the database
               await CreateOrUpdateAssessment(row.original);
             }}
-            className="w-full border border-gray-300 rounded p-1 text-center items-center justify-center"
+            className="w-12 border border-gray-300 rounded p-1 text-center items-center justify-center"
           />
         );
       },
@@ -173,25 +169,23 @@ export const assessmentColumns: (props: {
       header: ({ column }) => (
         <DataTableColumnHeader
           column={column}
-          title="Assessor"
-          className="text-center flex items-center justify-center"
+          title="Coach"
+          className="text-center flex items-center justify-center w-14 pl-7"
         />
       ),
       cell: ({ row }) => {
-        // Access form context functions
         const { setValue, watch } = useFormContext();
 
-        // Watch the current value of Assessor
         const assessor = watch(`assessments.${row.index}.Assessor`);
 
         // Function to get the initials of the assessor's name
         const getInitials = (name: string) => {
           if (!name) return "";
           const names = name.split(" ");
-          const firstInitial = names[0]?.[0] || ""; // First name initial
+          const firstInitial = names[0]?.[0] || ""; 
           const lastInitial =
-            names.length > 1 ? names[names.length - 1][0] : ""; // Last name initial
-          return `${firstInitial}${lastInitial}`.toUpperCase(); // Combine and uppercase initials
+            names.length > 1 ? names[names.length - 1][0] : "";
+          return `${firstInitial}${lastInitial}`.toUpperCase(); 
         };
 
         return (
@@ -199,62 +193,12 @@ export const assessmentColumns: (props: {
             type="text"
             value={getInitials(assessor) || ""}
             onChange={(e) => {
-              // Update the form state directly
               setValue(`assessments.${row.index}.Assessor`, e.target.value);
             }}
-            className="w-full border border-gray-300 rounded p-1 text-center items-center justify-center"
+            className="w-14 border border-gray-300 rounded p-1 text-center items-center justify-center"
             disabled
           />
         );
-      },
-    },
-    {
-      accessorKey: "AssessedUserID", // Ensure accessorKey matches the data property
-      header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title="Assessed User"
-          className="text-center flex items-center justify-center"
-        />
-      ),
-      cell: ({ row }) => {
-        const { setValue, watch } = useFormContext();
-        const assessedUserID = watch(`assessments.${row.index}.AssessedUserID`);
-        const selectedStudent = students.find(
-          (student) => student.id === assessedUserID
-        );
-        const selectedStudentName = selectedStudent?.name || "";
-
-        return (
-          <Select
-            onValueChange={async (value) => {
-              setValue(`assessments.${row.index}.AssessedUserID`, value);
-              handleFieldChange(row.index, "AssessedUserID", value);
-              await CreateOrUpdateAssessment(row.original);
-            }}
-            value={assessedUserID || ""}
-            disabled={isStudent}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select a student">
-                {selectedStudentName || "Unknown"}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {students.map((student) => (
-                <SelectItem key={student.id} value={student.id || ""}>
-                  {student.name || "Unknown"}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        );
-      },
-      // Correct filter function to match student names based on the filter value
-      filterFn: (row, columnId, filterValue) => {
-        const assessedUserID = row.getValue(columnId);
-        const student = students.find((s) => s.id === assessedUserID);
-        return student?.name?.toLowerCase().includes(filterValue.toLowerCase());
       },
     },
     {
@@ -263,19 +207,16 @@ export const assessmentColumns: (props: {
         <DataTableColumnHeader
           column={column}
           title="Comment"
-          className="text-center flex items-center justify-center"
+          className="text-center flex items-center justify-center w-24 pl-16"
         />
       ),
       cell: ({ row }) => {
-        // Access the form context
         const { register, setValue, getValues } = useFormContext();
         const isDisabled = isStudent && row.original.AssessorID !== userID;
-        // Handler to save assessment changes
         const handleSave = async () => {
-          const assessments = getValues("assessments"); // Get all assessments
-          const assessment = assessments[row.index]; // Get the specific assessment row
+          const assessments = getValues("assessments"); 
+          const assessment = assessments[row.index]; 
           try {
-            // Call your server action to save or update the assessment
             const response = await CreateOrUpdateAssessment(assessment);
             if (response.success) {
               console.log("Assessment saved successfully", assessment);
@@ -287,12 +228,10 @@ export const assessmentColumns: (props: {
           }
         };
 
-        // Register the textarea with onChange to handle updates
         const { ref, onChange, ...inputProps } = register(
           `assessments.${row.index}.Comment`,
           {
             onChange: async (e) => {
-              // Update the form state without causing a re-render
               setValue(`assessments.${row.index}.Comment`, e.target.value, {
                 shouldDirty: true,
                 shouldTouch: true,
@@ -306,12 +245,14 @@ export const assessmentColumns: (props: {
         );
 
         return (
+          <div className="flex items-center justify-center h-full">
           <Textarea
             {...inputProps}
             disabled={isDisabled}
             ref={ref}
-            className="w-full border border-gray-300 rounded p-1 text-center items-center justify-center"
+            className="w-32 h-10 border border-gray-300 rounded text-center"
           />
+        </div>
         );
       },
     },
@@ -325,11 +266,10 @@ export const assessmentColumns: (props: {
     (skill) => ({
       accessorKey: skill.SkillID, // Unique key for each skill
       header: ({ column }) => (
-        <DataTableColumnHeaderRotated column={column} title={skill.SkillName} />
+        <DataTableColumnHeaderRotated column={column} title={skill.SkillName} className="w-2 pb-7" />
       ),
       headerAlign: "top",
       cell: ({ row }) => {
-        // Access form context functions
         const { setValue, getValues, watch } = useFormContext();
 
         const isDisabled = isStudent && row.original.AssessorID !== userID;
@@ -368,7 +308,7 @@ export const assessmentColumns: (props: {
               SkillID: skill.SkillID,
               SkillName: skill.SkillName,
               Score: updatedScore,
-              approved: true, // Set default values for other properties as needed
+              approved: true,
               initialScore: 0,
               adjustedScore: updatedScore,
             };
@@ -390,7 +330,6 @@ export const assessmentColumns: (props: {
             }
           }
 
-          // Save the changes to the database
           await CreateOrUpdateAssessment(row.original);
         };
 
@@ -398,14 +337,14 @@ export const assessmentColumns: (props: {
           <div>
             <input
               type="number"
-              value={adjustedScore} // Bind input value to the current score or default to 0
+              value={adjustedScore} 
               onChange={handleScoreChange}
               disabled={isDisabled}
               onFocus={(e) => e.target.select()}
-              min={0} // Set minimum allowed value
-              max={3} // Set maximum allowed value
-              step={1} // Allow only whole numbers
-              className="w-[30px] border border-gray-300 rounded p-1 text-center items-center justify-center"
+              min={0} 
+              max={3} 
+              step={1}
+              className="w-[30px] border border-gray-300 rounded text-center items-center justify-center"
             />
           </div>
         );
@@ -418,7 +357,6 @@ export const assessmentColumns: (props: {
     cell: ({ row }) => (
       <button
         onClick={async () => {
-          //onSaveAssessment(row.original);
           deleteAssessment(row.original.AssessmentID);
           console.log("Row Data:", row.original);
         }}

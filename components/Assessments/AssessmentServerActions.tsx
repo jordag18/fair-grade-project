@@ -237,7 +237,7 @@ export async function fetchAssessmentInstrumentSkills(
     const assessmentSkills = instrumentSkills.map((is) => ({
       SkillID: is.Skills.SkillID,
       SkillName: is.Skills.SkillName,
-      initialScore: userSkillsMap.get(is.Skills.SkillID) || 0, // Use user's score or default to 0
+      initialScore: userSkillsMap.get(is.Skills.SkillID) || 0, 
       adjustedScore: userSkillsMap.get(is.Skills.SkillID) || 0,
       approved: false,
     }));
@@ -470,7 +470,7 @@ export async function CreateOrUpdateAssessment(data: AssessmentType) {
             Title: `Assessment - ${new Date().toLocaleDateString()}`,
             Comment: Comment || "",
             AssessmentDate: new Date(),
-            InstrumentDescription: instrument.Name || "Unknown Instrument",
+            InstrumentDescription: data.InstrumentDescription as string,
           },
         });
       }

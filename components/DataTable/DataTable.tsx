@@ -138,7 +138,7 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"} className={getRowClassName(row.original)}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="border-black border-2 p-2 flex-col items-center justify-center text-center">
+                    <TableCell key={cell.id} className="border-black border-2 p-[1px] flex-col items-center justify-center text-center">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
