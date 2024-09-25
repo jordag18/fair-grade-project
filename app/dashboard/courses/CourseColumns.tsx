@@ -20,7 +20,7 @@ export const courseColumns: ColumnDef<Course>[] = [
       <DataTableColumnHeader column={column} title="Course Tag" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("CourseTag")}</div>
+      <div>{row.getValue("CourseTag")}</div>
     ),
     enableHiding: false,
   },
@@ -30,7 +30,7 @@ export const courseColumns: ColumnDef<Course>[] = [
       <DataTableColumnHeader column={column} title="Course Name" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("CourseName")}</div>
+      <div>{row.getValue("CourseName")}</div>
     ),
   },
   {
@@ -39,7 +39,7 @@ export const courseColumns: ColumnDef<Course>[] = [
       <DataTableColumnHeader column={column} title="Date Range" />
     ),
     cell: ({ row }) => (
-      <div className="w-[100px]">
+      <div>
         {formatDateRange(row.original.StartDate, row.original.EndDate)}
       </div>
     ),
@@ -50,7 +50,7 @@ export const courseColumns: ColumnDef<Course>[] = [
       <DataTableColumnHeader column={column} title="Time Range" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("TimeRange")}</div>
+      <div>{row.getValue("TimeRange")}</div>
     ),
   },
   {
@@ -59,7 +59,7 @@ export const courseColumns: ColumnDef<Course>[] = [
       <DataTableColumnHeader column={column} title="Location" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("Location")}</div>
+      <div>{row.getValue("Location")}</div>
     ),
   },
   {
@@ -68,7 +68,7 @@ export const courseColumns: ColumnDef<Course>[] = [
       <DataTableColumnHeader column={column} title="Instructor" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("Instructor")}</div>
+      <div>{row.getValue("Instructor")}</div>
     ),
   },
   {

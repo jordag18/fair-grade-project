@@ -27,7 +27,7 @@ export const nameColumns: CustomColumnDef<RowData>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Name" />
     ),
-    cell: ({ row }) => <div className="w-[150px]">{row.getValue("name")}</div>,
+    cell: ({ row }) => <div>{row.getValue("name")}</div>,
   },
 ];
 
@@ -40,7 +40,6 @@ export const skillsColumns: (skills: Skill[]) => CustomColumnDef<RowData>[] = (
     header: ({ column }) => (
       <DataTableColumnHeaderRotated column={column} title={skill.SkillName} />
     ),
-    headerAlign: "top",
     cell: ({ row }: { row: { original: RowData } }) => {
       const userSkills = (row.original as User).skills || [];
       const skillData = userSkills.find((s) => s.SkillID === skill.SkillID);

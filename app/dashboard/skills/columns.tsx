@@ -17,7 +17,7 @@ export const columns: (props: {
       <DataTableColumnHeader column={column} title="Skill Name" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("SkillName")}</div>
+      <div>{row.getValue("SkillName")}</div>
     ),
     enableSorting: false,
     enableHiding: false,
@@ -28,7 +28,7 @@ export const columns: (props: {
       <DataTableColumnHeader column={column} title="Skill Type" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("SkillType")}</div>
+      <div>{row.getValue("SkillType")}</div>
     ),
   },
   {
@@ -36,7 +36,7 @@ export const columns: (props: {
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Added By" />
     ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("UserName")}</div>,
+    cell: ({ row }) => <div>{row.getValue("UserName")}</div>,
   },
   {
     id: "actions",

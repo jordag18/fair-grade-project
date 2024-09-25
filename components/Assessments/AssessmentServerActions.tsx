@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { Assessment, SelfAssessment } from "@/types";
 import { AssessmentFormSchemaType } from "./AssessmentForm";
-import { AssessmentType } from "@/app/dashboard/assessments/AssessmentClientPage copy";
+import { AssessmentType } from "@/app/dashboard/assessments/AssessmentClientPage";
 
 interface SelfAssessmentData {
   StudentID: string;
@@ -237,7 +237,7 @@ export async function fetchAssessmentInstrumentSkills(
     const assessmentSkills = instrumentSkills.map((is) => ({
       SkillID: is.Skills.SkillID,
       SkillName: is.Skills.SkillName,
-      initialScore: userSkillsMap.get(is.Skills.SkillID) || 0, 
+      initialScore: userSkillsMap.get(is.Skills.SkillID) || 0,
       adjustedScore: userSkillsMap.get(is.Skills.SkillID) || 0,
       approved: false,
     }));
@@ -418,7 +418,7 @@ export async function CreateOrUpdateAssessment(data: AssessmentType) {
       Title,
     } = data;
 
-    console.log("Assessment Data Sent",data)
+    console.log("Assessment Data Sent", data);
 
     // Fetch Instrument Description
     const instrument = await prisma.instrument.findUnique({
@@ -457,7 +457,6 @@ export async function CreateOrUpdateAssessment(data: AssessmentType) {
         await prisma.assessmentSkills.deleteMany({
           where: { AssessmentID },
         });
-
       } else {
         // Create a new assessment
         newAssessment = await prisma.assessments.create({
@@ -517,7 +516,6 @@ export async function CreateOrUpdateAssessment(data: AssessmentType) {
     return { success: false, error: "Failed to create or update assessment" };
   }
 }
-
 
 export async function createInstructorAssessment(
   data: AssessmentFormSchemaType

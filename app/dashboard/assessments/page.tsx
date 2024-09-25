@@ -1,5 +1,5 @@
 import React from "react";
-import AssessmentClientPage from "./AssessmentClientPage copy";
+import AssessmentClientPage from "./AssessmentClientPage";
 import { useUserId } from "@/lib/auth/useUser";
 import { auth } from "@/auth";
 
