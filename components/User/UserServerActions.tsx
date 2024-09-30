@@ -35,21 +35,20 @@ export async function deleteUser(userID: string) {
   }
 }
 
-export async function fetchUsersByCourseAndRole(courseID: string, role: string) {
+export async function fetchUsersByCourse(courseID: string) {
   try {
     const users = await prisma.user.findMany({
       where: {
         UserCourse: {
           some: {
-            CourseID: courseID,
-            Role: role as UserCourseRole,
+            CourseID: courseID,  // Ensure that users are found based on the courseID
           },
         },
       },
       include: {
         UserCourse: {
           include: {
-            Courses: true,
+            Courses: true,  // Include related course information
           },
         },
       },
@@ -57,8 +56,10 @@ export async function fetchUsersByCourseAndRole(courseID: string, role: string) 
 
     const formattedUsers = users.map(user => ({
       ...user,
-      courses: user.UserCourse.map(uc => uc.Courses.CourseName),
-      role: user.UserCourse.find(uc => uc.CourseID === courseID)?.Role,
+      courses: user.UserCourse
+        .map(uc => uc.Courses.CourseName)
+        .filter(courseName => courseName !== "No Courses"),  // Filter out any courses with the name "No Courses"
+      role: user.UserCourse.find(uc => uc.CourseID === courseID)?.Role,  // Get the role for the given courseID
     }));
 
     return { success: true, users: formattedUsers };
@@ -68,3 +69,23 @@ export async function fetchUsersByCourseAndRole(courseID: string, role: string) 
   }
 }
 
+
+export async function updateUserRole(userId: string, courseID: string, newRole: any) {
+  try {
+    await prisma.userCourse.update({
+      where: {
+        UserID_CourseID: {
+          UserID: userId,
+          CourseID: courseID,
+        },
+      },
+      data: {
+        Role: newRole,
+      },
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Error updating user role:", error);
+    return { success: false, error: "Failed to update user role" };
+  }
+}

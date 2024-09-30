@@ -58,7 +58,7 @@ export const assessmentColumns: (props: {
         <DataTableColumnHeader
           column={column}
           title="Instrument"
-          className="text-center flex items-center justify-center w-20 pl-7"
+          className="text-center flex items-center justify-center w-24 pl-7"
         />
       ),
       accessorFn: (row) => row.Instrument_Assessment?.Name || "", // Define how to access the nested property for filtering
@@ -115,7 +115,7 @@ export const assessmentColumns: (props: {
         <DataTableColumnHeader
           column={column}
           title="Date"
-          className="text-center flex items-center justify-center w-12 pl-6"
+          className="text-center flex items-center justify-center w-14 pl-6"
         />
       ),
       cell: ({ row }) => {
@@ -157,7 +157,7 @@ export const assessmentColumns: (props: {
 
               await CreateOrUpdateAssessment(row.original);
             }}
-            className="w-12 border border-gray-300 rounded p-1 text-center items-center justify-center"
+            className="w-14 border border-gray-300 rounded p-1 text-center items-center justify-center"
           />
         );
       },
@@ -167,8 +167,8 @@ export const assessmentColumns: (props: {
       header: ({ column }) => (
         <DataTableColumnHeader
           column={column}
-          title="Coach"
-          className="text-center flex items-center justify-center w-14 pl-7"
+          title="Assessor"
+          className="text-center flex items-center justify-center w-20 pl-7"
         />
       ),
       cell: ({ row }) => {
@@ -370,6 +370,6 @@ export const assessmentColumns: (props: {
   if (isStudent) {
     return [...basicColumns, ...skillColumns];
   } else {
-    return [...basicColumns, ...skillColumns, actionsColumn];
+    return [...basicColumns, ...skillColumns];
   }
 };

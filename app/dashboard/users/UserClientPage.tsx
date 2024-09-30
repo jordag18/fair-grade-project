@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { DataTable } from "@/components/DataTable/DataTable";
 import { useCourse } from "@/context/CourseContext";
-import { fetchUsersByCourseAndRole } from "@/components/User/UserServerActions";
+import { fetchUsersByCourse } from "@/components/User/UserServerActions";
 import { columns } from "./columns";
 import { User } from "@/types";
 
@@ -14,7 +14,7 @@ const UserClientPage = () => {
 
   useEffect(() => {
     if (selectedCourse) {
-      fetchUsersByCourseAndRole(selectedCourse.CourseID, "Student").then(
+      fetchUsersByCourse(selectedCourse.CourseID).then(
         (data) => {
           if (data.success && data.users) {
             console.log("User Data: ", data.users);
@@ -32,7 +32,7 @@ const UserClientPage = () => {
 
   const refreshUsers = () => {
     if (selectedCourse) {
-      fetchUsersByCourseAndRole(selectedCourse.CourseID, "Student").then(
+      fetchUsersByCourse(selectedCourse.CourseID).then(
         (data) => {
           if (data.success && data.users) {
             setUsers(data.users as any);

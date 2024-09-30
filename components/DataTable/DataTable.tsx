@@ -91,10 +91,10 @@ export function DataTable<TData, TValue>({
     const getRowClassName = (row: any) => {
       // Example logic to color rows based on a hypothetical `status` property
       if (row.InstrumentDescription == "Student-Assessment") {
-        return "bg-purple-100"; // Apply green background for rows with a SelfAssessmentID
+        return "bg-purple-300"; // Apply green background for rows with a SelfAssessmentID
       }
       else if (row.InstrumentDescription == "Assessment") {
-        return "bg-blue-100";
+        return "bg-blue-300";
       }
       return "bg-white"; // Default background for other rows
     };
