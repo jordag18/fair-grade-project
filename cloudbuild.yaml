@@ -26,7 +26,7 @@ steps:
 images:
 - 'gcr.io/$PROJECT_ID/fair-grade-app'
 
-logsBucket: gs://744541105758-global-cloudbuild-logs
+logsBucket: gs://968379393687-global-cloudbuild-logs
 
 options:
   defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
